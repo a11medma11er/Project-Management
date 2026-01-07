@@ -176,7 +176,7 @@
                             @can('manage-ai-prompts')
                             <li class="nav-item">
                                 <a href="{{ route('ai.prompts.index') }}" class="nav-link">
-                                    <i class="ri-edit-box-line me-1"></i> Manage Prompts
+                                    <i class="ri-edit-box-line me-1"></i> Prompts
                                 </a>
                             </li>
                             @endcan
