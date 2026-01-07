@@ -414,7 +414,180 @@ git push origin feature/new-feature
 
 ## 📝 Recent Updates
 
-### Version 1.7.0 - Prompt Management System (**Latest** - January 2026)
+### Version 1.8.0 - AI Decision Engine (**Latest** - January 2026)
+
+Comprehensive AI decision-making system with automated analysis, confidence scoring, and human-in-the-loop workflow for intelligent project management.
+
+#### 🧠 Decision Engine Core
+
+**AIDecisionEngine Service:**
+- **Task Analysis:**
+  - `analyzeTask(taskId)` - Analyze single task and generate decision
+  - Detection: overdue, stale (7+ days), low engagement, blocked
+  - Confidence scoring (0.0-1.0) based on severity
+  - Reasoning array with detailed analysis
+  - Alternatives system with impact levels (Low/Medium/High)
+
+- **Project Analysis:**
+  - `analyzeProject(projectId)` - Project health assessment
+  - Health status: overdue, at_risk, has_blockers, stale
+  - Risk detection with multiple blockers
+  - Activity tracking (14+ days)
+  - Mitigation suggestions
+
+- **Decision Execution:**
+  - `executeDecision(decision, modifiedAction)` - Execute approved decisions
+  - Execution logging with timestamps
+  - Error handling and rollback
+  - Simulated execution for testing
+
+**Decision Types:**
+- Task analysis (priority, engagement, blockers)
+- Project analysis (health, risks, timeline)
+- Confidence-based recommendations
+- Alternative actions for each decision
+
+#### 📊 Advanced Analysis Service
+
+**AIAnalysisService:**
+- **System Insights:**
+  - `getSystemInsights()` - Comprehensive overview (cached 10min)
+  - `calculateSystemHealthScore()` - 0-100 score with deductions:
+    * Overdue tasks (max -30 points)
+    * Stale tasks (max -20 points)
+    * At-risk projects (max -25 points)
+    * Low engagement (max -15 points)
+    * Critical tasks (max -10 points)
+
+- **Trend Analysis:**
+  - `analyzeTrends()` - Last 30 days trends
+  - Acceptance trend (increasing/decreasing/stable)
+  - Confidence trend (improving/declining/stable)
+  - Decision history tracking
+
+- **Priority Recommendations:**
+  - `getTaskPriorityRecommendations()` - Smart priority suggestions
+  - Urgency-based calculations
+  - Deadline proximity analysis
+  - Reasoning generation
+
+- **Engagement Analysis:**
+  - `getEngagementAnalysis()` - Low engagement detection
+  - Average task age
+  - Collaboration recommendations
+
+- **Risk Assessment:**
+  - `getProjectRiskAssessment()` - Project risk scoring
+  - Risk score calculation (0-100)
+  - Risk level classification (critical/high/medium/low)
+  - Risk factors identification
+  - Mitigation suggestions
+
+- **Performance Metrics:**
+  - `getPerformanceMetrics()` - AI system performance
+  - Decision metrics (total, avg confidence, response time)
+  - Accuracy metrics (acceptance rate, execution success)
+  - Impact metrics (tasks improved, projects helped)
+
+#### 🎛️ Decision Management Interface
+
+**AIDecisionController:**
+- **List View (index):**
+  - Filters: status (pending/accepted/rejected/modified)
+  - Type filter (task_analysis/project_analysis)
+  - Confidence threshold filter
+  - Sort by date/confidence
+  - Pagination support
+
+- **CRUD Operations:**
+  - `show()` - Detailed decision view
+  - `accept()` - Accept and execute
+  - `reject()` - Reject with reason
+  - `modify()` - Modify recommendation and execute
+  - `bulkAccept()` - Batch accept multiple decisions
+  - `destroy()` - Soft delete
+
+- **Activity Logging:**
+  - All actions logged via Spatie Activity Log
+  - User tracking
+  - Execution results
+
+**Blade Views:**
+
+**index.blade.php:**
+- Stats cards (4):
+  * Pending review count
+  * Accepted count
+  * Rejected count
+  * Average confidence %
+- Multi-filter system
+- Confidence bar visualization (green/yellow/red)
+- Bulk selection with checkboxes
+- Quick actions (Accept/Reject)
+- Empty state with friendly message
+
+**show.blade.php:**
+- Recommendation display with confidence progress bar
+- Reasoning list with checkmarks
+- Alternatives cards with impact badges
+- User feedback section
+- Execution result display
+- Metadata sidebar (ID, type, status, timestamps)
+- Action modals:
+  * Modify modal - Edit recommendation
+  * Reject modal - Provide rejection reason
+- Related task/project links
+
+#### ⚙️ Automation & Commands
+
+**Artisan Command:**
+```bash
+php artisan ai:analyze
+  --type=all|tasks|projects    # Analysis type
+  --limit=20                    # Max items to analyze
+  --verbose                     # Detailed output
+```
+
+**Features:**
+- Batch analysis of tasks needing attention
+- Project risk detection
+- Decision creation and logging
+- Progress indicators
+- Summary report
+
+**Scheduled Analysis:**
+- Can be added to Laravel scheduler
+- Automatic daily/hourly analysis
+- Background processing support
+
+#### 📈 Integration
+
+**Data Flow:**
+1. **Detection:** AI views identify issues (from Day 12)
+2. **Analysis:** DecisionEngine analyzes context
+3. **Recommendation:** Generates decision with confidence
+4. **Review:** Human reviews via dashboard
+5. **Execution:** Approved decisions executed automatically
+6. **Tracking:** Results logged and measured
+
+**Services Used:**
+- AIDataAggregator (Day 12) - Data retrieval
+- AIContextBuilder (Day 12) - Context building
+- AIDecisionEngine (Day 14) - Decision generation
+- AIAnalysisService (Day 14) - Advanced analytics
+
+**Permissions:**
+- `view-ai-decisions` - View decisions list
+- `approve-ai-actions` - Accept/reject/modify decisions
+
+**Files Created:** 6 (2 services, 1 command, 1 controller, 2 views)  
+**Lines of Code:** ~1810+  
+**Routes:** 7 protected endpoints  
+**Command:** 1 artisan command
+
+---
+
+### Version 1.7.0 - Prompt Management System (January 2026)
 
 Professional template management system for AI prompts with versioning, testing, and comprehensive CRUD interface.
 
