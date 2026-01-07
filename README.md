@@ -137,6 +137,62 @@ Visit: `http://localhost:8000`
 
 ## 🗂️ Database Schema
 
+Navigate to: `http://127.0.0.1:8000/management/`
+
+Available sections:
+- **Users:** `/management/users`
+- **Roles:** `/management/roles`
+- **Permissions:** `/management/permissions`
+- **Projects:** `/management/projects`
+- **Tasks:** `/management/tasks` (List View)
+- **Tasks Kanban:** `/management/tasks/kanban` (Kanban Board)
+
+### Creating a Task
+
+1. Navigate to Tasks → Create Task
+2. Fill in task details:
+   - **Basic Info:** Title (required), Description
+   - **Project:** Link to existing project (optional)
+   - **Timeline:** Due Date (required)
+   - **Classification:** Status, Priority
+   - **Team:** Assign multiple users
+   - **Organization:** Add tags
+3. Click "Create Task"
+4. Task gets auto-generated number (e.g., #VLZ0001)
+
+### Using Kanban Board
+
+1. Navigate to Tasks → Kanban Board (`/management/tasks/kanban`)
+2. View tasks organized in columns by status:
+   - **New** - Newly created tasks
+   - **Pending** - Tasks waiting to start
+   - **In Progress** - Currently active tasks
+   - **Completed** - Finished tasks
+3. Click any task card to view full details
+4. Use for quick visual overview of project status
+
+### Managing Task Workflow
+
+**Adding Comments:**
+1. Open task details page
+2. Scroll to Comments tab
+3. Type your comment
+4. Click "Add Comment"
+5. Supports nested replies
+
+**Uploading Attachments:**
+1. Open task details page
+2. Go to Attachments tab
+3. Click "Upload File"
+4. Select file (max 10MB)
+5. Allowed types: pdf, doc, docx, xls, xlsx, images, zip
+
+**Tracking Time:**
+1. Open task details page
+2. Go to Time Entries tab
+3. Enter date and duration
+4. Log time spent on task
+
 ### Core Tables
 - `users` - User accounts
 - `roles` - User roles
@@ -152,22 +208,13 @@ Visit: `http://localhost:8000`
 
 ---
 
-## 🔑 Default Permissions
-
-### Users Module
-- `view-users`, `create-users`, `edit-users`, `delete-users`
-
-### Roles Module
-- `view-roles`, `create-roles`, `edit-roles`, `delete-roles`
-
-### Permissions Module
-- `view-permissions`, `create-permissions`, `edit-permissions`, `delete-permissions`
-
-### Projects Module
-- `view-projects`, `create-projects`, `edit-projects`, `delete-projects`
-
-### Tasks Module
-- `view-tasks`, `create-tasks`, `edit-tasks`, `delete-tasks`
+## 🔑| Module | Permissions |
+|--------|-------------|
+| Users | view-users, create-users, edit-users, delete-users |
+| Roles | view-roles, create-roles, edit-roles, delete-roles |
+| Permissions | view-permissions, create-permissions, edit-permissions, delete-permissions |
+| Projects | view-projects, create-projects, edit-projects, delete-projects |
+| **Tasks** | **view-tasks, create-tasks, edit-tasks, delete-tasks** |
 
 ---
 
