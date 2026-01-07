@@ -5,7 +5,10 @@ namespace App\Services\AI;
 use App\Models\AI\AIDecision;
 use App\Models\Task;
 use App\Models\Project;
+use App\Models\User;
+use App\Notifications\NewAIDecisionNotification;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class AIDecisionEngine
 {
@@ -354,7 +357,7 @@ class AIDecisionEngine
         float $confidence,
         array $alternatives
     ): AIDecision {
-        return AIDecision::create([
+        $decision = AIDecision::create([
             'decision_type' => $type,
             'task_id' => $taskId,
             'project_id' => $projectId,
@@ -365,6 +368,21 @@ class AIDecisionEngine
             'user_action' => 'pending',
             'executed_at' => null,
         ]);
+
+        // Notify users with permission to approve AI actions
+        try {
+            $usersToNotify = User::permission('approve-ai-actions')->get();
+            
+            if ($usersToNotify->isNotEmpty()) {
+                Notification::send($usersToNotify, new NewAIDecisionNotification($decision));
+                Log::info("Notified {$usersToNotify->count()} users about decision #{$decision->id}");
+            }
+        } catch (\Exception $e) {
+            // Don't fail decision creation if notification fails
+            Log::warning("Failed to send notifications for decision #{$decision->id}: " . $e->getMessage());
+        }
+
+        return $decision;
     }
 
     /**

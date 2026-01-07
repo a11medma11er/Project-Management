@@ -281,6 +281,11 @@
         </div>
     </div>
 
+    <!-- Quick Review Widget -->
+    <div class="row">
+        @include('components.ai-quick-review')
+    </div>
+
     <!-- Quick Actions -->
     <div class="row">
         <div class="col-12">
