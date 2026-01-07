@@ -47,6 +47,11 @@ class RolesAndPermissionsSeeder extends Seeder
             'create-tasks',
             'edit-tasks',
             'delete-tasks',
+            
+            // Activity Logs
+            'view-activity-logs',
+            'export-activity-logs',
+            'manage-activity-logs',
         ];
 
         foreach ($permissions as $permission) {

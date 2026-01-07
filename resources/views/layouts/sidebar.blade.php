@@ -127,6 +127,30 @@
                 </li>
                 @endcan
 
+                {{-- Activity Logs --}}
+                @can('view-activity-logs')
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarActivityLogs" data-bs-toggle="collapse" role="button" 
+                       aria-expanded="false" aria-controls="sidebarActivityLogs">
+                        <i class="ri-file-list-3-line"></i> <span>Activity Logs</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarActivityLogs">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('management.activity-logs.index') }}" class="nav-link">
+                                    <i class="ri-list-check me-1"></i> All Logs
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('management.activity-logs.analytics') }}" class="nav-link">
+                                    <i class="ri-bar-chart-line me-1"></i> Analytics
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                @endcan
+
                 <!-- AI Section -->
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarAI" data-bs-toggle="collapse" role="button"

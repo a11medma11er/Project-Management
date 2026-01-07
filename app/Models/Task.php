@@ -7,10 +7,13 @@ use App\Enums\TaskPriority;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Models\Activity;
 
 class Task extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'task_number',
@@ -214,5 +217,39 @@ class Task extends Model
     public function scopeCompleted($query)
     {
         return $query->where('status', TaskStatus::COMPLETED->value);
+    }
+    
+    // Activity Log Configuration
+    
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'title', 
+                'description', 
+                'status', 
+                'priority', 
+                'due_date',
+                'client_name',
+                'project_id'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('tasks');
+    }
+    
+    public function tapActivity(Activity $activity, string $eventName): void
+    {
+        $activity->properties = $activity->properties->merge([
+            'ip' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'context' => [
+                'project_id' => $this->project_id,
+                'overdue' => $this->isOverdue(),
+                'urgency' => $this->getUrgencyLevel(),
+                'status_label' => $this->status->label(),
+                'priority_label' => $this->priority->label(),
+            ],
+        ]);
     }
 }

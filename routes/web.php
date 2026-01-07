@@ -50,6 +50,33 @@ Route::middleware(['auth'])->prefix('management')->name('management.')->group(fu
         Route::resource('projects', App\Http\Controllers\Management\ProjectController::class);
     });
     
+    // Activity Logs Management
+    Route::middleware('can:view-activity-logs')->group(function () {
+        Route::get('activity-logs', [App\Http\Controllers\Management\ActivityLogController::class, 'index'])
+            ->name('activity-logs.index');
+        Route::get('activity-logs/analytics', [App\Http\Controllers\Management\ActivityLogController::class, 'analytics'])
+            ->name('activity-logs.analytics');
+        Route::get('activity-logs/{activity}', [App\Http\Controllers\Management\ActivityLogController::class, 'show'])
+            ->name('activity-logs.show');
+        Route::post('activity-logs/cleanup', [App\Http\Controllers\Management\ActivityLogController::class, 'cleanup'])
+            ->name('activity-logs.cleanup')
+            ->middleware('can:manage-activity-logs');
+    });
+    
+    // Context Readiness Testing (Development/Demo)
+    Route::middleware('can:view-tasks')->prefix('context-test')->name('context-test.')->group(function () {
+        Route::get('demo', [App\Http\Controllers\Management\ContextTestController::class, 'demo'])
+            ->name('demo');
+        Route::get('builder/{task}', [App\Http\Controllers\Management\ContextTestController::class, 'testContextBuilder'])
+            ->name('builder');
+        Route::get('activities/{task}', [App\Http\Controllers\Management\ContextTestController::class, 'testActivityService'])
+            ->name('activities');
+        Route::get('ai-status', [App\Http\Controllers\Management\ContextTestController::class, 'testAIStatus'])
+            ->name('ai-status');
+        Route::get('user-patterns/{userId}', [App\Http\Controllers\Management\ContextTestController::class, 'testUserPatterns'])
+            ->name('user-patterns');
+    });
+    
     // Tasks Management
     Route::middleware('can:view-tasks')->group(function () {
         // Kanban board (must be before resource route)
@@ -65,7 +92,7 @@ Route::middleware(['auth'])->prefix('management')->name('management.')->group(fu
             ->name('tasks.attachments.store');
         Route::post('tasks/{task}/sub-tasks', [App\Http\Controllers\Management\TaskController::class, 'storeSubTask'])
             ->name('tasks.sub-tasks.store');
-        Route::patch('tasks/sub-tasks/{subTask}/toggle', [App\Http\Controllers\Management\TaskController::class, 'toggleSubTask'])
+        Route::put('tasks/{task}/sub-tasks/{subTask}/toggle', [App\Http\Controllers\Management\TaskController::class, 'toggleSubTask'])
             ->name('tasks.sub-tasks.toggle');
         Route::post('tasks/{task}/time-entries', [App\Http\Controllers\Management\TaskController::class, 'storeTimeEntry'])
             ->name('tasks.time-entries.store');
