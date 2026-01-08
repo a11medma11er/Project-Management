@@ -186,6 +186,13 @@
                                     <i class="ri-lightbulb-flash-line me-1"></i> Insights
                                 </a>
                             </li>
+                            @can('view-ai-analytics')
+                            <li class="nav-item">
+                                <a href="{{ route('ai.learning.index') }}" class="nav-link">
+                                    <i class="ri-brain-line me-1"></i> Learning
+                                </a>
+                            </li>
+                            @endcan
                             @endcan
                             @can('manage-ai-settings')
                             <li class="nav-item">
