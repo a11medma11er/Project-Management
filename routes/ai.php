@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AI\AISafetyController;
 use App\Http\Controllers\Admin\AI\AIFeaturesController;
 use App\Http\Controllers\Admin\AI\AILearningController;
 use App\Http\Controllers\Admin\AI\AIReportingController;
+use App\Http\Controllers\Admin\AI\AIWorkflowController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckAIPermission;
 
@@ -102,6 +103,17 @@ Route::prefix('admin/ai')
             Route::get('/insights', [AIInsightsController::class, 'index'])->name('insights.index');
             Route::get('/analytics', [AIAnalyticsController::class, 'index'])->name('analytics.index');
             Route::get('/analytics/export', [AIAnalyticsController::class, 'export'])->name('analytics.export');
+        });
+
+        // ============================================
+        // AI Workflows & Automation
+        // ============================================
+        Route::middleware(['can:manage-ai-settings'])->group(function () {
+            Route::get('/workflows', [AIWorkflowController::class, 'index'])->name('workflows.index');
+            Route::post('/workflows/run', [AIWorkflowController::class, 'runAutomation'])->name('workflows.run');
+            Route::post('/workflows/create-rule', [AIWorkflowController::class, 'createRule'])->name('workflows.create-rule');
+            Route::post('/workflows/schedule', [AIWorkflowController::class, 'scheduleAnalysis'])->name('workflows.schedule');
+            Route::get('/workflows/workload', [AIWorkflowController::class, 'workloadBalance'])->name('workflows.workload');
         });
 
         // ============================================

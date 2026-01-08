@@ -198,6 +198,13 @@
                                 </a>
                             </li>
                             @endcan
+                            @can('manage-ai-settings')
+                            <li class="nav-item">
+                                <a href="{{ route('ai.workflows.index') }}" class="nav-link">
+                                    <i class="ri-robot-2-line me-1"></i> Workflows
+                                </a>
+                            </li>
+                            @endcan
                             @endcan
                             @can('manage-ai-settings')
                             <li class="nav-item">
