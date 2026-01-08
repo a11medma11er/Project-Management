@@ -204,6 +204,21 @@
                                     <i class="ri-robot-2-line me-1"></i> Workflows
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('ai.integrations.index') }}" class="nav-link">
+                                    <i class="ri-links-line me-1"></i> Integrations
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('ai.performance.index') }}" class="nav-link">
+                                    <i class="ri-dashboard-line me-1"></i> Performance
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('ai.security.index') }}" class="nav-link">
+                                    <i class="ri-shield-check-line me-1"></i> Security
+                                </a>
+                            </li>
                             @endcan
                             @endcan
                             @can('manage-ai-settings')

@@ -12,6 +12,9 @@ use App\Http\Controllers\Admin\AI\AIFeaturesController;
 use App\Http\Controllers\Admin\AI\AILearningController;
 use App\Http\Controllers\Admin\AI\AIReportingController;
 use App\Http\Controllers\Admin\AI\AIWorkflowController;
+use App\Http\Controllers\Admin\AI\AIIntegrationController;
+use App\Http\Controllers\Admin\AI\AIPerformanceController;
+use App\Http\Controllers\Admin\AI\AISecurityController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckAIPermission;
 
@@ -117,7 +120,39 @@ Route::prefix('admin/ai')
         });
 
         // ============================================
-        // AI Safety & Guardrails
+        // AI Integrations
+        // ============================================
+        Route::middleware(['can:manage-ai-settings'])->group(function () {
+            Route::get('/integrations', [AIIntegrationController::class, 'index'])->name('integrations.index');
+            Route::post('/integrations/test-provider', [AIIntegrationController::class, 'testProvider'])->name('integrations.test-provider');
+            Route::post('/integrations/test-webhook', [AIIntegrationController::class, 'testWebhook'])->name('integrations.test-webhook');
+            Route::post('/integrations/test-slack', [AIIntegrationController::class, 'testSlack'])->name('integrations.test-slack');
+            Route::get('/integrations/health', [AIIntegrationController::class, 'health'])->name('integrations.health');
+        });
+
+        // ============================================
+        // AI Performance & Optimization
+        // ============================================
+        Route::middleware(['can:manage-ai-settings'])->group(function () {
+            Route::get('/performance', [AIPerformanceController::class, 'index'])->name('performance.index');
+            Route::post('/performance/clear-cache', [AIPerformanceController::class, 'clearCache'])->name('performance.clear-cache');
+            Route::post('/performance/warm-cache', [AIPerformanceController::class, 'warmUpCache'])->name('performance.warm-cache');
+            Route::get('/performance/suggested-indexes', [AIPerformanceController::class, 'getSuggestedIndexes'])->name('performance.suggested-indexes');
+            Route::get('/performance/system-metrics', [AIPerformanceController::class, 'getSystemMetrics'])->name('performance.system-metrics');
+        });
+
+        // ============================================
+        // AI Security
+        // ============================================
+        Route::middleware(['can:manage-ai-settings'])->group(function () {
+            Route::get('/security', [AISecurityController::class, 'index'])->name('security.index');
+            Route::get('/security/check-rate-limit', [AISecurityController::class, 'checkRateLimit'])->name('security.check-rate-limit');
+            Route::post('/security/validate-input', [AISecurityController::class, 'validateInput'])->name('security.validate-input');
+            Route::get('/security/metrics', [AISecurityController::class, 'getMetrics'])->name('security.metrics');
+        });
+
+        // ============================================
+        // AI Safety & Guardrails (Legacy)
         // ============================================
         Route::middleware(['can:manage-ai-safety'])->group(function () {
             Route::get('/safety', [AISafetyController::class, 'index'])->name('safety.index');
