@@ -152,7 +152,7 @@
                 @endcan
 
                 <!-- AI Section -->
-                @can('access-ai-control  ')
+                @can('access-ai-control')
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarAI" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarAI">
@@ -186,6 +186,7 @@
                                     <i class="ri-lightbulb-flash-line me-1"></i> Insights
                                 </a>
                             </li>
+                            @endcan
                             @can('view-ai-analytics')
                             <li class="nav-item">
                                 <a href="{{ route('ai.learning.index') }}" class="nav-link">
@@ -219,7 +220,6 @@
                                     <i class="ri-shield-check-line me-1"></i> Security
                                 </a>
                             </li>
-                            @endcan
                             @endcan
                             @can('manage-ai-settings')
                             <li class="nav-item">

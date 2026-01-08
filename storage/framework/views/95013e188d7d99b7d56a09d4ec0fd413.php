@@ -1,7 +1,7 @@
-@extends('layouts.master')
-@section('title') @lang('translation.kanbanboard') @endsection
-@section('css')
-    <link href="{{ URL::asset('build/libs/dragula/dragula.min.css') }}" rel="stylesheet">
+
+<?php $__env->startSection('title'); ?> <?php echo app('translator')->get('translation.kanbanboard'); ?> <?php $__env->stopSection(); ?>
+<?php $__env->startSection('css'); ?>
+    <link href="<?php echo e(URL::asset('build/libs/dragula/dragula.min.css')); ?>" rel="stylesheet">
     <style>
         .tasks-wrapper {
             max-height: calc(100vh - 280px);
@@ -28,12 +28,12 @@
         }
     </style>
 
-@endsection
-@section('content')
-    @component('components.breadcrumb')
-        @slot('li_1') Tasks @endslot
-        @slot('title')Kanban Board @endslot
-    @endcomponent
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
+    <?php $__env->startComponent('components.breadcrumb'); ?>
+        <?php $__env->slot('li_1'); ?> Tasks <?php $__env->endSlot(); ?>
+        <?php $__env->slot('title'); ?>Kanban Board <?php $__env->endSlot(); ?>
+    <?php echo $__env->renderComponent(); ?>
     <div class="card">
         <div class="card-body">
             <div class="row g-2">
@@ -56,31 +56,31 @@
                         <a href="javascript: void(0);" class="avatar-group-item"
                             data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top"
                             title="Nancy">
-                            <img src="{{ URL::asset('build/images/users/avatar-5.jpg') }}" alt=""
+                            <img src="<?php echo e(URL::asset('build/images/users/avatar-5.jpg')); ?>" alt=""
                                 class="rounded-circle avatar-xs">
                         </a>
                         <a href="javascript: void(0);" class="avatar-group-item"
                             data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top"
                             title="Frank">
-                            <img src="{{ URL::asset('build/images/users/avatar-3.jpg') }}" alt=""
+                            <img src="<?php echo e(URL::asset('build/images/users/avatar-3.jpg')); ?>" alt=""
                                 class="rounded-circle avatar-xs">
                         </a>
                         <a href="javascript: void(0);" class="avatar-group-item"
                             data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top"
                             title="Tonya">
-                            <img src="{{ URL::asset('build/images/users/avatar-10.jpg') }}" alt=""
+                            <img src="<?php echo e(URL::asset('build/images/users/avatar-10.jpg')); ?>" alt=""
                                 class="rounded-circle avatar-xs">
                         </a>
                         <a href="javascript: void(0);" class="avatar-group-item"
                             data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top"
                             title="Thomas">
-                            <img src="{{ URL::asset('build/images/users/avatar-8.jpg') }}" alt=""
+                            <img src="<?php echo e(URL::asset('build/images/users/avatar-8.jpg')); ?>" alt=""
                                 class="rounded-circle avatar-xs">
                         </a>
                         <a href="javascript: void(0);" class="avatar-group-item"
                             data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top"
                             title="Herbert">
-                            <img src="{{ URL::asset('build/images/users/avatar-2.jpg') }}" alt=""
+                            <img src="<?php echo e(URL::asset('build/images/users/avatar-2.jpg')); ?>" alt=""
                                 class="rounded-circle avatar-xs">
                         </a>
                         <a href="#addmemberModal" data-bs-toggle="modal" class="avatar-group-item">
@@ -123,9 +123,9 @@
             </div>
             <div data-simplebar class="tasks-wrapper px-3 mx-n3">
                 <div id="unassigned-task" class="tasks">
-                    @foreach($boardTasks['unassigned'] as $task)
-                        @include('partials.kanban-task-card', ['task' => $task])
-                    @endforeach
+                    <?php $__currentLoopData = $boardTasks['unassigned']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $task): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php echo $__env->make('partials.kanban-task-card', ['task' => $task], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
             <div class="my-3">
@@ -138,14 +138,14 @@
             <div class="d-flex mb-3">
                 <div class="flex-grow-1">
                     <h6 class="fs-14 text-uppercase fw-semibold mb-0">To Do <small
-                        class="badge bg-secondary align-bottom ms-1 totaltask-badge">{{ $boardTasks['todo']->count() }}</small></h6>
+                        class="badge bg-secondary align-bottom ms-1 totaltask-badge"><?php echo e($boardTasks['todo']->count()); ?></small></h6>
                 </div>
             </div>
             <div data-simplebar class="tasks-wrapper px-3 mx-n3">
                 <div id="todo-task" class="tasks">
-                    @foreach($boardTasks['todo'] as $task)
-                         @include('partials.kanban-task-card', ['task' => $task])
-                    @endforeach
+                    <?php $__currentLoopData = $boardTasks['todo']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $task): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                         <?php echo $__env->make('partials.kanban-task-card', ['task' => $task], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
             <div class="my-3">
@@ -176,9 +176,9 @@
             </div>
             <div data-simplebar class="tasks-wrapper px-3 mx-n3">
                 <div id="inprogress-task" class="tasks">
-                    @foreach($boardTasks['inprogress'] as $task)
-                        @include('partials.kanban-task-card', ['task' => $task])
-                    @endforeach
+                    <?php $__currentLoopData = $boardTasks['inprogress']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $task): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php echo $__env->make('partials.kanban-task-card', ['task' => $task], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
             <div class="my-3">
@@ -191,7 +191,7 @@
             <div class="d-flex mb-3">
                 <div class="flex-grow-1">
                     <h6 class="fs-14 text-uppercase fw-semibold mb-0">In Reviews <small
-                            class="badge bg-info align-bottom ms-1 totaltask-badge">{{ $boardTasks['reviews']->count() }}</small></h6>
+                            class="badge bg-info align-bottom ms-1 totaltask-badge"><?php echo e($boardTasks['reviews']->count()); ?></small></h6>
                 </div>
                 <div class="flex-shrink-0">
                     <div class="dropdown card-header-dropdown">
@@ -209,9 +209,9 @@
             </div>
             <div data-simplebar class="tasks-wrapper px-3 mx-n3">
                 <div id="reviews-task" class="tasks">
-                    @foreach($boardTasks['reviews'] as $task)
-                        @include('partials.kanban-task-card', ['task' => $task])
-                    @endforeach
+                    <?php $__currentLoopData = $boardTasks['reviews']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $task): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php echo $__env->make('partials.kanban-task-card', ['task' => $task], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
             <div class="my-3">
@@ -224,7 +224,7 @@
             <div class="d-flex mb-3">
                 <div class="flex-grow-1">
                     <h6 class="fs-14 text-uppercase fw-semibold mb-0">Completed <small
-                            class="badge bg-success align-bottom ms-1 totaltask-badge">{{ $boardTasks['completed']->count() }}</small></h6>
+                            class="badge bg-success align-bottom ms-1 totaltask-badge"><?php echo e($boardTasks['completed']->count()); ?></small></h6>
                 </div>
                 <div class="flex-shrink-0">
                     <div class="dropdown card-header-dropdown">
@@ -241,9 +241,9 @@
             </div>
             <div data-simplebar class="tasks-wrapper px-3 mx-n3">
                 <div id="completed-task" class="tasks">
-                    @foreach($boardTasks['completed'] as $task)
-                        @include('partials.kanban-task-card', ['task' => $task])
-                    @endforeach
+                    <?php $__currentLoopData = $boardTasks['completed']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $task): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php echo $__env->make('partials.kanban-task-card', ['task' => $task], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
             <div class="my-3">
@@ -377,8 +377,8 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('management.tasks.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+                    <form action="<?php echo e(route('management.tasks.store')); ?>" method="POST" enctype="multipart/form-data">
+                        <?php echo csrf_field(); ?>
                         <div class="row g-3">
                             <div class="col-lg-12">
                                 <label for="clientName" class="form-label">Client / Project Name</label>
@@ -408,31 +408,33 @@
                                 <label for="tasks-progress" class="form-label">Add Team Member</label>
                                 <div data-simplebar style="height: 95px;">
                                     <ul class="list-unstyled vstack gap-2 mb-0">
-                                        @foreach(\App\Models\User::all() as $user)
+                                        <?php $__currentLoopData = \App\Models\User::all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <li>
                                             <div class="form-check d-flex align-items-center">
                                                 <input class="form-check-input me-3" type="checkbox"
-                                                    name="assigned_users[]" value="{{ $user->id }}" id="user-{{ $user->id }}">
+                                                    name="assigned_users[]" value="<?php echo e($user->id); ?>" id="user-<?php echo e($user->id); ?>">
                                                 <label class="form-check-label d-flex align-items-center"
-                                                    for="user-{{ $user->id }}">
+                                                    for="user-<?php echo e($user->id); ?>">
                                                     <span class="flex-shrink-0">
-                                                        @if($user->avatar)
-                                                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="" class="avatar-xxs rounded-circle">
-                                                        @else
+                                                        <?php if($user->avatar): ?>
+                                                            <img src="<?php echo e(asset('storage/' . $user->avatar)); ?>" alt="" class="avatar-xxs rounded-circle">
+                                                        <?php else: ?>
                                                             <div class="avatar-xxs">
                                                                 <div class="avatar-title rounded-circle bg-info-subtle text-info">
-                                                                    {{ substr($user->name, 0, 1) }}
+                                                                    <?php echo e(substr($user->name, 0, 1)); ?>
+
                                                                 </div>
                                                             </div>
-                                                        @endif
+                                                        <?php endif; ?>
                                                     </span>
                                                     <span class="flex-grow-1 ms-2">
-                                                        {{ $user->name }}
+                                                        <?php echo e($user->name); ?>
+
                                                     </span>
                                                 </label>
                                             </div>
                                         </li>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </ul>
                                 </div>
                             </div>
@@ -506,11 +508,11 @@
     </div>
     <!--end modal -->
 
-@endsection
-@section('script')
-    <script src="{{ URL::asset('build/libs/dragula/dragula.min.js') }}"></script>
-    <script src="{{ URL::asset('build/libs/dom-autoscroller/dom-autoscroller.min.js') }}"></script>
-    <script src="{{ URL::asset('build/js/app.js') }}"></script>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('script'); ?>
+    <script src="<?php echo e(URL::asset('build/libs/dragula/dragula.min.js')); ?>"></script>
+    <script src="<?php echo e(URL::asset('build/libs/dom-autoscroller/dom-autoscroller.min.js')); ?>"></script>
+    <script src="<?php echo e(URL::asset('build/js/app.js')); ?>"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -539,7 +541,7 @@
                         var taskId = el.getAttribute('data-task-id');
                         var newStatusId = target.getAttribute('id');
 
-                        axios.post('{{ route("management.tasks.kanban.update") }}', {
+                        axios.post('<?php echo e(route("management.tasks.kanban.update")); ?>', {
                             taskId: taskId,
                             status: newStatusId
                         })
@@ -610,4 +612,6 @@
             taskCounter();
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.master', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\work\my projects\Git\Project-Management\resources\views/apps-tasks-kanban.blade.php ENDPATH**/ ?>

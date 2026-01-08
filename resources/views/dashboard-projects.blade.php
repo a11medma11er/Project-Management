@@ -24,9 +24,9 @@
                                         Active Projects</p>
                                     <div class="d-flex align-items-center mb-3">
                                         <h4 class="fs-4 flex-grow-1 mb-0"><span class="counter-value"
-                                                data-target="825">0</span></h4>
-                                        <span class="badge bg-danger-subtle text-danger fs-12"><i
-                                                class="ri-arrow-down-s-line fs-13 align-middle me-1"></i>5.02
+                                                data-target="{{ $statistics['active_projects'] }}">0</span></h4>
+                                        <span class="badge bg-{{ $statistics['projects_trend'] >= 0 ? 'success' : 'danger' }}-subtle text-{{ $statistics['projects_trend'] >= 0 ? 'success' : 'danger' }} fs-12"><i
+                                                class="ri-arrow-{{ $statistics['projects_trend'] >= 0 ? 'up' : 'down' }}-s-line fs-13 align-middle me-1"></i>{{ abs ($statistics['projects_trend']) }}
                                             %</span>
                                     </div>
                                     <p class="text-muted text-truncate mb-0">Projects this month</p>
@@ -47,15 +47,15 @@
                                     </span>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <p class="text-uppercase fw-medium text-muted mb-3">New Leads</p>
+                                    <p class="text-uppercase fw-medium text-muted mb-3">New Tasks</p>
                                     <div class="d-flex align-items-center mb-3">
                                         <h4 class="fs-4 flex-grow-1 mb-0"><span class="counter-value"
-                                                data-target="7522">0</span></h4>
-                                        <span class="badge bg-success-subtle text-success fs-12"><i
-                                                class="ri-arrow-up-s-line fs-13 align-middle me-1"></i>3.58
+                                                data-target="{{ $statistics['new_tasks'] }}">0</span></h4>
+                                        <span class="badge bg-{{ $statistics['tasks_trend'] >= 0 ? 'success' : 'danger' }}-subtle text-{{ $statistics['tasks_trend'] >= 0 ? 'success' : 'danger' }} fs-12"><i
+                                                class="ri-arrow-{{ $statistics['tasks_trend'] >= 0 ? 'up' : 'down' }}-s-line fs-13 align-middle me-1"></i>{{ abs($statistics['tasks_trend']) }}
                                             %</span>
                                     </div>
-                                    <p class="text-muted mb-0">Leads this month</p>
+                                    <p class="text-muted mb-0">Tasks this month</p>
                                 </div>
                             </div>
                         </div><!-- end card body -->
@@ -76,10 +76,10 @@
                                         Total Hours</p>
                                     <div class="d-flex align-items-center mb-3">
                                         <h4 class="fs-4 flex-grow-1 mb-0"><span class="counter-value"
-                                                data-target="168">0</span>h <span class="counter-value"
-                                                data-target="40">0</span>m</h4>
-                                        <span class="badge bg-danger-subtle text-danger fs-12"><i
-                                                class="ri-arrow-down-s-line fs-13 align-middle me-1"></i>10.35
+                                                data-target="{{ $statistics['total_hours'] }}">0</span>h <span class="counter-value"
+                                                data-target="{{ $statistics['total_minutes'] }}">0</span>m</h4>
+                                        <span class="badge bg-{{ $statistics['hours_trend'] >= 0 ? 'success' : 'danger' }}-subtle text-{{ $statistics['hours_trend'] >= 0 ? 'success' : 'danger' }} fs-12"><i
+                                                class="ri-arrow-{{ $statistics['hours_trend'] >= 0 ? 'up' : 'down' }}-s-line fs-13 align-middle me-1"></i>{{ abs($statistics['hours_trend']) }}
                                             %</span>
                                     </div>
                                     <p class="text-muted text-truncate mb-0">Work this month</p>
@@ -95,20 +95,6 @@
                     <div class="card">
                         <div class="card-header border-0 align-items-center d-flex">
                             <h4 class="card-title mb-0 flex-grow-1">Projects Overview</h4>
-                            <div>
-                                <button type="button" class="btn btn-soft-secondary btn-sm">
-                                    ALL
-                                </button>
-                                <button type="button" class="btn btn-soft-secondary btn-sm">
-                                    1M
-                                </button>
-                                <button type="button" class="btn btn-soft-secondary btn-sm">
-                                    6M
-                                </button>
-                                <button type="button" class="btn btn-soft-primary btn-sm">
-                                    1Y
-                                </button>
-                            </div>
                         </div><!-- end card header -->
 
                         <div class="card-header p-0 border-0 bg-light-subtle">
@@ -116,7 +102,7 @@
                                 <div class="col-6 col-sm-3">
                                     <div class="p-3 border border-dashed border-start-0">
                                         <h5 class="mb-1"><span class="counter-value"
-                                                data-target="9851">0</span></h5>
+                                                data-target="{{ $chartData['total_projects'] }}">0</span></h5>
                                         <p class="text-muted mb-0">Number of Projects</p>
                                     </div>
                                 </div>
@@ -124,36 +110,21 @@
                                 <div class="col-6 col-sm-3">
                                     <div class="p-3 border border-dashed border-start-0">
                                         <h5 class="mb-1"><span class="counter-value"
-                                                data-target="1026">0</span></h5>
+                                                data-target="{{ $chartData['active_projects'] }}">0</span></h5>
                                         <p class="text-muted mb-0">Active Projects</p>
                                     </div>
                                 </div>
                                 <!--end col-->
-                                <div class="col-6 col-sm-3">
-                                    <div class="p-3 border border-dashed border-start-0">
-                                        <h5 class="mb-1">$<span class="counter-value"
-                                                data-target="228.89">0</span>k</h5>
-                                        <p class="text-muted mb-0">Revenue</p>
-                                    </div>
-                                </div>
-                                <!--end col-->
-                                <div class="col-6 col-sm-3">
+                                <div class="col-6 col-sm-6">
                                     <div class="p-3 border border-dashed border-start-0 border-end-0">
                                         <h5 class="mb-1 text-success"><span class="counter-value"
-                                                data-target="10589">0</span>h</h5>
+                                                data-target="{{ $chartData['working_hours'] }}">0</span>h</h5>
                                         <p class="text-muted mb-0">Working Hours</p>
                                     </div>
                                 </div>
                                 <!--end col-->
                             </div>
                         </div><!-- end card header -->
-                        <div class="card-body p-0 pb-2">
-                            <div>
-                                <div id="projects-overview-chart"
-                                    data-colors='["--vz-primary", "--vz-primary-rgb, 0.1", "--vz-primary-rgb, 0.50"]'
-                                    dir="ltr" class="apex-charts"></div>
-                            </div>
-                        </div><!-- end card body -->
                     </div><!-- end card -->
                 </div><!-- end col -->
             </div><!-- end row -->
@@ -165,77 +136,32 @@
                     <h4 class="card-title mb-0">Upcoming Schedules</h4>
                 </div><!-- end cardheader -->
                 <div class="card-body pt-0">
-                    <div class="upcoming-scheduled">
-                        <input type="text" class="form-control" data-provider="flatpickr"
-                            data-date-format="d M, Y" data-deafult-date="today" data-inline-date="true">
-                    </div>
+
 
                     <h6 class="text-uppercase fw-semibold mt-4 mb-3 text-muted">Events:</h6>
+                    @forelse($upcomingTasks as $task)
                     <div class="mini-stats-wid d-flex align-items-center mt-3">
                         <div class="flex-shrink-0 avatar-sm">
                             <span
                                 class="mini-stat-icon avatar-title rounded-circle text-success bg-success-subtle fs-4">
-                                09
+                                {{ $task->due_date ? $task->due_date->format('d') : '--' }}
                             </span>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h6 class="mb-1">Development planning</h6>
-                            <p class="text-muted mb-0">iTest Factory </p>
+                            <h6 class="mb-1">{{ $task->title }}</h6>
+                            <p class="text-muted mb-0">{{ $task->project ? $task->project->title : 'N/A' }}</p>
                         </div>
                         <div class="flex-shrink-0">
-                            <p class="text-muted mb-0">9:20 <span class="text-uppercase">am</span></p>
+                            <p class="text-muted mb-0">{{ $task->due_date ? $task->due_date->format('M d') : 'N/A' }}</p>
                         </div>
                     </div><!-- end -->
-                    <div class="mini-stats-wid d-flex align-items-center mt-3">
-                        <div class="flex-shrink-0 avatar-sm">
-                            <span
-                                class="mini-stat-icon avatar-title rounded-circle text-success bg-success-subtle fs-4">
-                                12
-                            </span>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="mb-1">Design new UI and check sales</h6>
-                            <p class="text-muted mb-0">Meta4Systems</p>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <p class="text-muted mb-0">11:30 <span class="text-uppercase">am</span></p>
-                        </div>
-                    </div><!-- end -->
-                    <div class="mini-stats-wid d-flex align-items-center mt-3">
-                        <div class="flex-shrink-0 avatar-sm">
-                            <span
-                                class="mini-stat-icon avatar-title rounded-circle text-success bg-success-subtle fs-4">
-                                25
-                            </span>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="mb-1">Weekly catch-up </h6>
-                            <p class="text-muted mb-0">Nesta Technologies</p>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <p class="text-muted mb-0">02:00 <span class="text-uppercase">pm</span></p>
-                        </div>
-                    </div><!-- end -->
-                    <div class="mini-stats-wid d-flex align-items-center mt-3">
-                        <div class="flex-shrink-0 avatar-sm">
-                            <span
-                                class="mini-stat-icon avatar-title rounded-circle text-success bg-success-subtle fs-4">
-                                27
-                            </span>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="mb-1">James Bangs (Client) Meeting</h6>
-                            <p class="text-muted mb-0">Nesta Technologies</p>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <p class="text-muted mb-0">03:45 <span class="text-uppercase">pm</span></p>
-                        </div>
-                    </div><!-- end -->
-
-                    <div class="mt-3 text-center">
-                        <a href="javascript:void(0);" class="text-muted text-decoration-underline">View
-                            all Events</a>
+                    @empty
+                    <div class="text-center text-muted py-4">
+                        <i class="ri-calendar-line fs-1 mb-2 d-block"></i>
+                        <p>No upcoming tasks</p>
                     </div>
+                    @endforelse
+
 
                 </div><!-- end cardbody -->
             </div><!-- end card -->
@@ -265,236 +191,82 @@
                                 </tr><!-- end tr -->
                             </thead><!-- thead -->
 
+
                             <tbody>
+                                @forelse($activeProjects as $project)
                                 <tr>
-                                    <td class="fw-medium">Brand Logo Design</td>
+                                    <td class="fw-medium">{{ $project->title }}</td>
                                     <td>
-                                        <img src="{{ URL::asset('build/images/users/avatar-1.jpg') }}"
-                                            class="avatar-xxs rounded-circle me-1" alt="">
-                                        <a href="javascript: void(0);" class="text-reset">Donald
-                                            Risher</a>
+                                        @if($project->teamLead)
+                                            <img src="{{ $project->teamLead->avatar ? asset('storage/'.$project->teamLead->avatar) : URL::asset('build/images/users/avatar-1.jpg') }}"
+                                                class="avatar-xxs rounded-circle me-1" alt="">
+                                            <a href="javascript:void(0);" class="text-reset">{{ $project->teamLead->name }}</a>
+                                        @else
+                                            <span class="text-muted">No Lead</span>
+                                        @endif
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0 me-1 text-muted fs-13">53%</div>
-                                            <div class="progress progress-sm  flex-grow-1"
-                                                style="width: 68%;">
+                                            <div class="flex-shrink-0 me-1 text-muted fs-13">{{ $project->progress }}%</div>
+                                            <div class="progress progress-sm flex-grow-1" style="width: 68%;">
                                                 <div class="progress-bar bg-primary rounded"
-                                                    role="progressbar" style="width: 53%"
-                                                    aria-valuenow="53" aria-valuemin="0"
+                                                    role="progressbar" style="width: {{ $project->progress }}%"
+                                                    aria-valuenow="{{ $project->progress }}" aria-valuemin="0"
                                                     aria-valuemax="100"></div>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="avatar-group flex-nowrap">
+                                            @foreach($project->members->take(3) as $member)
                                             <div class="avatar-group-item">
-                                                <a href="javascript: void(0);" class="d-inline-block">
-                                                    <img src="{{ URL::asset('build/images/users/avatar-1.jpg') }}" alt=""
+                                                <a href="javascript:void(0);" class="d-inline-block" data-bs-toggle="tooltip" title="{{ $member->name }}">
+                                                    <img src="{{ $member->avatar ? asset('storage/'.$member->avatar) : URL::asset('build/images/users/avatar-1.jpg') }}" alt=""
                                                         class="rounded-circle avatar-xxs">
                                                 </a>
                                             </div>
+                                            @endforeach
+                                            @if($project->members->count() > 3)
                                             <div class="avatar-group-item">
-                                                <a href="javascript: void(0);" class="d-inline-block">
-                                                    <img src="{{ URL::asset('build/images/users/avatar-2.jpg') }}" alt=""
-                                                        class="rounded-circle avatar-xxs">
+                                                <a href="javascript:void(0);" class="d-inline-block">
+                                                    <div class="avatar-xxs">
+                                                        <span class="avatar-title rounded-circle bg-light text-primary">
+                                                            +{{ $project->members->count() - 3 }}
+                                                        </span>
+                                                    </div>
                                                 </a>
                                             </div>
-                                            <div class="avatar-group-item">
-                                                <a href="javascript: void(0);" class="d-inline-block">
-                                                    <img src="{{ URL::asset('build/images/users/avatar-3.jpg') }}" alt=""
-                                                        class="rounded-circle avatar-xxs">
-                                                </a>
-                                            </div>
+                                            @endif
                                         </div>
                                     </td>
-                                    <td><span class="badge bg-warning-subtle text-warning">Inprogress</span></td>
-                                    <td class="text-muted">06 Sep 2021</td>
-                                </tr><!-- end tr -->
+                                    <td>
+                                        <span class="badge bg-{{ $project->status == 'Completed' ? 'success' : ($project->status == 'Inprogress' ? 'warning' : 'danger') }}-subtle text-{{ $project->status == 'Completed' ? 'success' : ($project->status == 'Inprogress' ? 'warning' : 'danger') }}">
+                                            {{ $project->status }}
+                                        </span>
+                                    </td>
+                                    <td class="text-muted">{{ $project->deadline ? $project->deadline->format('d M Y') : 'N/A' }}</td>
+                                </tr>
+                                @empty
                                 <tr>
-                                    <td class="fw-medium">Redesign - Landing Page</td>
-                                    <td>
-                                        <img src="{{ URL::asset('build/images/users/avatar-2.jpg') }}"
-                                            class="avatar-xxs rounded-circle me-1" alt="">
-                                        <a href="javascript: void(0);" class="text-reset">Prezy
-                                            William</a>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        <i class="ri-folder-open-line fs-1 mb-2 d-block"></i>
+                                        No active projects found
                                     </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0 text-muted me-1">0%</div>
-                                            <div class="progress progress-sm flex-grow-1"
-                                                style="width: 68%;">
-                                                <div class="progress-bar bg-primary rounded"
-                                                    role="progressbar" style="width: 0%"
-                                                    aria-valuenow="0" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group">
-                                            <div class="avatar-group-item">
-                                                <a href="javascript: void(0);" class="d-inline-block">
-                                                    <img src="{{ URL::asset('build/images/users/avatar-5.jpg') }}" alt=""
-                                                        class="rounded-circle avatar-xxs">
-                                                </a>
-                                            </div>
-                                            <div class="avatar-group-item">
-                                                <a href="javascript: void(0);" class="d-inline-block">
-                                                    <img src="{{ URL::asset('build/images/users/avatar-6.jpg') }}" alt=""
-                                                        class="rounded-circle avatar-xxs">
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><span class="badge bg-danger-subtle text-danger">Pending</span></td>
-                                    <td class="text-muted">13 Nov 2021</td>
-                                </tr><!-- end tr -->
-                                <tr>
-                                    <td class="fw-medium">Multipurpose Landing Template</td>
-                                    <td>
-                                        <img src="{{ URL::asset('build/images/users/avatar-3.jpg') }}"
-                                            class="avatar-xxs rounded-circle me-1" alt="">
-                                        <a href="javascript: void(0);" class="text-reset">Boonie
-                                            Hoynas</a>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0 text-muted me-1">100%</div>
-                                            <div class="progress progress-sm flex-grow-1"
-                                                style="width: 68%;">
-                                                <div class="progress-bar bg-primary rounded"
-                                                    role="progressbar" style="width: 100%"
-                                                    aria-valuenow="100" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group">
-                                            <div class="avatar-group-item">
-                                                <a href="javascript: void(0);" class="d-inline-block">
-                                                    <img src="{{ URL::asset('build/images/users/avatar-7.jpg') }}" alt=""
-                                                        class="rounded-circle avatar-xxs">
-                                                </a>
-                                            </div>
-                                            <div class="avatar-group-item">
-                                                <a href="javascript: void(0);" class="d-inline-block">
-                                                    <img src="{{ URL::asset('build/images/users/avatar-8.jpg') }}" alt=""
-                                                        class="rounded-circle avatar-xxs">
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><span class="badge bg-success-subtle text-success">Completed</span></td>
-                                    <td class="text-muted">26 Nov 2021</td>
-                                </tr><!-- end tr -->
-                                <tr>
-                                    <td class="fw-medium">Chat Application</td>
-                                    <td>
-                                        <img src="{{ URL::asset('build/images/users/avatar-5.jpg') }}"
-                                            class="avatar-xxs rounded-circle me-1" alt="">
-                                        <a href="javascript: void(0);" class="text-reset">Pauline
-                                            Moll</a>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0 text-muted me-1">64%</div>
-                                            <div class="progress flex-grow-1 progress-sm"
-                                                style="width: 68%;">
-                                                <div class="progress-bar bg-primary rounded"
-                                                    role="progressbar" style="width: 64%"
-                                                    aria-valuenow="64" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group">
-                                            <div class="avatar-group-item">
-                                                <a href="javascript: void(0);" class="d-inline-block">
-                                                    <img src="{{ URL::asset('build/images/users/avatar-2.jpg') }}" alt=""
-                                                        class="rounded-circle avatar-xxs">
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><span class="badge bg-warning-subtle text-warning">Progress</span></td>
-                                    <td class="text-muted">15 Dec 2021</td>
-                                </tr><!-- end tr -->
-                                <tr>
-                                    <td class="fw-medium">Create Wireframe</td>
-                                    <td>
-                                        <img src="{{ URL::asset('build/images/users/avatar-6.jpg') }}"
-                                            class="avatar-xxs rounded-circle me-1" alt="">
-                                        <a href="javascript: void(0);" class="text-reset">James
-                                            Bangs</a>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0 text-muted me-1">77%</div>
-                                            <div class="progress flex-grow-1 progress-sm"
-                                                style="width: 68%;">
-                                                <div class="progress-bar bg-primary rounded"
-                                                    role="progressbar" style="width: 77%"
-                                                    aria-valuenow="77" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group">
-                                            <div class="avatar-group-item">
-                                                <a href="javascript: void(0);" class="d-inline-block">
-                                                    <img src="{{ URL::asset('build/images/users/avatar-1.jpg') }}" alt=""
-                                                        class="rounded-circle avatar-xxs">
-                                                </a>
-                                            </div>
-                                            <div class="avatar-group-item">
-                                                <a href="javascript: void(0);" class="d-inline-block">
-                                                    <img src="{{ URL::asset('build/images/users/avatar-6.jpg') }}" alt=""
-                                                        class="rounded-circle avatar-xxs">
-                                                </a>
-                                            </div>
-                                            <div class="avatar-group-item">
-                                                <a href="javascript: void(0);" class="d-inline-block">
-                                                    <img src="{{ URL::asset('build/images/users/avatar-4.jpg') }}" alt=""
-                                                        class="rounded-circle avatar-xxs">
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><span class="badge bg-warning-subtle text-warning">Progress</span></td>
-                                    <td class="text-muted">21 Dec 2021</td>
-                                </tr><!-- end tr -->
+                                </tr>
+                                @endforelse
                             </tbody><!-- end tbody -->
                         </table><!-- end table -->
                     </div>
 
                     <div class="align-items-center mt-xl-3 mt-4 justify-content-between d-flex">
                         <div class="flex-shrink-0">
-                            <div class="text-muted">Showing <span class="fw-semibold">5</span> of <span
-                                    class="fw-semibold">25</span> Results
+                            <div class="text-muted">Showing <span class="fw-semibold">{{ $activeProjects->count() }}</span> of <span
+                                    class="fw-semibold">{{ $activeProjects->total() }}</span> Results
                             </div>
                         </div>
-                        <ul class="pagination pagination-separated pagination-sm mb-0">
-                            <li class="page-item disabled">
-                                <a href="#" class="page-link">←</a>
-                            </li>
-                            <li class="page-item">
-                                <a href="#" class="page-link">1</a>
-                            </li>
-                            <li class="page-item active">
-                                <a href="#" class="page-link">2</a>
-                            </li>
-                            <li class="page-item">
-                                <a href="#" class="page-link">3</a>
-                            </li>
-                            <li class="page-item">
-                                <a href="#" class="page-link">→</a>
-                            </li>
-                        </ul>
+                        {{ $activeProjects->links('pagination::bootstrap-4') }}
                     </div>
+
 
                 </div><!-- end card body -->
             </div><!-- end card -->
@@ -532,138 +304,56 @@
                                     <th scope="col">Assignee</th>
                                 </tr>
                             </thead><!-- end thead -->
-                            <tbody>
+                            <tbody id="my-tasks-tbody">
+                                @forelse($userTasks as $task)
                                 <tr>
                                     <td>
                                         <div class="form-check">
                                             <input class="form-check-input fs-15" type="checkbox"
-                                                value="" id="checkTask1">
-                                            <label class="form-check-label ms-1" for="checkTask1">
-                                                Create new Admin Template
+                                                value="{{ $task->id }}" id="checkTask{{ $task->id }}">
+                                            <label class="form-check-label ms-1" for="checkTask{{ $task->id }}">
+                                                {{ $task->title }}
                                             </label>
                                         </div>
                                     </td>
-                                    <td class="text-muted">03 Nov 2021</td>
-                                    <td><span class="badge bg-success-subtle text-success">Completed</span></td>
+                                    <td class="text-muted">{{ $task->due_date ? $task->due_date->format('d M Y') : 'N/A' }}</td>
                                     <td>
-                                        <a href="javascript: void(0);" class="d-inline-block"
-                                            data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                            data-bs-original-title="Mary Stoner">
-                                            <img src="{{ URL::asset('build/images/users/avatar-2.jpg') }}" alt=""
+                                        @php
+                                            $statusBadge = match($task->status->value) {
+                                                'completed' => 'success',
+                                                'in_progress' => 'warning',
+                                                'pending' => 'info',
+                                                default => 'danger'
+                                            };
+                                        @endphp
+                                        <span class="badge bg-{{ $statusBadge }}-subtle text-{{ $statusBadge }}">
+                                            {{ ucfirst(str_replace('_', ' ', $task->status->value)) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if($task->assignedUsers->first())
+                                        <a href="javascript:void(0);" class="d-inline-block"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $task->assignedUsers->first()->name }}">
+                                            <img src="{{ $task->assignedUsers->first()->avatar ? asset('storage/'.$task->assignedUsers->first()->avatar) : URL::asset('build/images/users/avatar-2.jpg') }}" alt=""
                                                 class="rounded-circle avatar-xxs">
                                         </a>
+                                        @endif
                                     </td>
                                 </tr><!-- end -->
+                                @empty
                                 <tr>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input fs-15" type="checkbox"
-                                                value="" id="checkTask2">
-                                            <label class="form-check-label ms-1" for="checkTask2">
-                                                Marketing Coordinator
-                                            </label>
-                                        </div>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i class="ri-task-line fs-1 mb-2 d-block"></i>
+                                        No tasks assigned
                                     </td>
-                                    <td class="text-muted">17 Nov 2021</td>
-                                    <td><span class="badge bg-warning-subtle text-warning">Progress</span></td>
-                                    <td>
-                                        <a href="javascript: void(0);" class="d-inline-block"
-                                            data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                            data-bs-original-title="Den Davis">
-                                            <img src="{{ URL::asset('build/images/users/avatar-7.jpg') }}" alt=""
-                                                class="rounded-circle avatar-xxs">
-                                        </a>
-                                    </td>
-                                </tr><!-- end -->
-                                <tr>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input fs-15" type="checkbox"
-                                                value="" id="checkTask3">
-                                            <label class="form-check-label ms-1" for="checkTask3">
-                                                Administrative Analyst
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td class="text-muted">26 Nov 2021</td>
-                                    <td><span class="badge bg-success-subtle text-success">Completed</span></td>
-                                    <td>
-                                        <a href="javascript: void(0);" class="d-inline-block"
-                                            data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                            data-bs-original-title="Alex Brown">
-                                            <img src="{{ URL::asset('build/images/users/avatar-6.jpg') }}" alt=""
-                                                class="rounded-circle avatar-xxs">
-                                        </a>
-                                    </td>
-                                </tr><!-- end -->
-                                <tr>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input fs-15" type="checkbox"
-                                                value="" id="checkTask4">
-                                            <label class="form-check-label ms-1" for="checkTask4">
-                                                E-commerce Landing Page
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td class="text-muted">10 Dec 2021</td>
-                                    <td><span class="badge bg-danger-subtle text-danger">Pending</span></td>
-                                    <td>
-                                        <a href="javascript: void(0);" class="d-inline-block"
-                                            data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                            data-bs-original-title="Prezy Morin">
-                                            <img src="{{ URL::asset('build/images/users/avatar-5.jpg') }}" alt=""
-                                                class="rounded-circle avatar-xxs">
-                                        </a>
-                                    </td>
-                                </tr><!-- end -->
-                                <tr>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input fs-15" type="checkbox"
-                                                value="" id="checkTask5">
-                                            <label class="form-check-label ms-1" for="checkTask5">
-                                                UI/UX Design
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td class="text-muted">22 Dec 2021</td>
-                                    <td><span class="badge bg-warning-subtle text-warning">Progress</span></td>
-                                    <td>
-                                        <a href="javascript: void(0);" class="d-inline-block"
-                                            data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                            data-bs-original-title="Stine Nielsen">
-                                            <img src="{{ URL::asset('build/images/users/avatar-1.jpg') }}" alt=""
-                                                class="rounded-circle avatar-xxs">
-                                        </a>
-                                    </td>
-                                </tr><!-- end -->
-                                <tr>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input fs-15" type="checkbox"
-                                                value="" id="checkTask6">
-                                            <label class="form-check-label ms-1" for="checkTask6">
-                                                Projects Design
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td class="text-muted">31 Dec 2021</td>
-                                    <td><span class="badge bg-danger-subtle text-danger">Pending</span></td>
-                                    <td>
-                                        <a href="javascript: void(0);" class="d-inline-block"
-                                            data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                            data-bs-original-title="Jansh William">
-                                            <img src="{{ URL::asset('build/images/users/avatar-4.jpg') }}" alt=""
-                                                class="rounded-circle avatar-xxs">
-                                        </a>
-                                    </td>
-                                </tr><!-- end -->
+                                </tr>
+                                @endforelse
                             </tbody><!-- end tbody -->
                         </table><!-- end table -->
                     </div>
                     <div class="mt-3 text-center">
-                        <a href="javascript:void(0);" class="text-muted text-decoration-underline">Load
+                        
+                        <a href="{{ route('management.tasks.index') }}" class="text-muted text-decoration-underline">Load
                             More</a>
                     </div>
                 </div><!-- end cardbody -->
@@ -708,117 +398,38 @@
                                     <th scope="col">Status</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="team-members-tbody">
+                                @forelse($teamMembers as $member)
                                 <tr>
                                     <td class="d-flex">
-                                        <img src="{{ URL::asset('build/images/users/avatar-1.jpg') }}" alt=""
+                                        <img src="{{ $member->avatar ? asset('storage/'.$member->avatar) : URL::asset('build/images/users/avatar-1.jpg') }}" alt=""
                                             class="avatar-xs rounded-3 me-2">
                                         <div>
-                                            <h5 class="fs-13 mb-0">Donald Risher</h5>
-                                            <p class="fs-12 mb-0 text-muted">Product Manager</p>
+                                            <h5 class="fs-13 mb-0">{{ $member->name }}</h5>
+                                            <p class="fs-12 mb-0 text-muted">{{ $member->role_name }}</p>
                                         </div>
                                     </td>
                                     <td>
-                                        <h6 class="mb-0">110h : <span class="text-muted">150h</span>
+                                        <h6 class="mb-0">{{ $member->hours }}h : <span class="text-muted">150h</span>
                                         </h6>
                                     </td>
                                     <td>
-                                        258
+                                        {{ $member->tasks_count }}
                                     </td>
                                     <td style="width:5%;">
-                                        <div id="radialBar_chart_1" data-colors='["--vz-primary"]'
-                                            data-chart-series="50" class="apex-charts" dir="ltr"></div>
+                                        <div id="radialBar_chart_{{ $loop->iteration }}" data-colors='["--vz-{{ $member->progress < 30 ? 'warning' : 'primary' }}"]'
+                                            data-chart-series="{{ $member->progress }}" class="apex-charts" dir="ltr"></div>
                                     </td>
                                 </tr><!-- end tr -->
+                                @empty
                                 <tr>
-                                    <td class="d-flex">
-                                        <img src="{{ URL::asset('build/images/users/avatar-2.jpg') }}" alt=""
-                                            class="avatar-xs rounded-3 me-2">
-                                        <div>
-                                            <h5 class="fs-13 mb-0">Jansh Brown</h5>
-                                            <p class="fs-12 mb-0 text-muted">Lead Developer</p>
-                                        </div>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i class="ri-team-line fs-1 mb-2 d-block"></i>
+                                        No team members found
                                     </td>
-                                    <td>
-                                        <h6 class="mb-0">83h : <span class="text-muted">150h</span></h6>
-                                    </td>
-                                    <td>
-                                        105
-                                    </td>
-                                    <td>
-                                        <div id="radialBar_chart_2" data-colors='["--vz-primary"]'
-                                            data-chart-series="45" class="apex-charts" dir="ltr"></div>
-                                    </td>
-                                </tr><!-- end tr -->
-                                <tr>
-                                    <td class="d-flex">
-                                        <img src="{{ URL::asset('build/images/users/avatar-7.jpg') }}" alt=""
-                                            class="avatar-xs rounded-3 me-2">
-                                        <div>
-                                            <h5 class="fs-13 mb-0">Carroll Adams</h5>
-                                            <p class="fs-12 mb-0 text-muted">Lead Designer</p>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <h6 class="mb-0">58h : <span class="text-muted">150h</span></h6>
-                                    </td>
-                                    <td>
-                                        75
-                                    </td>
-                                    <td>
-                                        <div id="radialBar_chart_3" data-colors='["--vz-primary"]'
-                                            data-chart-series="75" class="apex-charts" dir="ltr"></div>
-                                    </td>
-                                </tr><!-- end tr -->
-                                <tr>
-                                    <td class="d-flex">
-                                        <img src="{{ URL::asset('build/images/users/avatar-4.jpg') }}" alt=""
-                                            class="avatar-xs rounded-3 me-2">
-                                        <div>
-                                            <h5 class="fs-13 mb-0">William Pinto</h5>
-                                            <p class="fs-12 mb-0 text-muted">UI/UX Designer</p>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <h6 class="mb-0">96h : <span class="text-muted">150h</span></h6>
-                                    </td>
-                                    <td>
-                                        85
-                                    </td>
-                                    <td>
-                                        <div id="radialBar_chart_4" data-colors='["--vz-warning"]'
-                                            data-chart-series="25" class="apex-charts" dir="ltr"></div>
-                                    </td>
-                                </tr><!-- end tr -->
-                                <tr>
-                                    <td class="d-flex">
-                                        <img src="{{ URL::asset('build/images/users/avatar-6.jpg') }}" alt=""
-                                            class="avatar-xs rounded-3 me-2">
-                                        <div>
-                                            <h5 class="fs-13 mb-0">Garry Fournier</h5>
-                                            <p class="fs-12 mb-0 text-muted">Web Designer</p>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <h6 class="mb-0">76h : <span class="text-muted">150h</span></h6>
-                                    </td>
-                                    <td>
-                                        69
-                                    </td>
-                                    <td>
-                                        <div id="radialBar_chart_5" data-colors='["--vz-primary"]'
-                                            data-chart-series="60" class="apex-charts" dir="ltr"></div>
-                                    </td>
-                                </tr><!-- end tr -->
-                                <tr>
-                                    <td class="d-flex">
-                                        <img src="{{ URL::asset('build/images/users/avatar-5.jpg') }}" alt=""
-                                            class="avatar-xs rounded-3 me-2">
-                                        <div>
-                                            <h5 class="fs-13 mb-0">Susan Denton</h5>
-                                            <p class="fs-12 mb-0 text-muted">Lead Designer</p>
-                                        </div>
-                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
 
                                     <td>
                                         <h6 class="mb-0">123h : <span class="text-muted">150h</span>
@@ -860,339 +471,6 @@
             </div><!-- end card -->
         </div><!-- end col -->
 
-        <div class="col-xxl-4 col-lg-6">
-            <div class="card card-height-100">
-                <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Chat</h4>
-                    <div class="flex-shrink-0">
-                        <div class="dropdown card-header-dropdown">
-                            <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                                <span class="text-muted"><i
-                                        class="ri-settings-4-line align-bottom me-1"></i>Setting <i
-                                        class="mdi mdi-chevron-down ms-1"></i></span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#"><i
-                                        class="ri-user-2-fill align-bottom text-muted me-2"></i> View
-                                    Profile</a>
-                                <a class="dropdown-item" href="#"><i
-                                        class="ri-inbox-archive-line align-bottom text-muted me-2"></i>
-                                    Archive</a>
-                                <a class="dropdown-item" href="#"><i
-                                        class="ri-mic-off-line align-bottom text-muted me-2"></i>
-                                    Muted</a>
-                                <a class="dropdown-item" href="#"><i
-                                        class="ri-delete-bin-5-line align-bottom text-muted me-2"></i>
-                                    Delete</a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- end card header -->
-
-                <div class="card-body p-0">
-                    <div id="users-chat">
-                        <div class="chat-conversation p-3" id="chat-conversation" data-simplebar style="height: 400px;">
-                            <ul class="list-unstyled chat-conversation-list chat-sm"
-                                id="users-conversation">
-                                <li class="chat-list left">
-                                    <div class="conversation-list">
-                                        <div class="chat-avatar">
-                                            <img src="{{ URL::asset('build/images/users/avatar-2.jpg') }}" alt="">
-                                        </div>
-                                        <div class="user-chat-content">
-                                            <div class="ctext-wrap">
-                                                <div class="ctext-wrap-content">
-                                                    <p class="mb-0 ctext-content">Good morning 😊</p>
-                                                </div>
-                                                <div class="dropdown align-self-start message-box-drop">
-                                                    <a class="dropdown-toggle" href="#" role="button"
-                                                        data-bs-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
-                                                        <i class="ri-more-2-fill"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-reply-line me-2 text-muted align-bottom"></i>Reply</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-share-line me-2 text-muted align-bottom"></i>Forward</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-file-copy-line me-2 text-muted align-bottom"></i>Copy</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-bookmark-line me-2 text-muted align-bottom"></i>Bookmark</a>
-                                                        <a class="dropdown-item delete-item" href="#"><i
-                                                                class="ri-delete-bin-5-line me-2 text-muted align-bottom"></i>Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="conversation-name"><small
-                                                    class="text-muted time">09:07 am</small> <span
-                                                    class="text-success check-message-icon"><i
-                                                        class="ri-check-double-line align-bottom"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <!-- chat-list -->
-
-                                <li class="chat-list right">
-                                    <div class="conversation-list">
-                                        <div class="user-chat-content">
-                                            <div class="ctext-wrap">
-                                                <div class="ctext-wrap-content">
-                                                    <p class="mb-0 ctext-content">Good morning, How are you?
-                                                        What about our next meeting?</p>
-                                                </div>
-                                                <div class="dropdown align-self-start message-box-drop">
-                                                    <a class="dropdown-toggle" href="#" role="button"
-                                                        data-bs-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
-                                                        <i class="ri-more-2-fill"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-reply-line me-2 text-muted align-bottom"></i>Reply</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-share-line me-2 text-muted align-bottom"></i>Forward</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-file-copy-line me-2 text-muted align-bottom"></i>Copy</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-bookmark-line me-2 text-muted align-bottom"></i>Bookmark</a>
-                                                        <a class="dropdown-item delete-item" href="#"><i
-                                                                class="ri-delete-bin-5-line me-2 text-muted align-bottom"></i>Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="conversation-name"><small
-                                                    class="text-muted time">09:08 am</small> <span
-                                                    class="text-success check-message-icon"><i
-                                                        class="ri-check-double-line align-bottom"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <!-- chat-list -->
-
-                                <li class="chat-list left">
-                                    <div class="conversation-list">
-                                        <div class="chat-avatar">
-                                            <img src="{{ URL::asset('build/images/users/avatar-2.jpg') }}" alt="">
-                                        </div>
-                                        <div class="user-chat-content">
-                                            <div class="ctext-wrap">
-                                                <div class="ctext-wrap-content">
-                                                    <p class="mb-0 ctext-content">Yeah everything is fine.
-                                                        Our next meeting tomorrow at 10.00 AM</p>
-                                                </div>
-                                                <div class="dropdown align-self-start message-box-drop">
-                                                    <a class="dropdown-toggle" href="#" role="button"
-                                                        data-bs-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
-                                                        <i class="ri-more-2-fill"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-reply-line me-2 text-muted align-bottom"></i>Reply</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-share-line me-2 text-muted align-bottom"></i>Forward</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-file-copy-line me-2 text-muted align-bottom"></i>Copy</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-bookmark-line me-2 text-muted align-bottom"></i>Bookmark</a>
-                                                        <a class="dropdown-item delete-item" href="#"><i
-                                                                class="ri-delete-bin-5-line me-2 text-muted align-bottom"></i>Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ctext-wrap">
-                                                <div class="ctext-wrap-content">
-                                                    <p class="mb-0 ctext-content">Hey, I'm going to meet a
-                                                        friend of mine at the department store. I have to
-                                                        buy some presents for my parents 🎁.</p>
-                                                </div>
-                                                <div class="dropdown align-self-start message-box-drop">
-                                                    <a class="dropdown-toggle" href="#" role="button"
-                                                        data-bs-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
-                                                        <i class="ri-more-2-fill"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-reply-line me-2 text-muted align-bottom"></i>Reply</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-share-line me-2 text-muted align-bottom"></i>Forward</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-file-copy-line me-2 text-muted align-bottom"></i>Copy</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-bookmark-line me-2 text-muted align-bottom"></i>Bookmark</a>
-                                                        <a class="dropdown-item delete-item" href="#"><i
-                                                                class="ri-delete-bin-5-line me-2 text-muted align-bottom"></i>Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="conversation-name"><small
-                                                    class="text-muted time">09:10 am</small> <span
-                                                    class="text-success check-message-icon"><i
-                                                        class="ri-check-double-line align-bottom"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <!-- chat-list -->
-
-                                <li class="chat-list right">
-                                    <div class="conversation-list">
-                                        <div class="user-chat-content">
-                                            <div class="ctext-wrap">
-                                                <div class="ctext-wrap-content">
-                                                    <p class="mb-0 ctext-content">Wow that's great</p>
-                                                </div>
-                                                <div class="dropdown align-self-start message-box-drop">
-                                                    <a class="dropdown-toggle" href="#" role="button"
-                                                        data-bs-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
-                                                        <i class="ri-more-2-fill"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-reply-line me-2 text-muted align-bottom"></i>Reply</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-share-line me-2 text-muted align-bottom"></i>Forward</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-file-copy-line me-2 text-muted align-bottom"></i>Copy</a>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="ri-bookmark-line me-2 text-muted align-bottom"></i>Bookmark</a>
-                                                        <a class="dropdown-item delete-item" href="#"><i
-                                                                class="ri-delete-bin-5-line me-2 text-muted align-bottom"></i>Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="conversation-name"><small
-                                                    class="text-muted time">09:12 am</small> <span
-                                                    class="text-success check-message-icon"><i
-                                                        class="ri-check-double-line align-bottom"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <!-- chat-list -->
-
-                                <li class="chat-list left">
-                                    <div class="conversation-list">
-                                        <div class="chat-avatar">
-                                            <img src="{{ URL::asset('build/images/users/avatar-2.jpg') }}" alt="">
-                                        </div>
-                                        <div class="user-chat-content">
-                                            <div class="ctext-wrap">
-                                                <div class="message-img mb-0">
-                                                    <div class="message-img-list">
-                                                        <div>
-                                                            <a class="popup-img d-inline-block"
-                                                                href="{{ URL::asset('build/images/small/img-1.jpg') }}">
-                                                                <img src="{{ URL::asset('build/images/small/img-1.jpg') }}"
-                                                                    alt="" class="rounded border">
-                                                            </a>
-                                                        </div>
-                                                        <div class="message-img-link">
-                                                            <ul class="list-inline mb-0">
-                                                                <li class="list-inline-item dropdown">
-                                                                    <a class="dropdown-toggle" href="#"
-                                                                        role="button"
-                                                                        data-bs-toggle="dropdown"
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded="false">
-                                                                        <i class="ri-more-fill"></i>
-                                                                    </a>
-                                                                    <div class="dropdown-menu">
-                                                                        <a class="dropdown-item"
-                                                                            href="{{ URL::asset('build/images/small/img-1.jpg') }}"
-                                                                            download=""><i
-                                                                                class="ri-download-2-line me-2 text-muted align-bottom"></i>Download</a>
-                                                                        <a class="dropdown-item" href="#"><i
-                                                                                class="ri-reply-line me-2 text-muted align-bottom"></i>Reply</a>
-                                                                        <a class="dropdown-item" href="#"><i
-                                                                                class="ri-share-line me-2 text-muted align-bottom"></i>Forward</a>
-                                                                        <a class="dropdown-item" href="#"><i
-                                                                                class="ri-bookmark-line me-2 text-muted align-bottom"></i>Bookmark</a>
-                                                                        <a class="dropdown-item delete-item"
-                                                                            href="#"><i
-                                                                                class="ri-delete-bin-5-line me-2 text-muted align-bottom"></i>Delete</a>
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="message-img-list">
-                                                        <div>
-                                                            <a class="popup-img d-inline-block"
-                                                                href="{{ URL::asset('build/images/small/img-2.jpg') }}">
-                                                                <img src="{{ URL::asset('build/images/small/img-2.jpg') }}"
-                                                                    alt="" class="rounded border">
-                                                            </a>
-                                                        </div>
-                                                        <div class="message-img-link">
-                                                            <ul class="list-inline mb-0">
-                                                                <li class="list-inline-item dropdown">
-                                                                    <a class="dropdown-toggle" href="#"
-                                                                        role="button"
-                                                                        data-bs-toggle="dropdown"
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded="false">
-                                                                        <i class="ri-more-fill"></i>
-                                                                    </a>
-                                                                    <div class="dropdown-menu">
-                                                                        <a class="dropdown-item"
-                                                                            href="{{ URL::asset('build/images/small/img-2.jpg') }}"
-                                                                            download=""><i
-                                                                                class="ri-download-2-line me-2 text-muted align-bottom"></i>Download</a>
-                                                                        <a class="dropdown-item" href="#"><i
-                                                                                class="ri-reply-line me-2 text-muted align-bottom"></i>Reply</a>
-                                                                        <a class="dropdown-item" href="#"><i
-                                                                                class="ri-share-line me-2 text-muted align-bottom"></i>Forward</a>
-                                                                        <a class="dropdown-item" href="#"><i
-                                                                                class="ri-bookmark-line me-2 text-muted align-bottom"></i>Bookmark</a>
-                                                                        <a class="dropdown-item delete-item"
-                                                                            href="#"><i
-                                                                                class="ri-delete-bin-5-line me-2 text-muted align-bottom"></i>Delete</a>
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="conversation-name"><small
-                                                    class="text-muted time">09:30 am</small> <span
-                                                    class="text-success check-message-icon"><i
-                                                        class="ri-check-double-line align-bottom"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <!-- chat-list -->
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="border-top border-top-dashed">
-                        <div class="row g-2 mx-3 mt-2 mb-3">
-                            <div class="col">
-                                <div class="position-relative">
-                                    <input type="text" class="form-control border-light bg-light"
-                                        placeholder="Enter Message...">
-                                </div>
-                            </div><!-- end col -->
-                            <div class="col-auto">
-                                <button type="submit" class="btn btn-info"><span
-                                        class="d-none d-sm-inline-block me-2">Send</span> <i
-                                        class="mdi mdi-send float-end"></i></button>
-                            </div><!-- end col -->
-                        </div><!-- end row -->
-                    </div>
-                </div><!-- end cardbody -->
-            </div><!-- end card -->
-        </div><!-- end col -->
 
         <div class="col-xxl-4 col-lg-6">
             <div class="card card-height-100">
@@ -1280,5 +558,330 @@
     <script src="{{ URL::asset('build/libs/apexcharts/apexcharts.min.js') }}"></script>
 
     <script src="{{ URL::asset('build/js/pages/dashboard-projects.init.js') }}"></script>
+    
+    <!-- Custom Dashboard JavaScript with Real Backend Data & Interactive Features -->
+    <script>
+    // Override Projects Overview Chart with Real Data
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            var chartEl = document.querySelector("#projects-overview-chart");
+            if (chartEl) {
+                chartEl.innerHTML = '';
+                
+                var linechartcustomerColors = getChartColorsArray("projects-overview-chart");
+                if (linechartcustomerColors) {
+                    var monthlyData = @json($chartData['monthly_data']);
+                    var months = @json($chartData['months']);
+                    
+                    var options = {
+                        series: [{
+                            name: 'Projects Created',
+                            type: 'bar',
+                            data: monthlyData
+                        }],
+                        chart: {
+                            height: 374,
+                            type: 'bar',
+                            toolbar: {
+                                show: false,
+                            }
+                        },
+                        plotOptions: {
+                            bar: {
+                                columnWidth: '30%',
+                                borderRadius: 4
+                            }
+                        },
+                        xaxis: {
+                            categories: months,
+                            axisTicks: {
+                                show: false
+                            },
+                            axisBorder: {
+                                show: false
+                            }
+                        },
+                        grid: {
+                            show: true,
+                            padding: {
+                                top: 0,
+                                right: -2,
+                                bottom: 15,
+                                left: 10
+                            },
+                        },
+                        colors: linechartcustomerColors,
+                        tooltip: {
+                            y: {
+                                formatter: function (y) {
+                                    return y + " Projects"
+                                }
+                            }
+                        }
+                    };
+                    
+                    var chart = new ApexCharts(chartEl, options);
+                    chart.render();
+                }
+            }
+        }, 500);
+
+        // ==================== MY TASKS FILTER ====================
+        const myTasksFilter = document.querySelectorAll('.dropdown-menu a[href="#"]');
+        myTasksFilter.forEach(link => {
+            if (link.closest('.card-header') && link.textContent.trim().match(/(All Tasks|Completed|Inprogress|Pending)/)) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const status = this.textContent.trim().toLowerCase().replace(' ', '_');
+                    const actualStatus = status === 'all_tasks' ? 'all' : status;
+                    
+                    // Update dropdown text
+                    const dropdownBtn = this.closest('.dropdown').querySelector('.dropdown-btn .text-muted');
+                    if (dropdownBtn) {
+                        dropdownBtn.innerHTML = this.textContent + ' <i class="mdi mdi-chevron-down ms-1"></i>';
+                    }
+                    
+                    // Fetch filtered tasks
+                    fetch('/dashboard/tasks/filter?status=' + actualStatus)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                updateMyTasksTable(data.tasks);
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            }
+        });
+
+        function updateMyTasksTable(tasks) {
+            const tbody = document.getElementById('my-tasks-tbody');
+            if (!tbody) return;
+            
+            if (tasks.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">
+                            <i class="ri-task-line fs-1 mb-2 d-block"></i>
+                            No tasks found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = tasks.map(task => {
+                const statusColors = {
+                    'completed': 'success',
+                    'in_progress': 'warning',
+                    'pending': 'info',
+                    'new': 'primary'
+                };
+                const badgeColor = statusColors[task.status] || 'secondary';
+                const statusText = task.status.replace('_', ' ');
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input fs-15" type="checkbox" value="${task.id}" id="checkTask${task.id}">
+                                <label class="form-check-label ms-1" for="checkTask${task.id}">
+                                    ${task.title}
+                                </label>
+                            </div>
+                        </td>
+                        <td class="text-muted">${task.due_date}</td>
+                        <td>
+                            <span class="badge bg-${badgeColor}-subtle text-${badgeColor}">
+                                ${statusText.charAt(0).toUpperCase() + statusText.slice(1)}
+                            </span>
+                        </td>
+                        <td>
+                            ${task.assignee ? `
+                                <a href="javascript:void(0);" class="d-inline-block" data-bs-toggle="tooltip" title="${task.assignee.name}">
+                                    <img src="${task.assignee.avatar || '{{ URL::asset("build/images/users/avatar-2.jpg") }}'}" 
+                                         alt="" class="rounded-circle avatar-xxs">
+                                </a>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ==================== UPCOMING SCHEDULES CALENDAR ====================
+        const calendarInput = document.querySelector('[data-provider="flatpickr"]');
+        if (calendarInput && typeof flatpickr !== 'undefined') {
+            flatpickr(calendarInput, {
+                inline: true,
+                dateFormat: "Y-m-d",
+                onChange: function(selectedDates, dateStr) {
+                    if (dateStr) {
+                        fetch('/dashboard/tasks/upcoming?date=' + dateStr)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    updateUpcomingSchedules(data.tasks);
+                                }
+                            })
+                            .catch(error => console.error('Error:', error));
+                    }
+                }
+            });
+        }
+
+        function updateUpcomingSchedules(tasks) {
+            const container = document.querySelector('.upcoming-scheduled');
+            if (!container) return;
+            
+            // Find events container (after calendar and h6)
+            let eventsContainer = container.querySelector('h6').nextElementSibling;
+            
+            if (tasks.length === 0) {
+                const existingEvents = container.querySelectorAll('.mini-stats-wid');
+                existingEvents.forEach(el => el.remove());
+                
+                const noData = document.createElement('div');
+                noData.className = 'text-center text-muted py-4';
+                noData.innerHTML = '<i class="ri-calendar-line fs-1 mb-2 d-block"></i><p>No tasks for selected date</p>';
+                container.querySelector('h6').after(noData);
+                return;
+            }
+            
+            // Remove existing events
+            const existingEvents = container.querySelectorAll('.mini-stats-wid');
+            existingEvents.forEach(el => el.remove());
+            
+            // Add new events
+            const h6 = container.querySelector('h6');
+            tasks.forEach(task => {
+                const eventHtml = `
+                    <div class="mini-stats-wid d-flex align-items-center mt-3">
+                        <div class="flex-shrink-0 avatar-sm">
+                            <span class="mini-stat-icon avatar-title rounded-circle text-success bg-success-subtle fs-4">
+                                ${task.day}
+                            </span>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">${task.title}</h6>
+                            <p class="text-muted mb-0">${task.project}</p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <p class="text-muted mb-0">${task.due_date}</p>
+                        </div>
+                    </div>
+                `;
+                h6.insertAdjacentHTML('afterend', eventHtml);
+            });
+        }
+
+        // ==================== TEAM MEMBERS SORT ====================
+        const teamSortLinks = document.querySelectorAll('.dropdown-menu a[href="#"]');
+        teamSortLinks.forEach(link => {
+            const text = link.textContent.trim();
+            if (text.match(/(Today|Yesterday|Last 7 Days|Last 30 Days|This Month|Last Month)/)) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const periodMap = {
+                        'Today': 'today',
+                        'Yesterday': 'today',
+                        'Last 7 Days': 'week',
+                        'Last 30 Days': 'month', 
+                        'This Month': 'month',
+                        'Last Month': 'month'
+                    };
+                    const period = periodMap[text] || 'month';
+                    
+                    // Update dropdown text
+                    const dropdownBtn = this.closest('.dropdown').querySelector('.dropdown-btn span:last-child');
+                    if (dropdownBtn) {
+                        dropdownBtn.innerHTML = text + '<i class="mdi mdi-chevron-down ms-1"></i>';
+                    }
+                    
+                    // Fetch sorted team members
+                    fetch('/dashboard/team/sort?period=' + period)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                updateTeamMembersTable(data.members);
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            }
+        });
+
+        function updateTeamMembersTable(members) {
+            const tbody = document.getElementById('team-members-tbody');
+            if (!tbody || members.length === 0) return;
+            
+            tbody.innerHTML = members.map((member, index) => {
+                const chartId = 'radialBar_chart_dynamic_' + member.id;
+                return `
+                    <tr>
+                        <td class="d-flex">
+                            <img src="${member.avatar || '{{ URL::asset("build/images/users/avatar-1.jpg") }}'}" 
+                                 alt="" class="avatar-xs rounded-3 me-2">
+                            <div>
+                                <h5 class="fs-13 mb-0">${member.name}</h5>
+                                <p class="fs-12 mb-0 text-muted">${member.role}</p>
+                            </div>
+                        </td>
+                        <td>
+                            <h6 class="mb-0">${member.hours}h : <span class="text-muted">150h</span></h6>
+                        </td>
+                        <td>${member.tasks_count}</td>
+                        <td style="width:5%;">
+                            <div id="${chartId}" data-colors='["--vz-${member.progress < 30 ? 'warning' : 'primary'}"]' 
+                                 data-chart-series="${member.progress}" class="apex-charts" dir="ltr"></div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            // Re-initialize radial charts
+            setTimeout(() => {
+                members.forEach(member => {
+                    const chartId = 'radialBar_chart_dynamic_' + member.id;
+                    const chartEl = document.getElementById(chartId);
+                    if (chartEl) {
+                        const colors = getChartColorsArray(chartId);
+                        const options = {
+                            series: [member.progress],
+                            chart: {
+                                type: 'radialBar',
+                                width: 36,
+                                height: 36,
+                                sparkline: { enabled: true }
+                            },
+                            dataLabels: { enabled: false },
+                            plotOptions: {
+                                radialBar: {
+                                    hollow: { margin: 0, size: '50%' },
+                                    track: { margin: 1 },
+                                    dataLabels: { show: false }
+                                }
+                            },
+                            colors: colors
+                        };
+                        new ApexCharts(chartEl, options).render();
+                    }
+                });
+            }, 100);
+        }
+
+        // ==================== VIEW ALL EVENTS LINK ====================
+        const viewAllLink = document.querySelector('a[href="javascript:void(0);"].text-decoration-underline');
+        if (viewAllLink && viewAllLink.textContent.includes('View all Events')) {
+            viewAllLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Redirect to tasks page
+                window.location.href = '/tasks';
+            });
+        }
+    });
+    </script>
+    
     <script src="{{ URL::asset('build/js/app.js') }}"></script>
 @endsection

@@ -19,7 +19,19 @@ Auth::routes(['verify' => true]);
 //Language Translation
 Route::get('index/{locale}', [App\Http\Controllers\HomeController::class, 'lang']);
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'root'])->name('root');
+Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('root');
+
+// Redirect legacy route to new controller route
+Route::get('apps-tasks-kanban', function() {
+    return redirect()->route('management.tasks.kanban');
+});
+
+// Dashboard AJAX Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard/tasks/filter', [App\Http\Controllers\DashboardController::class, 'filterTasks'])->name('dashboard.tasks.filter');
+    Route::get('/dashboard/tasks/upcoming', [App\Http\Controllers\DashboardController::class, 'getUpcomingTasksByDate'])->name('dashboard.tasks.upcoming');
+    Route::get('/dashboard/team/sort', [App\Http\Controllers\DashboardController::class, 'sortTeamMembers'])->name('dashboard.team.sort');
+});
 
 //Update User Details - Rate Limited to prevent abuse
 Route::middleware(['auth', 'throttle:10,1'])->group(function () {
@@ -84,8 +96,10 @@ Route::middleware(['auth'])->prefix('management')->name('management.')->group(fu
     // Tasks Management
     Route::middleware('can:view-tasks')->group(function () {
         // Kanban board (must be before resource route)
-        Route::get('tasks/kanban', [App\Http\Controllers\Management\TaskController::class, 'kanban'])
+        Route::get('tasks/kanban', [App\Http\Controllers\KanbanController::class, 'index'])
             ->name('tasks.kanban');
+        Route::post('tasks/kanban/update-status', [App\Http\Controllers\KanbanController::class, 'updateStatus'])
+            ->name('tasks.kanban.update');
             
         Route::resource('tasks', App\Http\Controllers\Management\TaskController::class);
         

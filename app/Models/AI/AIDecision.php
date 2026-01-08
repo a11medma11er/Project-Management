@@ -13,6 +13,8 @@ class AIDecision extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'ai_decisions';
+
     protected $fillable = [
         'task_id',
         'project_id',

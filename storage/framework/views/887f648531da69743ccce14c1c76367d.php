@@ -152,29 +152,96 @@
                 <?php endif; ?>
 
                 <!-- AI Section -->
+                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('access-ai-control')): ?>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarAI" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarAI">
-                        <i class="ri-robot-line"></i> <span>Artificial Intelligence</span>
-                        <span class="badge bg-info ms-1">Coming Soon</span>
+                        <i class="ri-robot-line"></i> <span>AI Assistant</span>
+                        <span class="badge bg-success ms-1">Live</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarAI">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="#" class="nav-link text-muted">
-                                    <i class="ri-chat-smile-2-line me-1"></i> AI Assistant
-                                    <span class="badge bg-secondary ms-1">Coming Soon</span>
+                                <a href="<?php echo e(route('ai.control.index')); ?>" class="nav-link">
+                                    <i class="ri-dashboard-line me-1"></i> AI Control Panel
+                                </a>
+                            </li>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-ai-decisions')): ?>
+                            <li class="nav-item">
+                                <a href="<?php echo e(route('ai.decisions.index')); ?>" class="nav-link">
+                                    <i class="ri-lightbulb-line me-1"></i> AI Decisions
+                                </a>
+                            </li>
+                            <?php endif; ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('manage-ai-prompts')): ?>
+                            <li class="nav-item">
+                                <a href="<?php echo e(route('ai.prompts.index')); ?>" class="nav-link">
+                                    <i class="ri-edit-box-line me-1"></i> Prompts
+                                </a>
+                            </li>
+                            <?php endif; ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-ai-analytics')): ?>
+                            <li class="nav-item">
+                                <a href="<?php echo e(route('ai.insights.index')); ?>" class="nav-link">
+                                    <i class="ri-lightbulb-flash-line me-1"></i> Insights
+                                </a>
+                            </li>
+                            <?php endif; ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-ai-analytics')): ?>
+                            <li class="nav-item">
+                                <a href="<?php echo e(route('ai.learning.index')); ?>" class="nav-link">
+                                    <i class="ri-brain-line me-1"></i> Learning
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link text-muted">
-                                    <i class="ri-bar-chart-box-line me-1"></i> AI Analytics
-                                    <span class="badge bg-secondary ms-1">Coming Soon</span>
+                                <a href="<?php echo e(route('ai.reports.index')); ?>" class="nav-link">
+                                    <i class="ri-file-chart-line me-1"></i> Reports
                                 </a>
                             </li>
+                            <?php endif; ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('manage-ai-settings')): ?>
+                            <li class="nav-item">
+                                <a href="<?php echo e(route('ai.workflows.index')); ?>" class="nav-link">
+                                    <i class="ri-robot-2-line me-1"></i> Workflows
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?php echo e(route('ai.integrations.index')); ?>" class="nav-link">
+                                    <i class="ri-links-line me-1"></i> Integrations
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?php echo e(route('ai.performance.index')); ?>" class="nav-link">
+                                    <i class="ri-dashboard-line me-1"></i> Performance
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?php echo e(route('ai.security.index')); ?>" class="nav-link">
+                                    <i class="ri-shield-check-line me-1"></i> Security
+                                </a>
+                            </li>
+                            <?php endif; ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('manage-ai-settings')): ?>
+                            <li class="nav-item">
+                                <a href="<?php echo e(route('ai.settings.index')); ?>" class="nav-link">
+                                    <i class="ri-settings-3-line me-1"></i> Settings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?php echo e(route('ai.guardrails.index')); ?>" class="nav-link">
+                                    <i class="ri-shield-check-line me-1"></i> Guardrails
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?php echo e(route('ai.features.index')); ?>" class="nav-link">
+                                    <i class="ri-magic-line me-1"></i> AI Features
+                                </a>
+                            </li>
+                            <?php endif; ?>
                         </ul>
                     </div>
                 </li>
+                <?php endif; ?>
 
             </ul>
         </div>

@@ -244,15 +244,3 @@ if (donutchartProjectsStatusColors) {
     var chart = new ApexCharts(document.querySelector("#prjects-status"), options);
     chart.render();
 }
-
-// chat
-var currentChatId = "users-chat";
-scrollToBottom(currentChatId);
-
-// Scroll to Bottom
-function scrollToBottom(id) {
-    setTimeout(() => {
-        var scrollEl = new SimpleBar(document.getElementById('chat-conversation'));
-        scrollEl.getScrollElement().scrollTop = document.getElementById("users-conversation").scrollHeight;
-    }, 100);
-}
