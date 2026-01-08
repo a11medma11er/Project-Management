@@ -75,6 +75,14 @@ Route::prefix('admin/ai')
         });
 
         // ============================================
+        // AI Learning
+        // ============================================
+        Route::middleware(['can:view-ai-analytics'])->group(function () {
+            Route::get('/learning', [AILearningController::class, 'index'])->name('learning.index');
+            Route::get('/learning/data', [AILearningController::class, 'getData'])->name('learning.data');
+        });
+
+        // ============================================
         // AI Analytics & Insights
         // ============================================
         Route::middleware(['can:view-ai-analytics'])->group(function () {
