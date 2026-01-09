@@ -33,7 +33,7 @@ class AIAnalyticsEngine
     /**
      * Get summary metrics
      */
-    protected function getSummaryMetrics($startDate, $endDate, $decisionTypes): array
+    public function getSummaryMetrics($startDate, $endDate, $decisionTypes): array
     {
         $query = AIDecision::whereBetween('created_at', [$startDate, $endDate]);
         
@@ -65,7 +65,7 @@ class AIAnalyticsEngine
     /**
      * Get performance metrics
      */
-    protected function getPerformanceMetrics($startDate, $endDate): array
+    public function getPerformanceMetrics($startDate, $endDate): array
     {
         $decisions = AIDecision::whereBetween('created_at', [$startDate, $endDate])
             ->whereNotNull('reviewed_at')
@@ -86,7 +86,7 @@ class AIAnalyticsEngine
     /**
      * Get accuracy metrics
      */
-    protected function getAccuracyMetrics($startDate, $endDate, $decisionTypes): array
+    public function getAccuracyMetrics($startDate, $endDate, $decisionTypes): array
     {
         $query = AIDecision::whereBetween('created_at', [$startDate, $endDate])
             ->whereIn('user_action', ['accepted', 'rejected', 'modified']);
@@ -168,7 +168,7 @@ class AIAnalyticsEngine
     /**
      * Get trend analysis
      */
-    protected function getTrendAnalysis($startDate, $endDate): array
+    public function getTrendAnalysis($startDate, $endDate): array
     {
         $dailyStats = AIDecision::select(
                 DB::raw('DATE(created_at) as date'),

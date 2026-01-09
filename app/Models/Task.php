@@ -89,6 +89,11 @@ class Task extends Model
         return $this->hasMany(TaskTimeEntry::class);
     }
 
+    public function aiDecisions()
+    {
+        return $this->hasMany(\App\Models\AI\AIDecision::class);
+    }
+
     // Scopes
     public function scopeStatus($query, $status)
     {

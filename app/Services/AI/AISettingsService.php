@@ -46,12 +46,10 @@ class AISettingsService
     /**
      * Get all settings by group
      */
-    public function getByGroup(string $group): array
+    public function getByGroup(string $group)
     {
         return Cache::remember("ai_settings_group_{$group}", 3600, function () use ($group) {
-            return AISetting::byGroup($group)->get()->mapWithKeys(function ($setting) {
-                return [$setting->key => $setting->getCastedValue()];
-            })->toArray();
+            return AISetting::byGroup($group)->get();
         });
     }
 

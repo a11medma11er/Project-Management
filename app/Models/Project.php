@@ -134,6 +134,11 @@ class Project extends Model
         return $this->hasMany(ProjectComment::class);
     }
 
+    public function aiDecisions()
+    {
+        return $this->hasMany(\App\Models\AI\AIDecision::class);
+    }
+
     /**
      * Scope for filtering by status
      */

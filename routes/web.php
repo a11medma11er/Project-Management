@@ -20,6 +20,7 @@ Auth::routes(['verify' => true]);
 Route::get('index/{locale}', [App\Http\Controllers\HomeController::class, 'lang']);
 
 Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('root');
+Route::get('/dashboard-projects', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard.projects');
 
 // Redirect legacy route to new controller route
 Route::get('apps-tasks-kanban', function() {

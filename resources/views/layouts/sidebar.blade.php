@@ -3,21 +3,21 @@
     <!-- LOGO -->
     <div class="navbar-brand-box">
         <!-- Dark Logo-->
-        <a href="dashboard-projects" class="logo logo-dark">
+        <a href="{{ url('dashboard-projects') }}" class="logo logo-dark">
             <span class="logo-sm">
                 <img src="{{ URL::asset('build/images/logo-sm.png') }}" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="{{ URL::asset('build/images/logo-dark.png') }}" alt="" height="17">
+                <img src="{{ URL::asset('build/images/logo-dark.png') }}" alt="" height="32" width="187">
             </span>
         </a>
         <!-- Light Logo-->
-        <a href="dashboard-projects" class="logo logo-light">
+        <a href="{{ url('dashboard-projects') }}" class="logo logo-light">
             <span class="logo-sm">
                 <img src="{{ URL::asset('build/images/logo-sm.png') }}" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="{{ URL::asset('build/images/logo-light.png') }}" alt="" height="17">
+                <img src="{{ URL::asset('build/images/logo-light.png') }}" alt="" height="32" width="187">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
@@ -26,7 +26,7 @@
         </button>
     </div>
 
-    <div id="scrollbar" class="h-100" data-simplebar>
+    <div id="scrollbar" style="height: calc(100vh - 70px)" data-simplebar>
         <div class="container-fluid">
 
             <div id="two-column-menu">
@@ -221,6 +221,11 @@
                                 </a>
                             </li>
                             @endcan
+                            <li class="nav-item">
+                                <a href="{{ route('ai.features.index') }}" class="nav-link">
+                                    <i class="ri-magic-line me-1"></i> AI Features
+                                </a>
+                            </li>
                             @can('manage-ai-settings')
                             <li class="nav-item">
                                 <a href="{{ route('ai.settings.index') }}" class="nav-link">
@@ -230,11 +235,6 @@
                             <li class="nav-item">
                                 <a href="{{ route('ai.guardrails.index') }}" class="nav-link">
                                     <i class="ri-shield-check-line me-1"></i> Guardrails
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('ai.features.index') }}" class="nav-link">
-                                    <i class="ri-magic-line me-1"></i> AI Features
                                 </a>
                             </li>
                             @endcan
