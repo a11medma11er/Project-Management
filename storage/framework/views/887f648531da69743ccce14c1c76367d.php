@@ -8,7 +8,7 @@
                 <img src="<?php echo e(URL::asset('build/images/logo-sm.png')); ?>" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="<?php echo e(URL::asset('build/images/logo-dark.png')); ?>" alt="" height="500" width="500">
+                <img src="<?php echo e(URL::asset('build/images/logo-dark.png')); ?>" alt="" height="32" width="187">
             </span>
         </a>
         <!-- Light Logo-->
@@ -17,7 +17,7 @@
                 <img src="<?php echo e(URL::asset('build/images/logo-sm.png')); ?>" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="<?php echo e(URL::asset('build/images/logo-light.png')); ?>" alt="" height="150" width="200">
+                <img src="<?php echo e(URL::asset('build/images/logo-light.png')); ?>" alt="" height="32" width="187">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
@@ -26,7 +26,7 @@
         </button>
     </div>
 
-    <div id="scrollbar" class="h-100" data-simplebar>
+    <div id="scrollbar" style="height: calc(100vh - 70px)" data-simplebar>
         <div class="container-fluid">
 
             <div id="two-column-menu">
@@ -221,6 +221,11 @@
                                 </a>
                             </li>
                             <?php endif; ?>
+                            <li class="nav-item">
+                                <a href="<?php echo e(route('ai.features.index')); ?>" class="nav-link">
+                                    <i class="ri-magic-line me-1"></i> AI Features
+                                </a>
+                            </li>
                             <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('manage-ai-settings')): ?>
                             <li class="nav-item">
                                 <a href="<?php echo e(route('ai.settings.index')); ?>" class="nav-link">
@@ -230,11 +235,6 @@
                             <li class="nav-item">
                                 <a href="<?php echo e(route('ai.guardrails.index')); ?>" class="nav-link">
                                     <i class="ri-shield-check-line me-1"></i> Guardrails
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?php echo e(route('ai.features.index')); ?>" class="nav-link">
-                                    <i class="ri-magic-line me-1"></i> AI Features
                                 </a>
                             </li>
                             <?php endif; ?>
