@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\TaskTimeEntry;
+use App\Models\AI\AIDecision;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -34,6 +35,8 @@ class DashboardController extends Controller
         $activeProjects = $this->getActiveProjects($user);
         $userTasks = $this->getUserTasks($user);
         $teamMembers = $this->getTeamMembers($user);
+        $aiStatistics = $this->getAIStatistics($user);
+        $projectsStatus = $this->getProjectsStatus($user);
         
         return view('dashboard-projects', compact(
             'statistics',
@@ -41,7 +44,9 @@ class DashboardController extends Controller
             'upcomingTasks',
             'activeProjects',
             'userTasks',
-            'teamMembers'
+            'teamMembers',
+            'aiStatistics',
+            'projectsStatus'
         ));
     }
 
@@ -69,14 +74,14 @@ class DashboardController extends Controller
         
         // New Tasks This Month
         $newTasksCount = $this->getUserTasksQuery($user)
-            ->where('status', 'new')
+            ->whereIn('status', ['new', 'pending', 'in_progress'])
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
             
         // Last month new tasks
         $lastMonthNewTasks = $this->getUserTasksQuery($user)
-            ->where('status', 'new')
+            ->whereIn('status', ['new', 'pending', 'in_progress'])
             ->whereMonth('created_at', now()->subMonth()->month)
             ->whereYear('created_at', now()->subMonth()->year)
             ->count();
@@ -246,6 +251,117 @@ class DashboardController extends Controller
                 return $member;
             })
             ->take(5); // Show top 5 members
+    }
+
+    /**
+     * Get AI statistics for dashboard.
+     */
+    private function getAIStatistics($user)
+    {
+        // Total AI Decisions
+        $totalDecisions = AIDecision::count();
+        
+        // Pending Decisions
+        $pendingDecisions = AIDecision::where('user_action', 'pending')->count();
+        
+        // Accepted Decisions
+        $acceptedDecisions = AIDecision::where('user_action', 'accepted')->count();
+        
+        // Rejected Decisions
+        $rejectedDecisions = AIDecision::where('user_action', 'rejected')->count();
+        
+        // Calculate Acceptance Rate
+        $totalReviewed = $acceptedDecisions + $rejectedDecisions;
+        $acceptanceRate = $totalReviewed > 0 ? round(($acceptedDecisions / $totalReviewed) * 100, 1) : 0;
+        
+        // Average Confidence Score
+        $avgConfidence = AIDecision::avg('confidence_score');
+        $avgConfidencePercent = $avgConfidence ? round($avgConfidence * 100, 1) : 0;
+        
+        // New decisions this month
+        $newThisMonth = AIDecision::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+        
+        // Decision types distribution
+        $decisionTypes = AIDecision::select('decision_type', DB::raw('count(*) as count'))
+            ->groupBy('decision_type')
+            ->get()
+            ->pluck('count', 'decision_type')
+            ->toArray();
+        
+        return [
+            'total' => $totalDecisions,
+            'pending' => $pendingDecisions,
+            'accepted' => $acceptedDecisions,
+            'rejected' => $rejectedDecisions,
+            'acceptance_rate' => $acceptanceRate,
+            'avg_confidence' => $avgConfidencePercent,
+            'new_this_month' => $newThisMonth,
+            'decision_types' => $decisionTypes,
+        ];
+    }
+
+    /**
+     * Get projects status statistics.
+     */
+    private function getProjectsStatus($user)
+    {
+        $projectsQuery = $this->getUserProjectsQuery($user);
+        
+        // Count by status
+        $completed = (clone $projectsQuery)->where('status', 'Completed')->count();
+        $inProgress = (clone $projectsQuery)->where('status', 'Inprogress')->count();
+        $yetToStart = (clone $projectsQuery)->where('status', 'Not Started')->count();
+        $cancelled = (clone $projectsQuery)->where('status', 'Cancelled')->count();
+        
+        // Calculate hours for each status
+        $completedHours = $this->getProjectStatusHours($user, 'Completed');
+        $inProgressHours = $this->getProjectStatusHours($user, 'Inprogress');
+        $yetToStartHours = $this->getProjectStatusHours($user, 'Not Started');
+        $cancelledHours = $this->getProjectStatusHours($user, 'Cancelled');
+        
+        // Total projects
+        $total = $completed + $inProgress + $yetToStart + $cancelled;
+        
+        // New projects this month
+        $newThisMonth = (clone $projectsQuery)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+        
+        return [
+            'total' => $total,
+            'completed' => $completed,
+            'in_progress' => $inProgress,
+            'yet_to_start' => $yetToStart,
+            'cancelled' => $cancelled,
+            'completed_hours' => $completedHours,
+            'in_progress_hours' => $inProgressHours,
+            'yet_to_start_hours' => $yetToStartHours,
+            'cancelled_hours' => $cancelledHours,
+            'new_this_month' => $newThisMonth,
+        ];
+    }
+
+    /**
+     * Get total hours for projects with specific status.
+     */
+    private function getProjectStatusHours($user, $status)
+    {
+        $projectIds = $this->getUserProjectsQuery($user)
+            ->where('status', $status)
+            ->pluck('id');
+        
+        if ($projectIds->isEmpty()) {
+            return 0;
+        }
+        
+        $totalMinutes = TaskTimeEntry::whereHas('task', function($q) use ($projectIds) {
+            $q->whereIn('project_id', $projectIds);
+        })->sum('duration_minutes');
+        
+        return floor($totalMinutes / 60);
     }
 
     /**

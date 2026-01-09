@@ -245,6 +245,45 @@ if (donutchartProjectsStatusColors) {
     chart.render();
 }
 
+// AI Status charts
+var donutchartAIStatusColors = getChartColorsArray("ai-status");
+if (donutchartAIStatusColors) {
+    var options = {
+        series: [0, 0, 0, 0], // Will be replaced by backend data
+        labels: ["Pending", "Accepted", "Rejected", "Modified"],
+        chart: {
+            type: "donut",
+            height: 230,
+        },
+        plotOptions: {
+            pie: {
+                size: 100,
+                offsetX: 0,
+                offsetY: 0,
+                donut: {
+                    size: "90%",
+                    labels: {
+                        show: false,
+                    }
+                },
+            },
+        },
+        dataLabels: {
+            enabled: false,
+        },
+        legend: {
+            show: false,
+        },
+        stroke: {
+            lineCap: "round",
+            width: 0
+        },
+        colors: donutchartAIStatusColors,
+    };
+    var chart = new ApexCharts(document.querySelector("#ai-status"), options);
+    chart.render();
+}
+
 // chat
 var currentChatId = "users-chat";
 scrollToBottom(currentChatId);

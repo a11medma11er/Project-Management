@@ -63,6 +63,10 @@ Route::middleware(['auth'])->prefix('management')->name('management.')->group(fu
         Route::post('projects/{project}/toggle-favorite', [App\Http\Controllers\Management\ProjectController::class, 'toggleFavorite'])
             ->name('projects.toggleFavorite');
         
+        // Project comments
+        Route::post('projects/{project}/comments', [App\Http\Controllers\Management\ProjectController::class, 'storeComment'])
+            ->name('projects.comments.store');
+        
         Route::resource('projects', App\Http\Controllers\Management\ProjectController::class);
     });
     

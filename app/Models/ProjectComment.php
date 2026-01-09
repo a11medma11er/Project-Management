@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class ProjectComment extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'project_id',
@@ -46,5 +48,16 @@ class ProjectComment extends Model
     public function replies()
     {
         return $this->hasMany(ProjectComment::class, 'parent_id');
+    }
+
+    /**
+     * Configure activity logging
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['comment'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

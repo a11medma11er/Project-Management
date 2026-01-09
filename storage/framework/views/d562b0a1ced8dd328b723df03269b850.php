@@ -94,6 +94,142 @@
             </div><!-- end row -->
 
             <div class="row">
+                <div class="col-xxl-4 col-lg-6">
+                    <div class="card card-height-100">
+                        <div class="card-header align-items-center d-flex">
+                            <h4 class="card-title mb-0 flex-grow-1">Projects Status</h4>
+                        </div><!-- end card header -->
+
+                <div class="card-body">
+                    <div id="prjects-status"
+                        data-colors='["--vz-success", "--vz-primary", "--vz-warning", "--vz-danger"]'
+                        class="apex-charts" dir="ltr"></div>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-center align-items-center mb-4">
+                            <h2 class="me-3 ff-secondary mb-0"><?php echo e($projectsStatus['total']); ?></h2>
+                            <div>
+                                <p class="text-muted mb-0">Total Projects</p>
+                                <p class="text-success fw-medium mb-0">
+                                    <span class="badge bg-success-subtle text-success p-1 rounded-circle"><i
+                                            class="ri-arrow-right-up-line"></i></span> +<?php echo e($projectsStatus['new_this_month']); ?> New
+                                </p>
+                            </div>
+                        </div>
+
+                        <div
+                            class="d-flex justify-content-between border-bottom border-bottom-dashed py-2">
+                            <p class="fw-medium mb-0"><i
+                                    class="ri-checkbox-blank-circle-fill text-success align-middle me-2"></i>
+                                Completed</p>
+                            <div>
+                                <span class="text-muted pe-5"><?php echo e($projectsStatus['completed']); ?> Projects</span>
+                                <span class="text-success fw-medium fs-12"><?php echo e($projectsStatus['completed_hours']); ?>hrs</span>
+                            </div>
+                        </div><!-- end -->
+                        <div
+                            class="d-flex justify-content-between border-bottom border-bottom-dashed py-2">
+                            <p class="fw-medium mb-0"><i
+                                    class="ri-checkbox-blank-circle-fill text-primary align-middle me-2"></i>
+                                In Progress</p>
+                            <div>
+                                <span class="text-muted pe-5"><?php echo e($projectsStatus['in_progress']); ?> Projects</span>
+                                <span class="text-success fw-medium fs-12"><?php echo e($projectsStatus['in_progress_hours']); ?>hrs</span>
+                            </div>
+                        </div><!-- end -->
+                        <div
+                            class="d-flex justify-content-between border-bottom border-bottom-dashed py-2">
+                            <p class="fw-medium mb-0"><i
+                                    class="ri-checkbox-blank-circle-fill text-warning align-middle me-2"></i>
+                                Yet to Start</p>
+                            <div>
+                                <span class="text-muted pe-5"><?php echo e($projectsStatus['yet_to_start']); ?> Projects</span>
+                                <span class="text-muted fw-medium fs-12"><?php echo e($projectsStatus['yet_to_start_hours'] > 0 ? $projectsStatus['yet_to_start_hours'] . 'hrs' : '~0hrs'); ?></span>
+                            </div>
+                        </div><!-- end -->
+                        <div class="d-flex justify-content-between py-2">
+                            <p class="fw-medium mb-0"><i
+                                    class="ri-checkbox-blank-circle-fill text-danger align-middle me-2"></i>
+                                Cancelled</p>
+                            <div>
+                                <span class="text-muted pe-5"><?php echo e($projectsStatus['cancelled']); ?> Projects</span>
+                                <span class="text-muted fw-medium fs-12"><?php echo e($projectsStatus['cancelled_hours'] > 0 ? $projectsStatus['cancelled_hours'] . 'hrs' : '~0hrs'); ?></span>
+                            </div>
+                        </div><!-- end -->
+                    </div>
+                </div><!-- end cardbody -->
+            </div><!-- end card -->
+        </div><!-- end col -->
+
+        <div class="col-xxl-4 col-lg-6">
+            <div class="card card-height-100">
+                <div class="card-header align-items-center d-flex">
+                    <h4 class="card-title mb-0 flex-grow-1">AI Status</h4>
+                    <div class="flex-shrink-0">
+                        <span class="badge bg-info-subtle text-info"><?php echo e($aiStatistics['avg_confidence']); ?>% Confidence</span>
+                    </div>
+                </div><!-- end card header -->
+
+                <div class="card-body">
+                    <div id="ai-status"
+                        data-colors='["--vz-info", "--vz-warning", "--vz-success", "--vz-danger"]'
+                        class="apex-charts" dir="ltr"></div>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-center align-items-center mb-4">
+                            <h2 class="me-3 ff-secondary mb-0"><?php echo e($aiStatistics['total']); ?></h2>
+                            <div>
+                                <p class="text-muted mb-0">Total AI Decisions</p>
+                                <p class="text-success fw-medium mb-0">
+                                    <span class="badge bg-success-subtle text-success p-1 rounded-circle"><i
+                                            class="ri-arrow-right-up-line"></i></span> +<?php echo e($aiStatistics['new_this_month']); ?> This Month
+                                </p>
+                            </div>
+                        </div>
+
+                        <div
+                            class="d-flex justify-content-between border-bottom border-bottom-dashed py-2">
+                            <p class="fw-medium mb-0"><i
+                                    class="ri-checkbox-blank-circle-fill text-info align-middle me-2"></i>
+                                Pending</p>
+                            <div>
+                                <span class="text-muted pe-5"><?php echo e($aiStatistics['pending']); ?> Decisions</span>
+                                <span class="text-muted fw-medium fs-12"><?php echo e(round(($aiStatistics['total'] > 0 ? $aiStatistics['pending'] / $aiStatistics['total'] : 0) * 100, 1)); ?>%</span>
+                            </div>
+                        </div><!-- end -->
+                        <div
+                            class="d-flex justify-content-between border-bottom border-bottom-dashed py-2">
+                            <p class="fw-medium mb-0"><i
+                                    class="ri-checkbox-blank-circle-fill text-success align-middle me-2"></i>
+                                Accepted</p>
+                            <div>
+                                <span class="text-muted pe-5"><?php echo e($aiStatistics['accepted']); ?> Decisions</span>
+                                <span class="text-success fw-medium fs-12"><?php echo e($aiStatistics['acceptance_rate']); ?>%</span>
+                            </div>
+                        </div><!-- end -->
+                        <div
+                            class="d-flex justify-content-between border-bottom border-bottom-dashed py-2">
+                            <p class="fw-medium mb-0"><i
+                                    class="ri-checkbox-blank-circle-fill text-danger align-middle me-2"></i>
+                                Rejected</p>
+                            <div>
+                                <span class="text-muted pe-5"><?php echo e($aiStatistics['rejected']); ?> Decisions</span>
+                                <span class="text-danger fw-medium fs-12"><?php echo e(round((($aiStatistics['accepted'] + $aiStatistics['rejected']) > 0 ? $aiStatistics['rejected'] / ($aiStatistics['accepted'] + $aiStatistics['rejected']) : 0) * 100, 1)); ?>%</span>
+                            </div>
+                        </div><!-- end -->
+                        <div class="d-flex justify-content-between py-2">
+                            <p class="fw-medium mb-0"><i
+                                    class="ri-robot-line align-middle me-2 text-primary"></i>
+                                Avg Confidence</p>
+                            <div>
+                                <span class="text-primary fw-medium"><?php echo e($aiStatistics['avg_confidence']); ?>%</span>
+                            </div>
+                        </div><!-- end -->
+                    </div>
+                </div><!-- end cardbody -->
+            </div><!-- end card -->
+        </div><!-- end col -->
+    </div><!-- end row -->
+
+            <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header border-0 align-items-center d-flex">
@@ -480,87 +616,6 @@
                 </div><!-- end cardbody -->
             </div><!-- end card -->
         </div><!-- end col -->
-
-
-        <div class="col-xxl-4 col-lg-6">
-            <div class="card card-height-100">
-                <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Projects Status</h4>
-                    <div class="flex-shrink-0">
-                        <div class="dropdown card-header-dropdown">
-                            <a class="dropdown-btn text-muted" href="#" data-bs-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                                All Time <i class="mdi mdi-chevron-down ms-1"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">All Time</a>
-                                <a class="dropdown-item" href="#">Last 7 Days</a>
-                                <a class="dropdown-item" href="#">Last 30 Days</a>
-                                <a class="dropdown-item" href="#">Last 90 Days</a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- end card header -->
-
-                <div class="card-body">
-                    <div id="prjects-status"
-                        data-colors='["--vz-success", "--vz-primary", "--vz-warning", "--vz-danger"]'
-                        class="apex-charts" dir="ltr"></div>
-                    <div class="mt-3">
-                        <div class="d-flex justify-content-center align-items-center mb-4">
-                            <h2 class="me-3 ff-secondary mb-0">258</h2>
-                            <div>
-                                <p class="text-muted mb-0">Total Projects</p>
-                                <p class="text-success fw-medium mb-0">
-                                    <span class="badge bg-success-subtle text-success p-1 rounded-circle"><i
-                                            class="ri-arrow-right-up-line"></i></span> +3 New
-                                </p>
-                            </div>
-                        </div>
-
-                        <div
-                            class="d-flex justify-content-between border-bottom border-bottom-dashed py-2">
-                            <p class="fw-medium mb-0"><i
-                                    class="ri-checkbox-blank-circle-fill text-success align-middle me-2"></i>
-                                Completed</p>
-                            <div>
-                                <span class="text-muted pe-5">125 Projects</span>
-                                <span class="text-success fw-medium fs-12">15870hrs</span>
-                            </div>
-                        </div><!-- end -->
-                        <div
-                            class="d-flex justify-content-between border-bottom border-bottom-dashed py-2">
-                            <p class="fw-medium mb-0"><i
-                                    class="ri-checkbox-blank-circle-fill text-primary align-middle me-2"></i>
-                                In Progress</p>
-                            <div>
-                                <span class="text-muted pe-5">42 Projects</span>
-                                <span class="text-success fw-medium fs-12">243hrs</span>
-                            </div>
-                        </div><!-- end -->
-                        <div
-                            class="d-flex justify-content-between border-bottom border-bottom-dashed py-2">
-                            <p class="fw-medium mb-0"><i
-                                    class="ri-checkbox-blank-circle-fill text-warning align-middle me-2"></i>
-                                Yet to Start</p>
-                            <div>
-                                <span class="text-muted pe-5">58 Projects</span>
-                                <span class="text-success fw-medium fs-12">~2050hrs</span>
-                            </div>
-                        </div><!-- end -->
-                        <div class="d-flex justify-content-between py-2">
-                            <p class="fw-medium mb-0"><i
-                                    class="ri-checkbox-blank-circle-fill text-danger align-middle me-2"></i>
-                                Cancelled</p>
-                            <div>
-                                <span class="text-muted pe-5">89 Projects</span>
-                                <span class="text-success fw-medium fs-12">~900hrs</span>
-                            </div>
-                        </div><!-- end -->
-                    </div>
-                </div><!-- end cardbody -->
-            </div><!-- end card -->
-        </div><!-- end col -->
     </div><!-- end row -->
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('script'); ?>
@@ -571,6 +626,120 @@
     
     <!-- Custom Dashboard JavaScript with Real Backend Data & Interactive Features -->
     <script>
+    // Override AI Status Chart with Real Data
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            var aiChartEl = document.querySelector("#ai-status");
+            if (aiChartEl) {
+                aiChartEl.innerHTML = '';
+                
+                var aiChartColors = getChartColorsArray("ai-status");
+                if (aiChartColors) {
+                    var aiData = {
+                        pending: <?php echo e($aiStatistics['pending']); ?>,
+                        accepted: <?php echo e($aiStatistics['accepted']); ?>,
+                        rejected: <?php echo e($aiStatistics['rejected']); ?>,
+                        modified: <?php echo e($aiStatistics['total'] - $aiStatistics['pending'] - $aiStatistics['accepted'] - $aiStatistics['rejected']); ?>
+
+                    };
+                    
+                    var options = {
+                        series: [aiData.pending, aiData.accepted, aiData.rejected, aiData.modified],
+                        labels: ["Pending", "Accepted", "Rejected", "Modified"],
+                        chart: {
+                            type: "donut",
+                            height: 230,
+                        },
+                        plotOptions: {
+                            pie: {
+                                size: 100,
+                                offsetX: 0,
+                                offsetY: 0,
+                                donut: {
+                                    size: "90%",
+                                    labels: {
+                                        show: false,
+                                    }
+                                },
+                            },
+                        },
+                        dataLabels: {
+                            enabled: false,
+                        },
+                        legend: {
+                            show: false,
+                        },
+                        stroke: {
+                            lineCap: "round",
+                            width: 0
+                        },
+                        colors: aiChartColors,
+                    };
+                    
+                    var aiChart = new ApexCharts(aiChartEl, options);
+                    aiChart.render();
+                }
+            }
+        }, 600);
+    });
+    
+    // Override Projects Status Chart with Real Data
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            var projectsChartEl = document.querySelector("#prjects-status");
+            if (projectsChartEl) {
+                projectsChartEl.innerHTML = '';
+                
+                var projectsChartColors = getChartColorsArray("prjects-status");
+                if (projectsChartColors) {
+                    var projectsData = {
+                        completed: <?php echo e($projectsStatus['completed']); ?>,
+                        in_progress: <?php echo e($projectsStatus['in_progress']); ?>,
+                        yet_to_start: <?php echo e($projectsStatus['yet_to_start']); ?>,
+                        cancelled: <?php echo e($projectsStatus['cancelled']); ?>
+
+                    };
+                    
+                    var options = {
+                        series: [projectsData.completed, projectsData.in_progress, projectsData.yet_to_start, projectsData.cancelled],
+                        labels: ["Completed", "In Progress", "Yet to Start", "Cancelled"],
+                        chart: {
+                            type: "donut",
+                            height: 230,
+                        },
+                        plotOptions: {
+                            pie: {
+                                size: 100,
+                                offsetX: 0,
+                                offsetY: 0,
+                                donut: {
+                                    size: "90%",
+                                    labels: {
+                                        show: false,
+                                    }
+                                },
+                            },
+                        },
+                        dataLabels: {
+                            enabled: false,
+                        },
+                        legend: {
+                            show: false,
+                        },
+                        stroke: {
+                            lineCap: "round",
+                            width: 0
+                        },
+                        colors: projectsChartColors,
+                    };
+                    
+                    var projectsChart = new ApexCharts(projectsChartEl, options);
+                    projectsChart.render();
+                }
+            }
+        }, 500);
+    });
+    
     // Override Projects Overview Chart with Real Data
     document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {

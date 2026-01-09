@@ -12,11 +12,40 @@
                         colors="primary:#8c68cd,secondary:#4788ff" style="width:90px;height:90px">
                     </lord-icon>
                 </div>
-                <h3 class="mb-1"><?php echo e($task->timeEntries->sum('duration_minutes')); ?> min</h3>
-                <h5 class="fs-14 mb-4"><?php echo e($task->title); ?></h5>
+                <h3 class="mb-1">
+                    <span id="totalTime"><?php echo e($task->timeEntries->sum('duration_minutes')); ?></span> min
+                </h3>
+                <h5 class="fs-14 mb-2">Total Logged Time</h5>
+                
+                <!-- Live Timer Display -->
+                <div id="liveTimerDisplay" class="mb-3" style="display: none;">
+                    <h4 class="text-primary mb-0">
+                        <i class="ri-time-line"></i> 
+                        <span id="currentTimer">00:00:00</span>
+                    </h4>
+                    <small class="text-muted">Current Session</small>
+                </div>
+                
                 <div class="hstack gap-2 justify-content-center">
-                    <button class="btn btn-danger btn-sm"><i class="ri-stop-circle-line align-bottom me-1"></i> Stop</button>
-                    <button class="btn btn-primary btn-sm"><i class="ri-play-circle-line align-bottom me-1"></i> Start</button>
+                    <button id="stopBtn" class="btn btn-danger btn-sm" style="display: none;">
+                        <i class="ri-stop-circle-line align-bottom me-1"></i> Stop
+                    </button>
+                    <button id="startBtn" class="btn btn-primary btn-sm">
+                        <i class="ri-play-circle-line align-bottom me-1"></i> Start
+                    </button>
+                </div>
+                
+                <!-- Quick Add Time Form (Hidden by default) -->
+                <div id="quickAddForm" class="mt-3 border-top pt-3" style="display: none;">
+                    <form action="<?php echo e(route('management.tasks.time-entries.store', $task)); ?>" method="POST" class="text-start">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="date" value="<?php echo e(date('Y-m-d')); ?>">
+                        <input type="hidden" name="duration_minutes" id="sessionDuration">
+                        <input type="hidden" name="task_title" value="<?php echo e($task->title); ?>">
+                        <button type="submit" class="btn btn-success btn-sm w-100">
+                            <i class="ri-save-line"></i> Save Session
+                        </button>
+                    </form>
                 </div>
             </div>
         </div><!--end card-->
@@ -367,6 +396,39 @@
                     </div><!--end tab-pane-->
                     <div class="tab-pane" id="profile-1" role="tabpanel">
                         <h6 class="card-title mb-4 pb-2">Time Entries</h6>
+                        
+                        <!-- Add Time Entry Form -->
+                        <div class="card border mb-3">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Add Time Entry</h6>
+                            </div>
+                            <div class="card-body">
+                                <form action="<?php echo e(route('management.tasks.time-entries.store', $task)); ?>" method="POST">
+                                    <?php echo csrf_field(); ?>
+                                    <div class="row g-3">
+                                        <div class="col-md-3">
+                                            <label class="form-label">Date</label>
+                                            <input type="date" class="form-control" name="date" max="<?php echo e(date('Y-m-d')); ?>" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Duration (minutes)</label>
+                                            <input type="number" class="form-control" name="duration_minutes" min="1" max="1440" placeholder="e.g., 120" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Idle Time (minutes)</label>
+                                            <input type="number" class="form-control" name="idle_minutes" min="0" placeholder="e.g., 5">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class="ri-add-line"></i> Add Entry
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
                         <div class="table-responsive table-card">
                             <table class="table align-middle mb-0">
                                 <thead class="table-light text-muted">
@@ -379,48 +441,51 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php $__empty_1 = true; $__currentLoopData = $task->timeEntries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $entry): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                     <tr>
                                         <th scope="row">
                                             <div class="d-flex align-items-center">
-                                                <img src="<?php echo e(URL::asset('build/images/users/avatar-8.jpg')); ?>" alt="" class="rounded-circle avatar-xxs">
+                                                <?php if($entry->user->avatar): ?>
+                                                    <img src="<?php echo e(asset('storage/' . $entry->user->avatar)); ?>" alt="" class="rounded-circle avatar-xxs">
+                                                <?php else: ?>
+                                                    <div class="avatar-xxs rounded-circle bg-secondary-subtle d-flex align-items-center justify-content-center">
+                                                        <span class="text-secondary fs-10"><?php echo e(strtoupper(substr($entry->user->name, 0, 1))); ?></span>
+                                                    </div>
+                                                <?php endif; ?>
                                                 <div class="flex-grow-1 ms-2">
-                                                    <a href="pages-profile" class="fw-medium">Thomas Taylor</a>
+                                                    <a href="javascript:void(0);" class="fw-medium"><?php echo e($entry->user->name); ?></a>
                                                 </div>
                                             </div>
                                         </th>
-                                        <td>02 Jan, 2022</td>
-                                        <td>3 hrs 12 min</td>
-                                        <td>05 min</td>
-                                        <td>Apps Pages</td>
-                                    </tr>
-                                    <tr>
+                                        <td><?php echo e($entry->date->format('d M, Y')); ?></td>
                                         <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="<?php echo e(URL::asset('build/images/users/avatar-10.jpg')); ?>" alt="" class="rounded-circle avatar-xxs">
-                                                <div class="flex-grow-1 ms-2">
-                                                    <a href="pages-profile" class="fw-medium">Tonya Noble</a>
-                                                </div>
-                                            </div>
+                                            <?php
+                                                $hrs = floor($entry->duration_minutes / 60);
+                                                $min = $entry->duration_minutes % 60;
+                                            ?>
+                                            <?php echo e($hrs); ?> hrs <?php echo e($min); ?> min
                                         </td>
-                                        <td>28 Dec, 2021</td>
-                                        <td>1 hrs 35 min</td>
-                                        <td>-</td>
-                                        <td>Profile Page Design</td>
+                                        <td>
+                                            <?php if($entry->idle_minutes > 0): ?>
+                                                <?php
+                                                    $idleHrs = floor($entry->idle_minutes / 60);
+                                                    $idleMin = $entry->idle_minutes % 60;
+                                                ?>
+                                                <?php if($idleHrs > 0): ?><?php echo e($idleHrs); ?> hrs <?php endif; ?><?php echo e($idleMin); ?> min
+                                            <?php else: ?>
+                                                -
+                                            <?php endif; ?>
+                                        </td>
+                                        <td><?php echo e($entry->task_title ?? $task->title); ?></td>
                                     </tr>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                     <tr>
-                                        <th scope="row">
-                                            <div class="d-flex align-items-center">
-                                                <img src="<?php echo e(URL::asset('build/images/users/avatar-10.jpg')); ?>" alt="" class="rounded-circle avatar-xxs">
-                                                <div class="flex-grow-1 ms-2">
-                                                    <a href="pages-profile" class="fw-medium">Tonya Noble</a>
-                                                </div>
-                                            </div>
-                                        </th>
-                                        <td>27 Dec, 2021</td>
-                                        <td>4 hrs 26 min</td>
-                                        <td>03 min</td>
-                                        <td>Ecommerce Dashboard</td>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            <i class="ri-time-line fs-20 d-block mb-2"></i>
+                                            No time entries recorded yet
+                                        </td>
                                     </tr>
+                                    <?php endif; ?>
                                 </tbody>
                             </table><!--end table-->
                         </div>
@@ -492,6 +557,9 @@
 <script src="<?php echo e(URL::asset('build/js/app.js')); ?>"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // ============================================
+        // Sub-tasks Toggle Functionality
+        // ============================================
         const checkboxes = document.querySelectorAll('.subtask-checkbox');
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function () {
@@ -503,11 +571,17 @@
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                         'X-CSRF-TOKEN': "<?php echo e(csrf_token()); ?>"
                     },
                     body: JSON.stringify({ is_completed: isChecked })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         if (data.is_completed) {
@@ -522,11 +596,121 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error updating subtask');
+                    alert('Error updating subtask: ' + error.message);
                     this.checked = !isChecked; // Revert
                 });
             });
         });
+
+        // ============================================
+        // Time Tracking Functionality
+        // ============================================
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const currentTimerDisplay = document.getElementById('currentTimer');
+        const liveTimerDisplay = document.getElementById('liveTimerDisplay');
+        const quickAddForm = document.getElementById('quickAddForm');
+        const sessionDurationInput = document.getElementById('sessionDuration');
+        
+        const STORAGE_KEY = 'task_<?php echo e($task->id); ?>_timer';
+        let timerInterval = null;
+        let startTime = null;
+        let elapsedSeconds = 0;
+
+        // Load saved timer state
+        function loadTimerState() {
+            const savedState = localStorage.getItem(STORAGE_KEY);
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                startTime = new Date(state.startTime);
+                elapsedSeconds = Math.floor((Date.now() - startTime.getTime()) / 1000);
+                startTimer(false); // Resume without resetting
+            }
+        }
+
+        // Save timer state
+        function saveTimerState() {
+            if (startTime) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    startTime: startTime.toISOString()
+                }));
+            }
+        }
+
+        // Clear timer state
+        function clearTimerState() {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+
+        // Format seconds to HH:MM:SS
+        function formatTime(seconds) {
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        // Update timer display
+        function updateDisplay() {
+            currentTimerDisplay.textContent = formatTime(elapsedSeconds);
+            sessionDurationInput.value = Math.ceil(elapsedSeconds / 60); // Convert to minutes
+        }
+
+        // Start timer
+        function startTimer(reset = true) {
+            if (reset) {
+                startTime = new Date();
+                elapsedSeconds = 0;
+            }
+            
+            liveTimerDisplay.style.display = 'block';
+            startBtn.style.display = 'none';
+            stopBtn.style.display = 'inline-block';
+            quickAddForm.style.display = 'none';
+            
+            updateDisplay();
+            saveTimerState();
+            
+            timerInterval = setInterval(() => {
+                elapsedSeconds++;
+                updateDisplay();
+            }, 1000);
+        }
+
+        // Stop timer
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
+            startBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'none';
+            
+            if (elapsedSeconds > 0) {
+                quickAddForm.style.display = 'block';
+            }
+            
+            clearTimerState();
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', () => startTimer(true));
+        stopBtn.addEventListener('click', stopTimer);
+
+        // Auto-save form submission handler
+        quickAddForm.querySelector('form').addEventListener('submit', function() {
+            // Reset timer after saving
+            setTimeout(() => {
+                elapsedSeconds = 0;
+                liveTimerDisplay.style.display = 'none';
+                quickAddForm.style.display = 'none';
+                updateDisplay();
+            }, 100);
+        });
+
+        // Load timer on page load
+        loadTimerState();
     });
 </script>
 <?php $__env->stopSection(); ?>

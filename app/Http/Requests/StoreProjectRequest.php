@@ -35,6 +35,7 @@ class StoreProjectRequest extends FormRequest
             'team_lead_id' => ['nullable', 'exists:users,id'],
             'members' => ['nullable', 'array'],
             'members.*' => ['exists:users,id'],
+            'attachments' => ['nullable', 'array'],
             'attachments.*' => ['file', 'max:10240'], // 10MB per file
         ];
     }

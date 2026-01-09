@@ -25,7 +25,7 @@
     @endif
 
     <form action="{{ isset($task) ? route('management.tasks.update', $task) : route('management.tasks.store') }}" 
-          method="POST">
+          method="POST" enctype="multipart/form-data">
         @csrf
         @if(isset($task))
             @method('PUT')
@@ -184,6 +184,40 @@
                 </div>
             </div>
 
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="ri-attachment-line"></i> Attachments</h5>
+                </div>
+                <div class="card-body">
+                    <input type="file" class="form-control @error('attachments.*') is-invalid @enderror" 
+                           name="attachments[]" multiple accept=".pdf,.doc,.docx,.zip,.png,.jpg,.jpeg">
+                    <small class="text-muted">Max 5 files, 5MB each</small>
+                    @error('attachments.*')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i class="ri-task-line"></i> Sub-Tasks</h5>
+                    <button type="button" class="btn btn-sm btn-soft-primary" onclick="addSubTask()">
+                        <i class="ri-add-line"></i> Add Sub-Task
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="subTasksContainer">
+                        <div class="input-group mb-2 subtask-item">
+                            <input type="text" class="form-control" name="sub_tasks[]" placeholder="Enter sub-task title">
+                            <button type="button" class="btn btn-danger" onclick="removeSubTask(this)">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <small class="text-muted">Add checklist items for this task</small>
+                </div>
+            </div>
+
             <div class="text-end mb-3">
                 <button type="submit" class="btn btn-success w-100">
                     <i class="ri-save-line align-bottom me-1"></i> {{ isset($task) ? 'Update Task' : 'Create Task' }}
@@ -192,4 +226,31 @@
         </div>
     </div>
     </form>
+@endsection
+
+@section('script')
+<script>
+// Sub-Tasks Management
+function addSubTask() {
+    const container = document.getElementById('subTasksContainer');
+    const newItem = document.createElement('div');
+    newItem.className = 'input-group mb-2 subtask-item';
+    newItem.innerHTML = `
+        <input type="text" class="form-control" name="sub_tasks[]" placeholder="Enter sub-task title">
+        <button type="button" class="btn btn-danger" onclick="removeSubTask(this)">
+            <i class="ri-delete-bin-line"></i>
+        </button>
+    `;
+    container.appendChild(newItem);
+}
+
+function removeSubTask(button) {
+    const container = document.getElementById('subTasksContainer');
+    if (container.children.length > 1) {
+        button.closest('.subtask-item').remove();
+    } else {
+        alert('At least one sub-task field is required');
+    }
+}
+</script>
 @endsection

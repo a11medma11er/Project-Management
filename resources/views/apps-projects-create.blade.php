@@ -2,9 +2,6 @@
 @section('title')
     {{ isset($project) ? 'Edit Project' : 'Create Project' }}
 @endsection
-@section('css')
-    <link href="{{ URL::asset('build/libs/dropzone/dropzone.css') }}" rel="stylesheet">
-@endsection
 @section('content')
     @component('components.breadcrumb')
         @slot('li_1')
@@ -130,45 +127,52 @@
                     <div>
                         <p class="text-muted">Add Attached files here.</p>
 
-                        <div class="dropzone">
-                            <div class="fallback">
-                                <input name="file" type="file" multiple="multiple">
-                            </div>
-                            <div class="dz-message needsclick">
-                                <div class="mb-3">
-                                    <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
-                                </div>
-
-                                <h5>Drop files here or click to upload.</h5>
-                            </div>
+                        <div class="mb-3">
+                            <input type="file" 
+                                   name="attachments[]" 
+                                   class="form-control" 
+                                   id="attachments-input"
+                                   multiple 
+                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.gif,.zip,.rar">
+                            <div class="form-text">You can select multiple files (Max 10MB per file)</div>
                         </div>
 
-                        <ul class="list-unstyled mb-0" id="dropzone-preview">
-                            <li class="mt-2" id="dropzone-preview-list">
-                                <!-- This is used as the file preview template -->
+                        <!-- Preview selected files -->
+                        <div id="files-preview" class="mt-3"></div>
+
+                        @if(isset($project) && $project->attachments->count() > 0)
+                        <h6 class="mt-4 mb-3">Existing Attachments:</h6>
+                        <ul class="list-unstyled mb-0">
+                            @foreach($project->attachments as $attachment)
+                            <li class="mt-2">
                                 <div class="border rounded">
                                     <div class="d-flex p-2">
                                         <div class="flex-shrink-0 me-3">
                                             <div class="avatar-sm bg-light rounded">
-                                                <img src="#" alt="Project-Image" data-dz-thumbnail
-                                                    class="img-fluid rounded d-block" />
+                                                <div class="avatar-title bg-primary-subtle text-primary rounded fs-24">
+                                                    <i class="ri-file-text-fill"></i>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="flex-grow-1">
                                             <div class="pt-1">
-                                                <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
-                                                <p class="fs-13 text-muted mb-0" data-dz-size></p>
-                                                <strong class="error text-danger" data-dz-errormessage></strong>
+                                                <h5 class="fs-14 mb-1">{{ $attachment->file_name }}</h5>
+                                                <p class="fs-13 text-muted mb-0">{{ $attachment->file_size_human }}</p>
                                             </div>
                                         </div>
                                         <div class="flex-shrink-0 ms-3">
-                                            <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
+                                            <a href="{{ asset('storage/' . $attachment->file_path) }}" 
+                                               download="{{ $attachment->file_name }}" 
+                                               class="btn btn-sm btn-success me-1">
+                                                <i class="ri-download-2-line"></i>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
                             </li>
+                            @endforeach
                         </ul>
-                        <!-- end dropzon-preview -->
+                        @endif
                     </div>
                 </div>
             </div>
@@ -374,7 +378,6 @@
 @endsection
 @section('script')
     <script src="{{ URL::asset('build/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js') }}"></script>
-    <script src="{{ URL::asset('build/libs/dropzone/dropzone-min.js') }}"></script>
     <script>
         // CKEditor initialization
         ClassicEditor
@@ -382,6 +385,49 @@
             .catch(error => {
                 console.error(error);
             });
+
+        // File attachments preview
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('attachments-input');
+            const filesPreview = document.getElementById('files-preview');
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    filesPreview.innerHTML = '';
+                    const files = e.target.files;
+
+                    if (files.length > 0) {
+                        filesPreview.innerHTML = '<h6 class="mb-3">Selected Files:</h6>';
+                        
+                        Array.from(files).forEach((file, index) => {
+                            const fileSize = (file.size / 1024).toFixed(2); // KB
+                            const fileSizeDisplay = fileSize > 1024 ? 
+                                (fileSize / 1024).toFixed(2) + ' MB' : 
+                                fileSize + ' KB';
+
+                            const fileItem = document.createElement('div');
+                            fileItem.className = 'border rounded p-2 mb-2';
+                            fileItem.innerHTML = `
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="avatar-sm bg-light rounded">
+                                            <div class="avatar-title bg-secondary-subtle text-secondary rounded">
+                                                <i class="ri-file-text-line fs-20"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">${file.name}</h6>
+                                        <p class="text-muted mb-0 fs-12">${fileSizeDisplay}</p>
+                                    </div>
+                                </div>
+                            `;
+                            filesPreview.appendChild(fileItem);
+                        });
+                    }
+                });
+            }
+        });
 
         // Team Members Management
         document.addEventListener('DOMContentLoaded', function() {

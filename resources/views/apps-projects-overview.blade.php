@@ -1,4 +1,4 @@
-@extends('layouts.master')
+﻿@extends('layouts.master')
 @section('title')
     {{ $project->title }}
 @endsection
@@ -80,6 +80,11 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link fw-semibold" data-bs-toggle="tab" href="#project-tasks" role="tab">
+                                    Tasks
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link fw-semibold" data-bs-toggle="tab" href="#project-activities" role="tab">
                                     Activities
                                 </a>
@@ -123,6 +128,7 @@
                                         @endif
 
 
+
                                         <div class="pt-3 border-top border-top-dashed mt-4">
                                             <div class="row gy-3">
 
@@ -153,100 +159,6 @@
                                             </div>
                                         </div>
 
-                                        <div class="pt-3 border-top border-top-dashed mt-4">
-                                            <h6 class="mb-3 fw-semibold text-uppercase">Resources</h6>
-                                            <div class="row g-3">
-                                                <div class="col-xxl-4 col-lg-6">
-                                                    <div class="border rounded border-dashed p-2">
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-3">
-                                                                <div class="avatar-sm">
-                                                                    <div
-                                                                        class="avatar-title bg-light text-primary rounded fs-24">
-                                                                        <i class="ri-folder-zip-line"></i>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="flex-grow-1 overflow-hidden">
-                                                                <h5 class="fs-13 mb-1"><a href="#"
-                                                                        class="text-body text-truncate d-block">App
-                                                                        pages.zip</a></h5>
-                                                                <div>2.2MB</div>
-                                                            </div>
-                                                            <div class="flex-shrink-0 ms-2">
-                                                                <div class="d-flex gap-1">
-                                                                    <button type="button"
-                                                                        class="btn btn-icon text-muted btn-sm fs-18"><i
-                                                                            class="ri-download-2-line"></i></button>
-                                                                    <div class="dropdown">
-                                                                        <button
-                                                                            class="btn btn-icon text-muted btn-sm fs-18 dropdown"
-                                                                            type="button" data-bs-toggle="dropdown"
-                                                                            aria-expanded="false">
-                                                                            <i class="ri-more-fill"></i>
-                                                                        </button>
-                                                                        <ul class="dropdown-menu">
-                                                                            <li><a class="dropdown-item" href="#"><i
-                                                                                        class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                                                                                    Rename</a></li>
-                                                                            <li><a class="dropdown-item" href="#"><i
-                                                                                        class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
-                                                                                    Delete</a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- end col -->
-                                                <div class="col-xxl-4 col-lg-6">
-                                                    <div class="border rounded border-dashed p-2">
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-3">
-                                                                <div class="avatar-sm">
-                                                                    <div
-                                                                        class="avatar-title bg-light text-primary rounded fs-24">
-                                                                        <i class="ri-file-ppt-2-line"></i>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="flex-grow-1 overflow-hidden">
-                                                                <h5 class="fs-13 mb-1"><a href="#"
-                                                                        class="text-body text-truncate d-block">Velzon
-                                                                        admin.ppt</a></h5>
-                                                                <div>2.4MB</div>
-                                                            </div>
-                                                            <div class="flex-shrink-0 ms-2">
-                                                                <div class="d-flex gap-1">
-                                                                    <button type="button"
-                                                                        class="btn btn-icon text-muted btn-sm fs-18"><i
-                                                                            class="ri-download-2-line"></i></button>
-                                                                    <div class="dropdown">
-                                                                        <button
-                                                                            class="btn btn-icon text-muted btn-sm fs-18 dropdown"
-                                                                            type="button" data-bs-toggle="dropdown"
-                                                                            aria-expanded="false">
-                                                                            <i class="ri-more-fill"></i>
-                                                                        </button>
-                                                                        <ul class="dropdown-menu">
-                                                                            <li><a class="dropdown-item" href="#"><i
-                                                                                        class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                                                                                    Rename</a></li>
-                                                                            <li><a class="dropdown-item" href="#"><i
-                                                                                        class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
-                                                                                    Delete</a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- end col -->
-                                            </div>
-                                            <!-- end row -->
-                                        </div>
                                     </div>
                                 </div>
                                 <!-- end card body -->
@@ -275,106 +187,71 @@
                                 <div class="card-body">
 
                                     <div data-simplebar style="height: 300px;" class="px-3 mx-n3 mb-2">
+                                        @forelse($project->comments->where('parent_id', null) as $comment)
                                         <div class="d-flex mb-4">
                                             <div class="flex-shrink-0">
-                                                <img src="{{ URL::asset('build/images/users/avatar-8.jpg') }}" alt=""
-                                                    class="avatar-xs rounded-circle" />
+                                                @if($comment->user->avatar)
+                                                    <img src="{{ asset('storage/' . $comment->user->avatar) }}" alt="{{ $comment->user->name }}"
+                                                        class="avatar-xs rounded-circle" />
+                                                @else
+                                                    <div class="avatar-xs">
+                                                        <div class="avatar-title rounded-circle bg-primary">
+                                                            {{ strtoupper(substr($comment->user->name, 0, 2)) }}
+                                                        </div>
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div class="flex-grow-1 ms-3">
-                                                <h5 class="fs-13">Joseph Parker <small class="text-muted ms-2">20
-                                                        Dec 2021 - 05:47AM</small></h5>
-                                                <p class="text-muted">I am getting message from customers that when
-                                                    they place order always get error message .</p>
-                                                <a href="javascript: void(0);" class="badge text-muted bg-light"><i
-                                                        class="mdi mdi-reply"></i> Reply</a>
-                                                <div class="d-flex mt-4">
-                                                    <div class="flex-shrink-0">
-                                                        <img src="{{ URL::asset('build/images/users/avatar-10.jpg') }}" alt=""
-                                                            class="avatar-xs rounded-circle" />
+                                                <h5 class="fs-13">{{ $comment->user->name }} 
+                                                    <small class="text-muted ms-2">{{ $comment->created_at->format('d M Y - h:iA') }}</small>
+                                                </h5>
+                                                <p class="text-muted">{{ $comment->comment }}</p>
+                                                
+                                                @if($comment->replies->count() > 0)
+                                                    @foreach($comment->replies as $reply)
+                                                    <div class="d-flex mt-3">
+                                                        <div class="flex-shrink-0">
+                                                            @if($reply->user->avatar)
+                                                                <img src="{{ asset('storage/' . $reply->user->avatar) }}" alt="{{ $reply->user->name }}"
+                                                                    class="avatar-xs rounded-circle" />
+                                                            @else
+                                                                <div class="avatar-xs">
+                                                                    <div class="avatar-title rounded-circle bg-secondary">
+                                                                        {{ strtoupper(substr($reply->user->name, 0, 2)) }}
+                                                                    </div>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                        <div class="flex-grow-1 ms-3">
+                                                            <h5 class="fs-13">{{ $reply->user->name }} 
+                                                                <small class="text-muted ms-2">{{ $reply->created_at->format('d M Y - h:iA') }}</small>
+                                                            </h5>
+                                                            <p class="text-muted">{{ $reply->comment }}</p>
+                                                        </div>
                                                     </div>
-                                                    <div class="flex-grow-1 ms-3">
-                                                        <h5 class="fs-13">Alexis Clarke <small
-                                                                class="text-muted ms-2">22 Dec 2021 - 02:32PM</small></h5>
-                                                        <p class="text-muted">Please be sure to check your Spam mailbox
-                                                            to see if your email filters have identified the email from Dell
-                                                            as spam.</p>
-                                                        <a href="javascript: void(0);" class="badge text-muted bg-light"><i
-                                                                class="mdi mdi-reply"></i> Reply</a>
-                                                    </div>
-                                                </div>
+                                                    @endforeach
+                                                @endif
                                             </div>
                                         </div>
-                                        <div class="d-flex mb-4">
-                                            <div class="flex-shrink-0">
-                                                <img src="{{ URL::asset('build/images/users/avatar-6.jpg') }}" alt=""
-                                                    class="avatar-xs rounded-circle" />
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <h5 class="fs-13">Donald Palmer <small class="text-muted ms-2">24
-                                                        Dec 2021 - 05:20PM</small></h5>
-                                                <p class="text-muted">If you have further questions, please contact
-                                                    Customer Support from the “Action Menu” on your <a
-                                                        href="javascript:void(0);" class="text-decoration-underline">Online
-                                                        Order Support</a>.</p>
-                                                <a href="javascript: void(0);" class="badge text-muted bg-light"><i
-                                                        class="mdi mdi-reply"></i> Reply</a>
-                                            </div>
+                                        @empty
+                                        <div class="text-center py-4">
+                                            <i class="ri-message-3-line fs-1 text-muted"></i>
+                                            <p class="text-muted mt-2">No comments yet. Be the first to comment!</p>
                                         </div>
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0">
-                                                <img src="{{ URL::asset('build/images/users/avatar-10.jpg') }}" alt=""
-                                                    class="avatar-xs rounded-circle" />
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <h5 class="fs-13">Alexis Clarke <small class="text-muted ms-2">26
-                                                        min ago</small></h5>
-                                                <p class="text-muted">Your <a href="javascript:void(0)"
-                                                        class="text-decoration-underline">Online Order Support</a> provides
-                                                    you with the most current status of your order. To help manage your
-                                                    order refer to the “Action Menu” to initiate return, contact Customer
-                                                    Support and more.</p>
-                                                <div class="row g-2 mb-3">
-                                                    <div class="col-lg-1 col-sm-2 col-6">
-                                                        <img src="{{ URL::asset('build/images/small/img-4.jpg') }}" alt=""
-                                                            class="img-fluid rounded">
-                                                    </div>
-                                                    <div class="col-lg-1 col-sm-2 col-6">
-                                                        <img src="{{ URL::asset('build/images/small/img-5.jpg') }}" alt=""
-                                                            class="img-fluid rounded">
-                                                    </div>
-                                                </div>
-                                                <a href="javascript: void(0);" class="badge text-muted bg-light"><i
-                                                        class="mdi mdi-reply"></i> Reply</a>
-                                                <div class="d-flex mt-4">
-                                                    <div class="flex-shrink-0">
-                                                        <img src="{{ URL::asset('build/images/users/avatar-6.jpg') }}" alt=""
-                                                            class="avatar-xs rounded-circle" />
-                                                    </div>
-                                                    <div class="flex-grow-1 ms-3">
-                                                        <h5 class="fs-13">Donald Palmer <small
-                                                                class="text-muted ms-2">8 sec ago</small></h5>
-                                                        <p class="text-muted">Other shipping methods are available at
-                                                            checkout if you want your purchase delivered faster.</p>
-                                                        <a href="javascript: void(0);" class="badge text-muted bg-light"><i
-                                                                class="mdi mdi-reply"></i> Reply</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @endforelse
                                     </div>
-                                    <form class="mt-4">
+                                    <form action="{{ route('management.projects.comments.store', $project) }}" method="POST" class="mt-4">
+                                        @csrf
                                         <div class="row g-3">
                                             <div class="col-12">
-                                                <label for="exampleFormControlTextarea1" class="form-label text-body">Leave
-                                                    a Comments</label>
-                                                <textarea class="form-control bg-light border-light" id="exampleFormControlTextarea1" rows="3"
-                                                    placeholder="Enter your comment..."></textarea>
+                                                <label for="comment-textarea" class="form-label text-body">Leave a Comment</label>
+                                                <textarea class="form-control bg-light border-light" name="comment" id="comment-textarea" rows="3"
+                                                    placeholder="Enter your comment..." required></textarea>
                                             </div>
                                             <div class="col-12 text-end">
-                                                <button type="button"
-                                                    class="btn btn-ghost-primary btn-icon waves-effect me-1"><i
-                                                        class="ri-attachment-line fs-16"></i></button>
-                                                <a href="javascript:void(0);" class="btn btn-primary">Post Comments</a>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="ri-send-plane-2-fill align-bottom me-1"></i> Post Comment
+                                                </button>
                                             </div>
                                         </div>
                                     </form>
@@ -560,257 +437,102 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @php
+                                                $iconMap = [
+                                                    'pdf' => ['icon' => 'ri-file-pdf-fill', 'color' => 'danger'],
+                                                    'doc' => ['icon' => 'ri-file-word-fill', 'color' => 'primary'],
+                                                    'docx' => ['icon' => 'ri-file-word-fill', 'color' => 'primary'],
+                                                    'xls' => ['icon' => 'ri-file-excel-fill', 'color' => 'success'],
+                                                    'xlsx' => ['icon' => 'ri-file-excel-fill', 'color' => 'success'],
+                                                    'ppt' => ['icon' => 'ri-file-ppt-fill', 'color' => 'warning'],
+                                                    'pptx' => ['icon' => 'ri-file-ppt-fill', 'color' => 'warning'],
+                                                    'zip' => ['icon' => 'ri-folder-zip-line', 'color' => 'primary'],
+                                                    'rar' => ['icon' => 'ri-folder-zip-line', 'color' => 'primary'],
+                                                    '7z' => ['icon' => 'ri-folder-zip-line', 'color' => 'primary'],
+                                                    'jpg' => ['icon' => 'ri-image-2-fill', 'color' => 'danger'],
+                                                    'jpeg' => ['icon' => 'ri-image-2-fill', 'color' => 'danger'],
+                                                    'png' => ['icon' => 'ri-image-2-fill', 'color' => 'danger'],
+                                                    'gif' => ['icon' => 'ri-image-2-fill', 'color' => 'danger'],
+                                                    'mp4' => ['icon' => 'ri-video-line', 'color' => 'primary'],
+                                                    'avi' => ['icon' => 'ri-video-line', 'color' => 'primary'],
+                                                    'mov' => ['icon' => 'ri-video-line', 'color' => 'primary'],
+                                                    'txt' => ['icon' => 'ri-file-text-fill', 'color' => 'secondary'],
+                                                ];
+                                                @endphp
+                                                @forelse($project->attachments as $attachment)
+                                                @php
+                                                $extension = strtolower(pathinfo($attachment->file_path, PATHINFO_EXTENSION));
+                                                $iconData = $iconMap[$extension] ?? ['icon' => 'ri-file-fill', 'color' => 'secondary'];
+                                                $fileSize = $attachment->file_size ? number_format($attachment->file_size / 1024, 2) . ' KB' : 'N/A';
+                                                if($attachment->file_size > 1024 * 1024) {
+                                                    $fileSize = number_format($attachment->file_size / (1024 * 1024), 2) . ' MB';
+                                                }
+                                                @endphp
                                                 <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <div class="avatar-sm">
-                                                                <div
-                                                                    class="avatar-title bg-light text-primary rounded fs-24">
-                                                                    <i class="ri-folder-zip-line"></i>
+                                                                <div class="avatar-title bg-light text-{{ $iconData['color'] }} rounded fs-24">
+                                                                    <i class="{{ $iconData['icon'] }}"></i>
                                                                 </div>
                                                             </div>
                                                             <div class="ms-3 flex-grow-1">
-                                                                <h5 class="fs-14 mb-0"><a href="javascript:void(0)"
-                                                                        class="text-body">Artboard-documents.zip</a>
+                                                                <h5 class="fs-14 mb-0">
+                                                                    <a href="{{ asset('storage/' . $attachment->file_path) }}" 
+                                                                       download="{{ $attachment->file_name }}" 
+                                                                       class="text-body">
+                                                                        {{ $attachment->file_name ?? basename($attachment->file_path) }}
+                                                                    </a>
                                                                 </h5>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td>Zip File</td>
-                                                    <td>4.57 MB</td>
-                                                    <td>12 Dec 2021</td>
+                                                    <td>{{ strtoupper($extension) }} File</td>
+                                                    <td>{{ $fileSize }}</td>
+                                                    <td>{{ $attachment->created_at->format('d M Y') }}</td>
                                                     <td>
                                                         <div class="dropdown">
-                                                            <a href="javascript:void(0);"
-                                                                class="btn btn-soft-secondary btn-sm btn-icon"
-                                                                data-bs-toggle="dropdown" aria-expanded="true">
+                                                            <a href="javascript:void(0);" class="btn btn-soft-secondary btn-sm btn-icon" data-bs-toggle="dropdown" aria-expanded="false">
                                                                 <i class="ri-more-fill"></i>
                                                             </a>
                                                             <ul class="dropdown-menu dropdown-menu-end">
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-eye-fill me-2 align-bottom text-muted"></i>View</a>
+                                                                <li>
+                                                                    <a class="dropdown-item" href="{{ asset('storage/' . $attachment->file_path) }}" target="_blank">
+                                                                        <i class="ri-eye-fill me-2 align-bottom text-muted"></i>View
+                                                                    </a>
                                                                 </li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-download-2-fill me-2 align-bottom text-muted"></i>Download</a>
+                                                                <li>
+                                                                    <a class="dropdown-item" href="{{ asset('storage/' . $attachment->file_path) }}" download="{{ $attachment->file_name }}">
+                                                                        <i class="ri-download-2-fill me-2 align-bottom text-muted"></i>Download
+                                                                    </a>
                                                                 </li>
+                                                                @can('delete-project-attachments')
                                                                 <li class="dropdown-divider"></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-delete-bin-5-fill me-2 align-bottom text-muted"></i>Delete</a>
+                                                                <li>
+                                                                    <form action="{{ route('management.projects.attachments.destroy', [$project, $attachment]) }}" method="POST" style="display: inline;">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="dropdown-item" onclick="return confirm('Are you sure you want to delete this file?')">
+                                                                            <i class="ri-delete-bin-5-fill me-2 align-bottom text-muted"></i>Delete
+                                                                        </button>
+                                                                    </form>
                                                                 </li>
+                                                                @endcan
                                                             </ul>
                                                         </div>
                                                     </td>
                                                 </tr>
+                                                @empty
                                                 <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="avatar-sm">
-                                                                <div
-                                                                    class="avatar-title bg-light text-danger rounded fs-24">
-                                                                    <i class="ri-file-pdf-fill"></i>
-                                                                </div>
-                                                            </div>
-                                                            <div class="ms-3 flex-grow-1">
-                                                                <h5 class="fs-14 mb-0"><a href="javascript:void(0);"
-                                                                        class="text-body">Bank Management System</a>
-                                                                </h5>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>PDF File</td>
-                                                    <td>8.89 MB</td>
-                                                    <td>24 Nov 2021</td>
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <a href="javascript:void(0);"
-                                                                class="btn btn-soft-secondary btn-sm btn-icon"
-                                                                data-bs-toggle="dropdown" aria-expanded="true">
-                                                                <i class="ri-more-fill"></i>
-                                                            </a>
-                                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-eye-fill me-2 align-bottom text-muted"></i>View</a>
-                                                                </li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-download-2-fill me-2 align-bottom text-muted"></i>Download</a>
-                                                                </li>
-                                                                <li class="dropdown-divider"></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-delete-bin-5-fill me-2 align-bottom text-muted"></i>Delete</a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
+                                                    <td colspan="5" class="text-center py-5">
+                                                        <lord-icon src="https://cdn.lordicon.com/nocovwne.json" trigger="loop" colors="primary:#405189,secondary:#0ab39c" style="width:72px;height:72px"></lord-icon>
+                                                        <h5 class="mt-2">No documents uploaded yet</h5>
+                                                        <p class="text-muted">Upload project documents to share with team members.</p>
                                                     </td>
                                                 </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="avatar-sm">
-                                                                <div
-                                                                    class="avatar-title bg-light text-primary rounded fs-24">
-                                                                    <i class="ri-video-line"></i>
-                                                                </div>
-                                                            </div>
-                                                            <div class="ms-3 flex-grow-1">
-                                                                <h5 class="fs-14 mb-0"><a href="javascript:void(0);"
-                                                                        class="text-body">Tour-video.mp4</a></h5>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>MP4 File</td>
-                                                    <td>14.62 MB</td>
-                                                    <td>19 Nov 2021</td>
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <a href="javascript:void(0);"
-                                                                class="btn btn-soft-secondary btn-sm btn-icon"
-                                                                data-bs-toggle="dropdown" aria-expanded="true">
-                                                                <i class="ri-more-fill"></i>
-                                                            </a>
-                                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-eye-fill me-2 align-bottom text-muted"></i>View</a>
-                                                                </li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-download-2-fill me-2 align-bottom text-muted"></i>Download</a>
-                                                                </li>
-                                                                <li class="dropdown-divider"></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-delete-bin-5-fill me-2 align-bottom text-muted"></i>Delete</a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="avatar-sm">
-                                                                <div
-                                                                    class="avatar-title bg-light text-success rounded fs-24">
-                                                                    <i class="ri-file-excel-fill"></i>
-                                                                </div>
-                                                            </div>
-                                                            <div class="ms-3 flex-grow-1">
-                                                                <h5 class="fs-14 mb-0"><a href="javascript:void(0);"
-                                                                        class="text-body">Account-statement.xsl</a>
-                                                                </h5>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>XSL File</td>
-                                                    <td>2.38 KB</td>
-                                                    <td>14 Nov 2021</td>
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <a href="javascript:void(0);"
-                                                                class="btn btn-soft-secondary btn-sm btn-icon"
-                                                                data-bs-toggle="dropdown" aria-expanded="true">
-                                                                <i class="ri-more-fill"></i>
-                                                            </a>
-                                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-eye-fill me-2 align-bottom text-muted"></i>View</a>
-                                                                </li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-download-2-fill me-2 align-bottom text-muted"></i>Download</a>
-                                                                </li>
-                                                                <li class="dropdown-divider"></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-delete-bin-5-fill me-2 align-bottom text-muted"></i>Delete</a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="avatar-sm">
-                                                                <div
-                                                                    class="avatar-title bg-light text-warning rounded fs-24">
-                                                                    <i class="ri-folder-fill"></i>
-                                                                </div>
-                                                            </div>
-                                                            <div class="ms-3 flex-grow-1">
-                                                                <h5 class="fs-14 mb-0"><a href="javascript:void(0);"
-                                                                        class="text-body">Project Screenshots
-                                                                        Collection</a></h5>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>Folder File</td>
-                                                    <td>87.24 MB</td>
-                                                    <td>08 Nov 2021</td>
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <a href="javascript:void(0);"
-                                                                class="btn btn-soft-secondary btn-sm btn-icon"
-                                                                data-bs-toggle="dropdown" aria-expanded="true">
-                                                                <i class="ri-more-fill"></i>
-                                                            </a>
-                                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-eye-fill me-2 align-bottom text-muted"></i>View</a>
-                                                                </li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-download-2-fill me-2 align-bottom text-muted"></i>Download</a>
-                                                                </li>
-                                                                <li class="dropdown-divider"></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-delete-bin-5-fill me-2 align-bottom text-muted"></i>Delete</a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="avatar-sm">
-                                                                <div
-                                                                    class="avatar-title bg-light text-danger rounded fs-24">
-                                                                    <i class="ri-image-2-fill"></i>
-                                                                </div>
-                                                            </div>
-                                                            <div class="ms-3 flex-grow-1">
-                                                                <h5 class="fs-14 mb-0"><a href="javascript:void(0);"
-                                                                        class="text-body">Velzon-logo.png</a></h5>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>PNG File</td>
-                                                    <td>879 KB</td>
-                                                    <td>02 Nov 2021</td>
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <a href="javascript:void(0);"
-                                                                class="btn btn-soft-secondary btn-sm btn-icon"
-                                                                data-bs-toggle="dropdown" aria-expanded="true">
-                                                                <i class="ri-more-fill"></i>
-                                                            </a>
-                                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-eye-fill me-2 align-bottom text-muted"></i>View</a>
-                                                                </li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-download-2-fill me-2 align-bottom text-muted"></i>Download</a>
-                                                                </li>
-                                                                <li class="dropdown-divider"></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                            class="ri-delete-bin-5-fill me-2 align-bottom text-muted"></i>Delete</a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                                @endforelse
                                             </tbody>
                                         </table>
-                                    </div>
-                                    <div class="text-center mt-3">
-                                        <a href="javascript:void(0);" class="text-success "><i
-                                                class="mdi mdi-loading mdi-spin fs-20 align-middle me-2"></i> Load more
-                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -818,176 +540,295 @@
                     </div>
                 </div>
                 <!-- end tab pane -->
+                <div class="tab-pane fade" id="project-tasks" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-4">
+                                <h5 class="card-title flex-grow-1 mb-0">Tasks</h5>
+                                @can('create-tasks')
+                                <div class="flex-shrink-0">
+                                    <a href="{{ route('management.tasks.create', ['project_id' => $project->id]) }}" class="btn btn-primary btn-sm">
+                                        <i class="ri-add-line align-bottom me-1"></i> Add Task
+                                    </a>
+                                </div>
+                                @endcan
+                            </div>
+                            
+                            @if($project->tasks && $project->tasks->count() > 0)
+                            <div class="table-responsive">
+                                <table class="table table-borderless table-nowrap align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col">Task</th>
+                                            <th scope="col">Assigned To</th>
+                                            <th scope="col">Priority</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Due Date</th>
+                                            <th scope="col">Progress</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($project->tasks as $task)
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-shrink-0 me-3">
+                                                        <div class="avatar-sm">
+                                                            <div class="avatar-title rounded-circle bg-{{ $task->priority == 'High' ? 'danger' : ($task->priority == 'Low' ? 'success' : 'warning') }}-subtle text-{{ $task->priority == 'High' ? 'danger' : ($task->priority == 'Low' ? 'success' : 'warning') }}">
+                                                                <i class="ri-task-line"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <h5 class="fs-14 mb-1">
+                                                            <a href="{{ route('management.tasks.show', $task->id) }}" class="text-body">{{ $task->title }}</a>
+                                                        </h5>
+                                                        @if($task->description)
+                                                        <p class="text-muted mb-0">{{ Str::limit(strip_tags($task->description), 50) }}</p>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if($task->assignedUsers && $task->assignedUsers->count() > 0)
+                                                <div class="avatar-group">
+                                                    @foreach($task->assignedUsers->take(3) as $user)
+                                                    <a href="javascript: void(0);" class="avatar-group-item" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $user->name }}">
+                                                        @if($user->avatar)
+                                                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="" class="rounded-circle avatar-xs">
+                                                        @else
+                                                        <div class="avatar-xs">
+                                                            <div class="avatar-title rounded-circle bg-primary">
+                                                                {{ strtoupper(substr($user->name, 0, 2)) }}
+                                                            </div>
+                                                        </div>
+                                                        @endif
+                                                    </a>
+                                                    @endforeach
+                                                    @if($task->assignedUsers->count() > 3)
+                                                    <a href="javascript: void(0);" class="avatar-group-item" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $task->assignedUsers->count() - 3 }} more">
+                                                        <div class="avatar-xs">
+                                                            <div class="avatar-title rounded-circle">
+                                                                +{{ $task->assignedUsers->count() - 3 }}
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                    @endif
+                                                </div>
+                                                @else
+                                                <span class="text-muted">Unassigned</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-{{ $task->priority == 'High' ? 'danger' : ($task->priority == 'Low' ? 'success' : 'warning') }}">
+                                                    {{ $task->priority }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-{{ $task->status == 'Completed' ? 'success' : ($task->status == 'In Progress' ? 'primary' : 'warning') }}">
+                                                    {{ $task->status }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if($task->due_date)
+                                                <span class="{{ $task->due_date->isPast() && $task->status != 'Completed' ? 'text-danger' : '' }}">
+                                                    {{ $task->due_date->format('d M Y') }}
+                                                </span>
+                                                @else
+                                                <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-grow-1 me-2">
+                                                        <div class="progress progress-sm">
+                                                            <div class="progress-bar bg-{{ $task->progress == 100 ? 'success' : 'primary' }}" 
+                                                                 role="progressbar" 
+                                                                 style="width: {{ $task->progress }}%">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-shrink-0">
+                                                        <span class="text-muted">{{ $task->progress }}%</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="ri-more-fill"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{ route('management.tasks.show', $task->id) }}">
+                                                                <i class="ri-eye-fill me-2 align-bottom text-muted"></i>View
+                                                            </a>
+                                                        </li>
+                                                        @can('edit-tasks')
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{ route('management.tasks.edit', $task->id) }}">
+                                                                <i class="ri-pencil-fill me-2 align-bottom text-muted"></i>Edit
+                                                            </a>
+                                                        </li>
+                                                        @endcan
+                                                        @can('delete-tasks')
+                                                        <li class="dropdown-divider"></li>
+                                                        <li>
+                                                            <form action="{{ route('management.tasks.destroy', $task->id) }}" method="POST" style="display: inline;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="dropdown-item" onclick="return confirm('Are you sure?')">
+                                                                    <i class="ri-delete-bin-fill me-2 align-bottom text-muted"></i>Delete
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                        @endcan
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            @else
+                            <div class="text-center py-5">
+                                <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#405189,secondary:#0ab39c" style="width:72px;height:72px"></lord-icon>
+                                <h5 class="mt-2">No tasks yet</h5>
+                                <p class="text-muted">Create tasks to manage project work and track progress.</p>
+                                @can('create-tasks')
+                                <a href="{{ route('management.tasks.create', ['project_id' => $project->id]) }}" class="btn btn-primary mt-2">
+                                    <i class="ri-add-line align-bottom me-1"></i> Create Task
+                                </a>
+                                @endcan
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                <!-- end tab pane -->
                 <div class="tab-pane fade" id="project-activities" role="tabpanel">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Activities</h5>
+                            <h5 class="card-title mb-4">Activities</h5>
+                            @if($activities->count() > 0)
                             <div class="acitivity-timeline py-3">
-                                <div class="acitivity-item d-flex">
+                                @foreach($activities as $activity)
+                                <div class="acitivity-item d-flex mb-4">
                                     <div class="flex-shrink-0">
-                                        <img src="{{ URL::asset('build/images/users/avatar-1.jpg') }}" alt=""
-                                            class="avatar-xs rounded-circle acitivity-avatar" />
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-1">Oliver Phillips <span
-                                                class="badge bg-primary-subtle text-primary align-middle">New</span></h6>
-                                        <p class="text-muted mb-2">We talked about a project on linkedin.</p>
-                                        <small class="mb-0 text-muted">Today</small>
-                                    </div>
-                                </div>
-                                <div class="acitivity-item py-3 d-flex">
-                                    <div class="flex-shrink-0 avatar-xs acitivity-avatar">
-                                        <div class="avatar-title bg-success-subtle text-success rounded-circle">
-                                            N
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-1">Nancy Martino <span
-                                                class="badge bg-secondary-subtle text-primary align-middle">In
-                                                Progress</span></h6>
-                                        <p class="text-muted mb-2"><i class="ri-file-text-line align-middle ms-2"></i>
-                                            Create new project Building product</p>
-                                        <div class="avatar-group mb-2">
-                                            <a href="javascript: void(0);" class="avatar-group-item"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                                data-bs-original-title="Christi">
-                                                <img src="{{ URL::asset('build/images/users/avatar-4.jpg') }}" alt=""
-                                                    class="rounded-circle avatar-xs" />
-                                            </a>
-                                            <a href="javascript: void(0);" class="avatar-group-item"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                                data-bs-original-title="Frank Hook">
-                                                <img src="{{ URL::asset('build/images/users/avatar-3.jpg') }}" alt=""
-                                                    class="rounded-circle avatar-xs" />
-                                            </a>
-                                            <a href="javascript: void(0);" class="avatar-group-item"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                                data-bs-original-title=" Ruby">
-                                                <div class="avatar-xs">
-                                                    <div class="avatar-title rounded-circle bg-light text-primary">
-                                                        R
-                                                    </div>
+                                        @if($activity->causer && $activity->causer->avatar)
+                                            <img src="{{ asset('storage/' . $activity->causer->avatar) }}" alt=""
+                                                class="avatar-xs rounded-circle acitivity-avatar" />
+                                        @elseif($activity->causer)
+                                            <div class="avatar-xs">
+                                                <div class="avatar-title rounded-circle bg-primary">
+                                                    {{ strtoupper(substr($activity->causer->name, 0, 2)) }}
                                                 </div>
-                                            </a>
-                                            <a href="javascript: void(0);" class="avatar-group-item"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                                data-bs-original-title="more">
-                                                <div class="avatar-xs">
-                                                    <div class="avatar-title rounded-circle">
-                                                        2+
-                                                    </div>
+                                            </div>
+                                        @else
+                                            <div class="avatar-xs">
+                                                <div class="avatar-title rounded-circle bg-secondary">
+                                                    <i class="ri-user-line"></i>
                                                 </div>
-                                            </a>
-                                        </div>
-                                        <small class="mb-0 text-muted">Yesterday</small>
-                                    </div>
-                                </div>
-                                <div class="acitivity-item py-3 d-flex">
-                                    <div class="flex-shrink-0">
-                                        <img src="{{ URL::asset('build/images/users/avatar-2.jpg') }}" alt=""
-                                            class="avatar-xs rounded-circle acitivity-avatar" />
+                                            </div>
+                                        @endif
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-1">Natasha Carey <span
-                                                class="badge bg-success-subtle text-success align-middle">Completed</span>
+                                        <h6 class="mb-1">
+                                            {{ $activity->causer ? $activity->causer->name : 'System' }}
+                                            @if($activity->created_at->diffInHours() < 24)
+                                                <span class="badge bg-primary-subtle text-primary align-middle">New</span>
+                                            @endif
                                         </h6>
-                                        <p class="text-muted mb-2">Adding a new event with attachments</p>
-                                        <div class="row">
-                                            <div class="col-xxl-4">
-                                                <div class="row border border-dashed gx-2 p-2 mb-2">
-                                                    <div class="col-4">
-                                                        <img src="{{ URL::asset('build/images/small/img-2.jpg') }}" alt=""
-                                                            class="img-fluid rounded" />
-                                                    </div>
-                                                    <!--end col-->
-                                                    <div class="col-4">
-                                                        <img src="{{ URL::asset('build/images/small/img-3.jpg') }}" alt=""
-                                                            class="img-fluid rounded" />
-                                                    </div>
-                                                    <!--end col-->
-                                                    <div class="col-4">
-                                                        <img src="{{ URL::asset('build/images/small/img-4.jpg') }}" alt=""
-                                                            class="img-fluid rounded" />
-                                                    </div>
-                                                    <!--end col-->
-                                                </div>
-                                                <!--end row-->
-                                            </div>
-                                        </div>
-                                        <small class="mb-0 text-muted">25 Nov</small>
+                                        <p class="text-muted mb-2">
+                                            @php
+                                            $subjectType = class_basename($activity->subject_type);
+                                            $description = $activity->description;
+                                            @endphp
+                                            
+                                            @if($subjectType == 'Project')
+                                                @if($description == 'created')
+                                                    Created the project
+                                                @elseif($description == 'updated')
+                                                    Updated project details
+                                                    @if($activity->properties && $activity->properties->has('attributes'))
+                                                        @php
+                                                        $attributes = $activity->properties->get('attributes');
+                                                        $old = $activity->properties->get('old', []);
+                                                        $changes = [];
+                                                        if(isset($attributes['status']) && isset($old['status'])) 
+                                                            $changes[] = "status from {$old['status']} to {$attributes['status']}";
+                                                        if(isset($attributes['priority']) && isset($old['priority'])) 
+                                                            $changes[] = "priority from {$old['priority']} to {$attributes['priority']}";
+                                                        if(isset($attributes['progress']) && isset($old['progress'])) 
+                                                            $changes[] = "progress from {$old['progress']}% to {$attributes['progress']}%";
+                                                        @endphp
+                                                        @if(count($changes) > 0)
+                                                            ({{ implode(', ', $changes) }})
+                                                        @endif
+                                                    @endif
+                                                @elseif($description == 'deleted')
+                                                    Deleted the project
+                                                @else
+                                                    {{ ucfirst($description) }} the project
+                                                @endif
+                                            
+                                            @elseif($subjectType == 'Task')
+                                                @if($description == 'created')
+                                                    Created a new task
+                                                    @if($activity->subject)
+                                                        <strong>"{{ $activity->subject->title }}"</strong>
+                                                    @endif
+                                                @elseif($description == 'updated')
+                                                    Updated task
+                                                    @if($activity->subject)
+                                                        <strong>"{{ $activity->subject->title }}"</strong>
+                                                    @endif
+                                                @elseif($description == 'deleted')
+                                                    Deleted a task
+                                                @else
+                                                    {{ ucfirst($description) }} a task
+                                                @endif
+                                            
+                                            @elseif($subjectType == 'ProjectComment')
+                                                @if($description == 'created')
+                                                    Added a comment
+                                                @elseif($description == 'updated')
+                                                    Updated a comment
+                                                @elseif($description == 'deleted')
+                                                    Deleted a comment
+                                                @else
+                                                    {{ ucfirst($description) }} a comment
+                                                @endif
+                                            
+                                            @elseif($subjectType == 'ProjectAttachment')
+                                                @if($description == 'created')
+                                                    Uploaded a file
+                                                    @if($activity->subject)
+                                                        <strong>"{{ $activity->subject->file_name }}"</strong>
+                                                    @endif
+                                                @elseif($description == 'deleted')
+                                                    Deleted a file
+                                                @else
+                                                    {{ ucfirst($description) }} a file
+                                                @endif
+                                            
+                                            @else
+                                                {{ ucfirst($description) }} {{ strtolower($subjectType) }}
+                                            @endif
+                                        </p>
+                                        <small class="mb-0 text-muted">{{ $activity->created_at->diffForHumans() }}</small>
                                     </div>
                                 </div>
-                                <div class="acitivity-item py-3 d-flex">
-                                    <div class="flex-shrink-0">
-                                        <img src="{{ URL::asset('build/images/users/avatar-6.jpg') }}" alt=""
-                                            class="avatar-xs rounded-circle acitivity-avatar" />
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-1">Bethany Johnson</h6>
-                                        <p class="text-muted mb-2">added a new member to velzon dashboard</p>
-                                        <small class="mb-0 text-muted">19 Nov</small>
-                                    </div>
-                                </div>
-                                <div class="acitivity-item py-3 d-flex">
-                                    <div class="flex-shrink-0">
-                                        <div class="avatar-xs acitivity-avatar">
-                                            <div class="avatar-title rounded-circle bg-danger-subtle text-danger">
-                                                <i class="ri-shopping-bag-line"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-1">Your order is placed <span
-                                                class="badge bg-danger-subtle text-danger align-middle ms-1">Out of
-                                                Delivery</span></h6>
-                                        <p class="text-muted mb-2">These customers can rest assured their order has been
-                                            placed.</p>
-                                        <small class="mb-0 text-muted">16 Nov</small>
-                                    </div>
-                                </div>
-                                <div class="acitivity-item py-3 d-flex">
-                                    <div class="flex-shrink-0">
-                                        <img src="{{ URL::asset('build/images/users/avatar-7.jpg') }}" alt=""
-                                            class="avatar-xs rounded-circle acitivity-avatar" />
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-1">Lewis Pratt</h6>
-                                        <p class="text-muted mb-2">They all have something to say beyond the words on the
-                                            page. They can come across as casual or neutral, exotic or graphic. </p>
-                                        <small class="mb-0 text-muted">22 Oct</small>
-                                    </div>
-                                </div>
-                                <div class="acitivity-item py-3 d-flex">
-                                    <div class="flex-shrink-0">
-                                        <div class="avatar-xs acitivity-avatar">
-                                            <div class="avatar-title rounded-circle bg-info-subtle text-info">
-                                                <i class="ri-line-chart-line"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-1">Monthly sales report</h6>
-                                        <p class="text-muted mb-2"><span class="text-danger">2 days left</span>
-                                            notification to submit the monthly sales report. <a href="javascript:void(0);"
-                                                class="link-warning text-decoration-underline">Reports Builder</a></p>
-                                        <small class="mb-0 text-muted">15 Oct</small>
-                                    </div>
-                                </div>
-                                <div class="acitivity-item d-flex">
-                                    <div class="flex-shrink-0">
-                                        <img src="{{ URL::asset('build/images/users/avatar-8.jpg') }}" alt=""
-                                            class="avatar-xs rounded-circle acitivity-avatar" />
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-1">New ticket received <span
-                                                class="badge bg-success-subtle text-success align-middle">Completed</span>
-                                        </h6>
-                                        <p class="text-muted mb-2">User <span class="text-primary">Erica245</span>
-                                            submitted a ticket.</p>
-                                        <small class="mb-0 text-muted">26 Aug</small>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
+                            @else
+                            <div class="text-center py-5">
+                                <i class="ri-history-line fs-1 text-muted mb-3"></i>
+                                <p class="text-muted mb-0">No activities recorded yet</p>
+                            </div>
+                            @endif
                         </div>
                         <!--end card-body-->
                     </div>
@@ -1015,693 +856,157 @@
                     <!-- end row -->
 
                     <div class="team-list list-view-filter">
+                        {{-- Team Lead Card --}}
+                        @if($project->teamLead)
                         <div class="card team-box">
                             <div class="card-body px-4">
                                 <div class="row align-items-center team-row">
                                     <div class="col team-settings">
                                         <div class="row align-items-center">
                                             <div class="col">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <button type="button" class="btn fs-16 p-0 favourite-btn">
-                                                        <i class="ri-star-fill"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col text-end dropdown">
-                                                <a href="javascript:void(0);" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
-                                                    <i class="ri-more-fill fs-17"></i>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-eye-fill text-muted me-2 align-bottom"></i>View</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-star-fill text-muted me-2 align-bottom"></i>Favourite</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-delete-bin-5-fill text-muted me-2 align-bottom"></i>Delete</a>
-                                                    </li>
-                                                </ul>
+                                                <span class="badge badge-soft-warning">Team Lead</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col">
                                         <div class="team-profile-img">
                                             <div class="avatar-lg img-thumbnail rounded-circle">
-                                                <img src="{{ URL::asset('build/images/users/avatar-2.jpg') }}" alt=""
-                                                    class="img-fluid d-block rounded-circle" />
+                                                @if($project->teamLead->avatar)
+                                                    <img src="{{ asset('storage/' . $project->teamLead->avatar) }}" alt="" class="img-fluid d-block rounded-circle" />
+                                                @else
+                                                    <div class="avatar-title bg-primary-subtle text-primary rounded-circle">
+                                                        {{ strtoupper(substr($project->teamLead->name, 0, 2)) }}
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div class="team-content">
-                                                <a href="#" class="d-block">
-                                                    <h5 class="fs-16 mb-1">Nancy Martino</h5>
+                                                <a href="{{ route('management.users.show', $project->teamLead) }}" class="d-block">
+                                                    <h5 class="fs-16 mb-1">{{ $project->teamLead->name }}</h5>
                                                 </a>
-                                                <p class="text-muted mb-0">Team Leader & HR</p>
+                                                <p class="text-muted mb-0">{{ $project->teamLead->email }}</p>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col">
                                         <div class="row text-muted text-center">
                                             <div class="col-6 border-end border-end-dashed">
-                                                <h5 class="mb-1">225</h5>
+                                                <h5 class="mb-1">{{ $project->teamLead->ledProjects()->count() }}</h5>
                                                 <p class="text-muted mb-0">Projects</p>
                                             </div>
                                             <div class="col-6">
-                                                <h5 class="mb-1">197</h5>
+                                                <h5 class="mb-1">{{ $project->teamLead->assignedTasks()->count() }}</h5>
                                                 <p class="text-muted mb-0">Tasks</p>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-2 col">
                                         <div class="text-end">
-                                            <a href="pages-profile" class="btn btn-light view-btn">View Profile</a>
+                                            <a href="{{ route('management.users.show', $project->teamLead) }}" class="btn btn-light view-btn">View Profile</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        @endif
                         <!--end card-->
+
+                        {{-- Team Members Cards --}}
+                        @forelse($project->members as $member)
                         <div class="card team-box">
                             <div class="card-body px-4">
                                 <div class="row align-items-center team-row">
                                     <div class="col team-settings">
                                         <div class="row align-items-center">
                                             <div class="col">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <button type="button" class="btn fs-16 p-0 favourite-btn active">
-                                                        <i class="ri-star-fill"></i>
-                                                    </button>
-                                                </div>
+                                                @if($member->pivot->role ?? null)
+                                                <span class="badge badge-soft-info">{{ ucfirst($member->pivot->role) }}</span>
+                                                @endif
                                             </div>
+                                            @can('manage-project-members')
                                             <div class="col text-end dropdown">
-                                                <a href="javascript:void(0);" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
+                                                <a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <i class="ri-more-fill fs-17"></i>
                                                 </a>
                                                 <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-eye-fill text-muted me-2 align-bottom"></i>View</a>
+                                                    <li>
+                                                        <a class="dropdown-item" href="{{ route('management.users.show', $member) }}">
+                                                            <i class="ri-eye-fill text-muted me-2 align-bottom"></i>View Profile
+                                                        </a>
                                                     </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-star-fill text-muted me-2 align-bottom"></i>Favourite</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-delete-bin-5-fill text-muted me-2 align-bottom"></i>Delete</a>
+                                                    <li class="dropdown-divider"></li>
+                                                    <li>
+                                                        <form action="{{ route('management.projects.members.destroy', [$project, $member]) }}" method="POST" style="display: inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="dropdown-item" onclick="return confirm('Are you sure you want to remove this member?')">
+                                                                <i class="ri-delete-bin-5-fill text-muted me-2 align-bottom"></i>Remove
+                                                            </button>
+                                                        </form>
                                                     </li>
                                                 </ul>
                                             </div>
+                                            @endcan
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col">
                                         <div class="team-profile-img">
                                             <div class="avatar-lg img-thumbnail rounded-circle">
-                                                <div class="avatar-title bg-danger-subtle text-danger rounded-circle">
-                                                    HB
-                                                </div>
+                                                @if($member->avatar)
+                                                    <img src="{{ asset('storage/' . $member->avatar) }}" alt="" class="img-fluid d-block rounded-circle" />
+                                                @else
+                                                    @php
+                                                    $colors = ['primary', 'success', 'info', 'warning', 'danger'];
+                                                    $colorIndex = ord(strtoupper($member->name[0])) % count($colors);
+                                                    @endphp
+                                                    <div class="avatar-title bg-{{ $colors[$colorIndex] }}-subtle text-{{ $colors[$colorIndex] }} rounded-circle">
+                                                        {{ strtoupper(substr($member->name, 0, 2)) }}
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div class="team-content">
-                                                <a href="#" class="d-block">
-                                                    <h5 class="fs-16 mb-1">Henry Baird</h5>
+                                                <a href="{{ route('management.users.show', $member) }}" class="d-block">
+                                                    <h5 class="fs-16 mb-1">{{ $member->name }}</h5>
                                                 </a>
-                                                <p class="text-muted mb-0">Full Stack Developer</p>
+                                                <p class="text-muted mb-0">{{ $member->email }}</p>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col">
                                         <div class="row text-muted text-center">
                                             <div class="col-6 border-end border-end-dashed">
-                                                <h5 class="mb-1">352</h5>
+                                                <h5 class="mb-1">{{ $member->projects()->count() }}</h5>
                                                 <p class="text-muted mb-0">Projects</p>
                                             </div>
                                             <div class="col-6">
-                                                <h5 class="mb-1">376</h5>
+                                                <h5 class="mb-1">{{ $member->assignedTasks()->count() }}</h5>
                                                 <p class="text-muted mb-0">Tasks</p>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-2 col">
                                         <div class="text-end">
-                                            <a href="pages-profile" class="btn btn-light view-btn">View Profile</a>
+                                            <a href="{{ route('management.users.show', $member) }}" class="btn btn-light view-btn">View Profile</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!--end card-->
-                        <div class="card team-box">
-                            <div class="card-body px-4">
-                                <div class="row align-items-center team-row">
-                                    <div class="col team-settings">
-                                        <div class="row align-items-center">
-                                            <div class="col">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <button type="button" class="btn fs-16 p-0 favourite-btn active">
-                                                        <i class="ri-star-fill"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col text-end dropdown">
-                                                <a href="javascript:void(0);" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
-                                                    <i class="ri-more-fill fs-17"></i>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-eye-fill text-muted me-2 align-bottom"></i>View</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-star-fill text-muted me-2 align-bottom"></i>Favourite</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-delete-bin-5-fill text-muted me-2 align-bottom"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="team-profile-img">
-                                            <div class="avatar-lg img-thumbnail rounded-circle">
-                                                <img src="{{ URL::asset('build/images/users/avatar-3.jpg') }}" alt=""
-                                                    class="img-fluid d-block rounded-circle" />
-                                            </div>
-                                            <div class="team-content">
-                                                <a href="#" class="d-block">
-                                                    <h5 class="fs-16 mb-1">Frank Hook</h5>
-                                                </a>
-                                                <p class="text-muted mb-0">Project Manager</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="row text-muted text-center">
-                                            <div class="col-6 border-end border-end-dashed">
-                                                <h5 class="mb-1">164</h5>
-                                                <p class="text-muted mb-0">Projects</p>
-                                            </div>
-                                            <div class="col-6">
-                                                <h5 class="mb-1">182</h5>
-                                                <p class="text-muted mb-0">Tasks</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-2 col">
-                                        <div class="text-end">
-                                            <a href="pages-profile" class="btn btn-light view-btn">View Profile</a>
-                                        </div>
-                                    </div>
-                                </div>
+                        @empty
+                        @if(!$project->teamLead)
+                        <div class="card">
+                            <div class="card-body text-center py-5">
+                                <lord-icon src="https://cdn.lordicon.com/eszyyflr.json" trigger="loop" colors="primary:#405189,secondary:#0ab39c" style="width:72px;height:72px"></lord-icon>
+                                <h5 class="mt-2">No team members yet</h5>
+                                <p class="text-muted">Add team members to start collaboration on this project.</p>
                             </div>
                         </div>
-                        <!--end card-->
-                        <div class="card team-box">
-                            <div class="card-body px-4">
-                                <div class="row align-items-center team-row">
-                                    <div class="col team-settings">
-                                        <div class="row align-items-center">
-                                            <div class="col">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <button type="button" class="btn fs-16 p-0 favourite-btn">
-                                                        <i class="ri-star-fill"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col text-end dropdown">
-                                                <a href="javascript:void(0);" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
-                                                    <i class="ri-more-fill fs-17"></i>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-eye-fill text-muted me-2 align-bottom"></i>View</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-star-fill text-muted me-2 align-bottom"></i>Favourite</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-delete-bin-5-fill text-muted me-2 align-bottom"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="team-profile-img">
-                                            <div class="avatar-lg img-thumbnail rounded-circle">
-                                                <img src="{{ URL::asset('build/images/users/avatar-8.jpg') }}" alt=""
-                                                    class="img-fluid d-block rounded-circle" />
-                                            </div>
-                                            <div class="team-content">
-                                                <a href="#" class="d-block">
-                                                    <h5 class="fs-16 mb-1">Jennifer Carter</h5>
-                                                </a>
-                                                <p class="text-muted mb-0">UI/UX Designer</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="row text-muted text-center">
-                                            <div class="col-6 border-end border-end-dashed">
-                                                <h5 class="mb-1">225</h5>
-                                                <p class="text-muted mb-0">Projects</p>
-                                            </div>
-                                            <div class="col-6">
-                                                <h5 class="mb-1">197</h5>
-                                                <p class="text-muted mb-0">Tasks</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-2 col">
-                                        <div class="text-end">
-                                            <a href="pages-profile" class="btn btn-light view-btn">View Profile</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--end card-->
-                        <div class="card team-box">
-                            <div class="card-body px-4">
-                                <div class="row align-items-center team-row">
-                                    <div class="col team-settings">
-                                        <div class="row align-items-center">
-                                            <div class="col">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <button type="button" class="btn fs-16 p-0 favourite-btn">
-                                                        <i class="ri-star-fill"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col text-end dropdown">
-                                                <a href="javascript:void(0);" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
-                                                    <i class="ri-more-fill fs-17"></i>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-eye-fill text-muted me-2 align-bottom"></i>View</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-star-fill text-muted me-2 align-bottom"></i>Favourite</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-delete-bin-5-fill text-muted me-2 align-bottom"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="team-profile-img">
-                                            <div class="avatar-lg img-thumbnail rounded-circle">
-                                                <div class="avatar-title bg-success-subtle text-success rounded-circle">
-                                                    ME
-                                                </div>
-                                            </div>
-                                            <div class="team-content">
-                                                <a href="#" class="d-block">
-                                                    <h5 class="fs-16 mb-1">Megan Elmore</h5>
-                                                </a>
-                                                <p class="text-muted mb-0">Team Leader & Web Developer</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="row text-muted text-center">
-                                            <div class="col-6 border-end border-end-dashed">
-                                                <h5 class="mb-1">201</h5>
-                                                <p class="text-muted mb-0">Projects</p>
-                                            </div>
-                                            <div class="col-6">
-                                                <h5 class="mb-1">263</h5>
-                                                <p class="text-muted mb-0">Tasks</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-2 col">
-                                        <div class="text-end">
-                                            <a href="pages-profile" class="btn btn-light view-btn">View Profile</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--end card-->
-                        <div class="card team-box">
-                            <div class="card-body px-4">
-                                <div class="row align-items-center team-row">
-                                    <div class="col team-settings">
-                                        <div class="row align-items-center">
-                                            <div class="col">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <button type="button" class="btn fs-16 p-0 favourite-btn">
-                                                        <i class="ri-star-fill"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col text-end dropdown">
-                                                <a href="javascript:void(0);" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
-                                                    <i class="ri-more-fill fs-17"></i>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-eye-fill text-muted me-2 align-bottom"></i>View</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-star-fill text-muted me-2 align-bottom"></i>Favourite</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-delete-bin-5-fill text-muted me-2 align-bottom"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="team-profile-img">
-                                            <div class="avatar-lg img-thumbnail rounded-circle">
-                                                <img src="{{ URL::asset('build/images/users/avatar-4.jpg') }}" alt=""
-                                                    class="img-fluid d-block rounded-circle" />
-                                            </div>
-                                            <div class="team-content">
-                                                <a href="#" class="d-block">
-                                                    <h5 class="fs-16 mb-1">Alexis Clarke</h5>
-                                                </a>
-                                                <p class="text-muted mb-0">Backend Developer</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="row text-muted text-center">
-                                            <div class="col-6 border-end border-end-dashed">
-                                                <h5 class="mb-1">132</h5>
-                                                <p class="text-muted mb-0">Projects</p>
-                                            </div>
-                                            <div class="col-6">
-                                                <h5 class="mb-1">147</h5>
-                                                <p class="text-muted mb-0">Tasks</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-2 col">
-                                        <div class="text-end">
-                                            <a href="pages-profile" class="btn btn-light view-btn">View Profile</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--end card-->
-                        <div class="card team-box">
-                            <div class="card-body px-4">
-                                <div class="row align-items-center team-row">
-                                    <div class="col team-settings">
-                                        <div class="row align-items-center">
-                                            <div class="col">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <button type="button" class="btn fs-16 p-0 favourite-btn">
-                                                        <i class="ri-star-fill"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col text-end dropdown">
-                                                <a href="javascript:void(0);" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
-                                                    <i class="ri-more-fill fs-17"></i>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-eye-fill text-muted me-2 align-bottom"></i>View</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-star-fill text-muted me-2 align-bottom"></i>Favourite</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-delete-bin-5-fill text-muted me-2 align-bottom"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="team-profile-img">
-                                            <div class="avatar-lg img-thumbnail rounded-circle">
-                                                <div class="avatar-title bg-info-subtle text-info rounded-circle">
-                                                    NC
-                                                </div>
-                                            </div>
-                                            <div class="team-content">
-                                                <a href="#" class="d-block">
-                                                    <h5 class="fs-16 mb-1">Nathan Cole</h5>
-                                                </a>
-                                                <p class="text-muted mb-0">Front-End Developer</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="row text-muted text-center">
-                                            <div class="col-6 border-end border-end-dashed">
-                                                <h5 class="mb-1">352</h5>
-                                                <p class="text-muted mb-0">Projects</p>
-                                            </div>
-                                            <div class="col-6">
-                                                <h5 class="mb-1">376</h5>
-                                                <p class="text-muted mb-0">Tasks</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-2 col">
-                                        <div class="text-end">
-                                            <a href="pages-profile" class="btn btn-light view-btn">View Profile</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--end card-->
-                        <div class="card team-box">
-                            <div class="card-body px-4">
-                                <div class="row align-items-center team-row">
-                                    <div class="col team-settings">
-                                        <div class="row align-items-center">
-                                            <div class="col">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <button type="button" class="btn fs-16 p-0 favourite-btn">
-                                                        <i class="ri-star-fill"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col text-end dropdown">
-                                                <a href="javascript:void(0);" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
-                                                    <i class="ri-more-fill fs-17"></i>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-eye-fill text-muted me-2 align-bottom"></i>View</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-star-fill text-muted me-2 align-bottom"></i>Favourite</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-delete-bin-5-fill text-muted me-2 align-bottom"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="team-profile-img">
-                                            <div class="avatar-lg img-thumbnail rounded-circle">
-                                                <img src="{{ URL::asset('build/images/users/avatar-7.jpg') }}" alt=""
-                                                    class="img-fluid d-block rounded-circle" />
-                                            </div>
-                                            <div class="team-content">
-                                                <a href="#" class="d-block">
-                                                    <h5 class="fs-16 mb-1">Joseph Parker</h5>
-                                                </a>
-                                                <p class="text-muted mb-0">Team Leader & HR</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="row text-muted text-center">
-                                            <div class="col-6 border-end border-end-dashed">
-                                                <h5 class="mb-1">64</h5>
-                                                <p class="text-muted mb-0">Projects</p>
-                                            </div>
-                                            <div class="col-6">
-                                                <h5 class="mb-1">93</h5>
-                                                <p class="text-muted mb-0">Tasks</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-2 col">
-                                        <div class="text-end">
-                                            <a href="pages-profile" class="btn btn-light view-btn">View Profile</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--end card-->
-                        <div class="card team-box">
-                            <div class="card-body px-4">
-                                <div class="row align-items-center team-row">
-                                    <div class="col team-settings">
-                                        <div class="row align-items-center">
-                                            <div class="col">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <button type="button" class="btn fs-16 p-0 favourite-btn">
-                                                        <i class="ri-star-fill"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col text-end dropdown">
-                                                <a href="javascript:void(0);" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
-                                                    <i class="ri-more-fill fs-17"></i>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-eye-fill text-muted me-2 align-bottom"></i>View</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-star-fill text-muted me-2 align-bottom"></i>Favourite</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-delete-bin-5-fill text-muted me-2 align-bottom"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="team-profile-img">
-                                            <div class="avatar-lg img-thumbnail rounded-circle">
-                                                <img src="{{ URL::asset('build/images/users/avatar-5.jpg') }}" alt=""
-                                                    class="img-fluid d-block rounded-circle" />
-                                            </div>
-                                            <div class="team-content">
-                                                <a href="#" class="d-block">
-                                                    <h5 class="fs-16 mb-1">Erica Kernan</h5>
-                                                </a>
-                                                <p class="text-muted mb-0">Web Designer</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="row text-muted text-center">
-                                            <div class="col-6 border-end border-end-dashed">
-                                                <h5 class="mb-1">345</h5>
-                                                <p class="text-muted mb-0">Projects</p>
-                                            </div>
-                                            <div class="col-6">
-                                                <h5 class="mb-1">298</h5>
-                                                <p class="text-muted mb-0">Tasks</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-2 col">
-                                        <div class="text-end">
-                                            <a href="pages-profile" class="btn btn-light view-btn">View Profile</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--end card-->
-                        <div class="card team-box">
-                            <div class="card-body px-4">
-                                <div class="row align-items-center team-row">
-                                    <div class="col team-settings">
-                                        <div class="row align-items-center">
-                                            <div class="col">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <button type="button" class="btn fs-16 p-0 favourite-btn">
-                                                        <i class="ri-star-fill"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col text-end dropdown">
-                                                <a href="javascript:void(0);" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
-                                                    <i class="ri-more-fill fs-17"></i>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-eye-fill text-muted me-2 align-bottom"></i>View</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-star-fill text-muted me-2 align-bottom"></i>Favourite</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ri-delete-bin-5-fill text-muted me-2 align-bottom"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="team-profile-img">
-                                            <div class="avatar-lg img-thumbnail rounded-circle">
-                                                <div class="avatar-title border bg-light text-primary rounded-circle">
-                                                    DP
-                                                </div>
-                                            </div>
-                                            <div class="team-content">
-                                                <a href="#" class="d-block">
-                                                    <h5 class="fs-16 mb-1">Donald Palmer</h5>
-                                                </a>
-                                                <p class="text-muted mb-0">Wed Developer</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col">
-                                        <div class="row text-muted text-center">
-                                            <div class="col-6 border-end border-end-dashed">
-                                                <h5 class="mb-1">97</h5>
-                                                <p class="text-muted mb-0">Projects</p>
-                                            </div>
-                                            <div class="col-6">
-                                                <h5 class="mb-1">135</h5>
-                                                <p class="text-muted mb-0">Tasks</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-2 col">
-                                        <div class="text-end">
-                                            <a href="pages-profile" class="btn btn-light view-btn">View Profile</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        @endif
+                        @endforelse
                         <!--end card-->
                     </div>
                     <!-- end team list -->
 
                     <div class="row g-0 text-center text-sm-start align-items-center mb-3">
-                        <div class="col-sm-6">
-                            <div>
-                                <p class="mb-sm-0">Showing 1 to 10 of 12 entries</p>
-                            </div>
-                        </div> <!-- end col -->
-                        <div class="col-sm-6">
-                            <ul
-                                class="pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
-                                <li class="page-item disabled"> <a href="#" class="page-link"><i
-                                            class="mdi mdi-chevron-left"></i></a> </li>
-                                <li class="page-item"> <a href="#" class="page-link">1</a> </li>
-                                <li class="page-item active"> <a href="#" class="page-link">2</a> </li>
-                                <li class="page-item"> <a href="#" class="page-link">3</a> </li>
-                                <li class="page-item"> <a href="#" class="page-link">4</a> </li>
-                                <li class="page-item"> <a href="#" class="page-link">5</a> </li>
-                                <li class="page-item"> <a href="#" class="page-link"><i
-                                            class="mdi mdi-chevron-right"></i></a> </li>
-                            </ul>
-                        </div><!-- end col -->
                     </div><!-- end row -->
                 </div>
                 <!-- end tab pane -->

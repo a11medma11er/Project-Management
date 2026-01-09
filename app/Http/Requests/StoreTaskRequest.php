@@ -26,6 +26,10 @@ class StoreTaskRequest extends FormRequest
             'assigned_users.*' => ['exists:users,id'],
             'tags' => TaskRules::tags(),
             'tags.*' => ['string', 'max:50'],
+            'attachments' => ['nullable', 'array', 'max:5'],
+            'attachments.*' => ['file', 'max:5120', 'mimes:pdf,doc,docx,zip,png,jpg,jpeg'],
+            'sub_tasks' => ['nullable', 'array', 'max:20'],
+            'sub_tasks.*' => ['nullable', 'string', 'max:255'],
         ];
     }
 

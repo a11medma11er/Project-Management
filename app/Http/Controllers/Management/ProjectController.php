@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -72,7 +73,7 @@ class ProjectController extends Controller
         }
 
         // Set created_by
-        $data['created_by'] = auth()->id();
+        $data['created_by'] = Auth::id();
 
         // Generate slug if not exists
         if (empty($data['slug'])) {
@@ -87,7 +88,29 @@ class ProjectController extends Controller
             $project->members()->attach($request->members);
         }
 
-        // Handle file attachments (will implement later with dropzone)
+        // Handle file attachments
+        if ($request->hasFile('attachments')) {
+            \Log::info('Files received:', ['count' => count($request->file('attachments'))]);
+            
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('projects/attachments', 'public');
+                
+                \Log::info('File uploaded:', [
+                    'name' => $file->getClientOriginalName(),
+                    'path' => $path
+                ]);
+                
+                $project->attachments()->create([
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_path' => $path,
+                    'file_type' => $file->getClientMimeType(),
+                    'file_size' => $file->getSize(),
+                    'uploaded_by' => Auth::id(),
+                ]);
+            }
+        } else {
+            \Log::info('No files received in request');
+        }
         
         return redirect()->route('management.projects.index')
             ->with('success', 'Project created successfully!');
@@ -98,10 +121,35 @@ class ProjectController extends Controller
      */
     public function show($id)
     {
-        $project = Project::with(['creator', 'teamLead', 'members', 'attachments', 'comments.user'])->findOrFail($id);
+        $project = Project::with(['creator', 'teamLead', 'members', 'attachments', 'comments.user', 'comments.replies.user', 'tasks.assignedUsers', 'tasks.creator'])->findOrFail($id);
         $users = User::select('id', 'name', 'avatar')->orderBy('name')->get();
         
-        return view('apps-projects-overview', compact('project', 'users'));
+        // Get all project-related activities
+        $activities = \Spatie\Activitylog\Models\Activity::where(function($query) use ($id) {
+            // Activities on the project itself
+            $query->where(function($q) use ($id) {
+                $q->where('subject_type', 'App\\Models\\Project')
+                  ->where('subject_id', $id);
+            })
+            // Activities on project tasks
+            ->orWhereHasMorph('subject', ['App\\Models\\Task'], function($q) use ($id) {
+                $q->where('project_id', $id);
+            })
+            // Activities on project comments
+            ->orWhereHasMorph('subject', ['App\\Models\\ProjectComment'], function($q) use ($id) {
+                $q->where('project_id', $id);
+            })
+            // Activities on project attachments
+            ->orWhereHasMorph('subject', ['App\\Models\\ProjectAttachment'], function($q) use ($id) {
+                $q->where('project_id', $id);
+            });
+        })
+        ->with('causer', 'subject')
+        ->latest()
+        ->take(50)
+        ->get();
+        
+        return view('apps-projects-overview', compact('project', 'users', 'activities'));
     }
 
     /**
@@ -145,6 +193,30 @@ class ProjectController extends Controller
             $project->members()->sync($request->members);
         }
 
+        // Handle file attachments
+        if ($request->hasFile('attachments')) {
+            \Log::info('Files received for update:', ['count' => count($request->file('attachments'))]);
+            
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('projects/attachments', 'public');
+                
+                \Log::info('File uploaded:', [
+                    'name' => $file->getClientOriginalName(),
+                    'path' => $path
+                ]);
+                
+                $project->attachments()->create([
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_path' => $path,
+                    'file_type' => $file->getClientMimeType(),
+                    'file_size' => $file->getSize(),
+                    'uploaded_by' => Auth::id(),
+                ]);
+            }
+        } else {
+            \Log::info('No files received in update request');
+        }
+
         return redirect()->route('management.projects.index')
             ->with('success', 'Project updated successfully!');
     }
@@ -185,5 +257,26 @@ class ProjectController extends Controller
             'success' => true,
             'is_favorite' => $project->is_favorite
         ]);
+    }
+
+    /**
+     * Store project comment
+     */
+    public function storeComment(Request $request, $id)
+    {
+        $project = Project::findOrFail($id);
+        
+        $request->validate([
+            'comment' => 'required|string|max:1000',
+            'parent_id' => 'nullable|exists:project_comments,id',
+        ]);
+
+        $project->allComments()->create([
+            'user_id' => Auth::id(),
+            'comment' => $request->comment,
+            'parent_id' => $request->parent_id,
+        ]);
+
+        return back()->with('success', 'Comment added successfully!');
     }
 }

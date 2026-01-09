@@ -90,6 +90,33 @@ class TaskController extends Controller
             }
         }
 
+        // Handle attachments
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $filePath = $file->storeAs('tasks/attachments', $fileName, 'public');
+                
+                $task->attachments()->create([
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_path' => $filePath,
+                    'file_type' => $file->getClientOriginalExtension(),
+                    'file_size' => round($file->getSize() / 1024), // Convert to KB
+                ]);
+            }
+        }
+
+        // Add sub-tasks
+        if ($request->filled('sub_tasks')) {
+            foreach ($request->sub_tasks as $subTaskTitle) {
+                if (!empty(trim($subTaskTitle))) {
+                    $task->subTasks()->create([
+                        'title' => trim($subTaskTitle),
+                        'is_completed' => false,
+                    ]);
+                }
+            }
+        }
+
         return redirect()->route('management.tasks.index')
             ->with('success', 'Task created successfully!');
     }
@@ -143,6 +170,33 @@ class TaskController extends Controller
             $task->tags()->delete();
             foreach ($request->tags as $tag) {
                 $task->tags()->create(['tag' => $tag]);
+            }
+        }
+
+        // Handle new attachments
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $filePath = $file->storeAs('tasks/attachments', $fileName, 'public');
+                
+                $task->attachments()->create([
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_path' => $filePath,
+                    'file_type' => $file->getClientOriginalExtension(),
+                    'file_size' => round($file->getSize() / 1024), // Convert to KB
+                ]);
+            }
+        }
+
+        // Update sub-tasks (keep existing, add new ones)
+        if ($request->filled('sub_tasks')) {
+            foreach ($request->sub_tasks as $subTaskTitle) {
+                if (!empty(trim($subTaskTitle))) {
+                    $task->subTasks()->create([
+                        'title' => trim($subTaskTitle),
+                        'is_completed' => false,
+                    ]);
+                }
             }
         }
 
@@ -232,7 +286,7 @@ class TaskController extends Controller
     }
 
 
-    public function toggleSubTask(TaskSubTask $subTask)
+    public function toggleSubTask(Task $task, TaskSubTask $subTask)
     {
         $this->authorize('edit-tasks');
         
