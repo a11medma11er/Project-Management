@@ -151,9 +151,41 @@
                     </div>
                     @endif
 
+                    {{-- Extract UI Location from description (📍 line) --}}
+                    @php
+                        $description = $prompt->description ?? '';
+                        $uiLocation = '';
+                        $purpose = '';
+                        
+                        // Extract 📍 line for UI location
+                        if (preg_match('/📍\s*(.+?)(?:\n|🎯|$)/s', $description, $locationMatch)) {
+                            $uiLocation = trim($locationMatch[1]);
+                        }
+                        
+                        // Extract 🎯 line for purpose
+                        if (preg_match('/🎯\s*PURPOSE:\s*(.+?)(?:\n|📤|$)/s', $description, $purposeMatch)) {
+                            $purpose = trim($purposeMatch[1]);
+                        }
+                        
+                        // Fallback to original description if no special format
+                        if (empty($uiLocation) && empty($purpose)) {
+                            $purpose = Str::limit($description, 100);
+                        }
+                    @endphp
+
+                    @if($uiLocation)
+                    <div class="mb-2">
+                        <span class="badge bg-soft-warning text-warning" style="font-size: 0.7rem; padding: 0.3rem 0.5rem; display: inline-block; white-space: normal; word-wrap: break-word; text-align: left; max-width: 100%;">
+                            <i class="ri-map-pin-line"></i> {{ Str::limit($uiLocation, 50) }}
+                        </span>
+                    </div>
+                    @endif
+
+                    @if($purpose)
                     <p class="text-muted small mb-2">
-                        {{ Str::limit($prompt->description, 100) }}
+                        {{ Str::limit($purpose, 100) }}
                     </p>
+                    @endif
 
                     <div class="mb-3">
                         <span class="badge bg-soft-primary text-primary me-1">

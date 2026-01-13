@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'throttle:10,1'])->group(function () {
     Route::post('/update-profile/{id}', [App\Http\Controllers\HomeController::class, 'updateProfile'])->name('updateProfile');
     Route::post('/update-password/{id}', [App\Http\Controllers\HomeController::class, 'updatePassword'])->name('updatePassword');
+    Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
 });
 
 // Management Routes (Users, Roles, Permissions)

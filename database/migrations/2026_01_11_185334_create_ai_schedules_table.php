@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('ai_schedules', function (Blueprint $table) {
             $table->id();
-            $table->string('type'); // e.g., 'full_audit', 'resource_check'
+            $table->string('type'); // e.g., 'project_health', 'automation_run'
             $table->json('params')->nullable();
             $table->string('status')->default('pending'); // pending, processing, completed, failed
-            $table->timestamp('run_at')->index();
+            $table->timestamp('run_at');
             $table->timestamp('completed_at')->nullable();
-            $table->json('output')->nullable(); // Store execution results
+            $table->json('output')->nullable();
             $table->text('error_message')->nullable();
             $table->timestamps();
         });
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('a_i_schedules');
+        Schema::dropIfExists('ai_schedules');
     }
 };

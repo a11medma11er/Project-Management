@@ -48,7 +48,7 @@ SELECT
     END AS urgency_level,
     
     -- Relationship Counts
-    (SELECT COUNT(*) FROM comments WHERE task_id = t.id) AS comment_count,
+    (SELECT COUNT(*) FROM task_comments WHERE task_id = t.id) AS comment_count,
     (SELECT COUNT(*) FROM attachments WHERE task_id = t.id) AS attachment_count,
     (SELECT COUNT(*) FROM time_entries WHERE task_id = t.id) AS time_entry_count,
     (SELECT COALESCE(SUM(hours), 0) FROM time_entries WHERE task_id = t.id) AS total_hours_logged,
@@ -86,7 +86,7 @@ SELECT
     END AS needs_attention,
     
     CASE
-        WHEN (SELECT COUNT(*) FROM comments WHERE task_id = t.id) = 0 
+        WHEN (SELECT COUNT(*) FROM task_comments WHERE task_id = t.id) = 0 
         AND DATEDIFF(NOW(), t.created_at) > 3 THEN true
         ELSE false
     END AS low_engagement,

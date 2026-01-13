@@ -22,7 +22,6 @@ class AIWorkflowController extends Controller
     public function index()
     {
         $activeRules = $this->automationService->getActiveRules();
-        $workloadBalance = $this->automationService->balanceWorkload();
         
         // Fetch Scheduled Jobs
         $scheduledJobs = \App\Models\AI\AISchedule::orderBy('run_at', 'desc')->limit(10)->get();
@@ -30,11 +29,53 @@ class AIWorkflowController extends Controller
         // Get Workload Threshold
         $threshold = (int) (\App\Models\AI\AISetting::where('key', 'workload_threshold')->value('value') ?? 5);
 
+        // Count available items for each feature
+        $availableCounts = [
+            'priority' => \App\Models\Task::where('status', 'in_progress')
+                ->where(function ($query) {
+                    $query->where('due_date', '<=', now()->addDays(3))
+                        ->orWhereHas('dependencies', function ($q) {
+                            $q->where('status', 'completed');
+                        });
+                })
+                ->whereDoesntHave('aiDecisions', function ($q) {
+                    $q->where('decision_type', 'priority_adjustment')
+                      ->where('created_at', '>=', now()->subDay());
+                })->count(),
+            
+            'assignment' => \App\Models\Task::doesntHave('assignedUsers')
+                ->whereIn('status', ['pending', 'in_progress'])
+                ->whereDoesntHave('aiDecisions', function ($q) {
+                    $q->where('decision_type', 'assignment_suggestion')
+                      ->where('created_at', '>=', now()->subDay());
+                })
+                ->count(),
+            
+            'deadline' => \App\Models\Task::where(function ($query) {
+                    $query->where('due_date', '<', now())
+                        ->orWhere('due_date', '<=', now()->addDays(3));
+                })
+                ->whereIn('status', ['in_progress', 'pending'])
+                ->whereDoesntHave('aiDecisions', function ($q) {
+                    $q->where('decision_type', 'deadline_extension')
+                      ->where('created_at', '>=', now()->subDay());
+                })
+                ->count(),
+            
+            'projects' => \App\Models\Project::whereIn('status', ['active', 'in_progress'])
+                ->count(),
+            
+            'overloaded_users' => \App\Models\User::whereHas('tasks', function ($query) {
+                    $query->where('status', '!=', 'completed');
+                }, '>', $threshold)
+                ->count(),
+        ];
+
         return view('admin.ai-workflows.index', compact(
             'activeRules',
-            'workloadBalance',
             'scheduledJobs',
-            'threshold'
+            'threshold',
+            'availableCounts'
         ));
     }
 
@@ -171,5 +212,43 @@ class AIWorkflowController extends Controller
             'success' => true,
             'message' => 'Threshold updated successfully'
         ]);
+    }
+
+    /**
+     * Run specific AI feature (Cloud Mode Batch Processing)
+     */
+    public function runFeature(Request $request)
+    {
+        $request->validate([
+            'feature' => 'required|in:priority,assignment,deadline,projects',
+            'limit' => 'required|integer|min:1|max:50'
+        ]);
+
+        try {
+            $feature = $request->feature;
+            $limit = $request->limit;
+
+            // Route to appropriate batch method
+            $result = match($feature) {
+                'priority' => $this->automationService->checkPriorityAdjustmentsBatch($limit),
+                'assignment' => $this->automationService->checkAssignmentSuggestionsBatch($limit),
+                'deadline' => $this->automationService->checkDeadlineExtensionsBatch($limit),
+                'projects' => $this->automationService->checkProjectHealthBatch($limit),
+                default => ['error' => 'Unknown feature']
+            };
+
+            return response()->json([
+                'success' => true,
+                'feature' => $feature,
+                'result' => $result
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Feature execution failed',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

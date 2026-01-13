@@ -11,10 +11,12 @@ use Illuminate\Support\Facades\Log;
 class AIDecisionController extends Controller
 {
     protected $decisionEngine;
+    protected $feedbackService;
 
-    public function __construct(AIDecisionEngine $decisionEngine)
+    public function __construct(AIDecisionEngine $decisionEngine, \App\Services\AI\AIFeedbackService $feedbackService)
     {
         $this->decisionEngine = $decisionEngine;
+        $this->feedbackService = $feedbackService;
     }
 
     /**
@@ -66,8 +68,8 @@ class AIDecisionController extends Controller
     public function accept(AIDecision $decision, Request $request)
     {
         try {
-            // Update decision status
-            $decision->update(['user_action' => 'accepted']);
+            // Record feedback (handles status update and learning logs)
+            $this->feedbackService->recordFeedback($decision, 'accepted');
 
             // Execute the decision
             $executed = $this->decisionEngine->executeDecision($decision);
@@ -76,7 +78,15 @@ class AIDecisionController extends Controller
             activity('ai')
                 ->causedBy(auth()->user())
                 ->performedOn($decision)
-                ->withProperties(['action' => 'accepted', 'executed' => $executed])
+                ->withProperties([
+                    'action' => 'accepted',
+                    'executed' => $executed,
+                    'decision_type' => $decision->decision_type,
+                    'confidence_score' => $decision->confidence_score,
+                    'task_id' => $decision->task_id,
+                    'project_id' => $decision->project_id,
+                    'ai_response_time' => $decision->created_at->diffInSeconds(now()) . 's_after_creation'
+                ])
                 ->log('decision_accepted');
 
             $message = $executed 
@@ -104,11 +114,12 @@ class AIDecisionController extends Controller
         ]);
 
         try {
-            // Update decision status
-            $decision->update([
-                'user_action' => 'rejected',
-                'user_feedback' => $validated['rejection_reason'] ?? null,
-            ]);
+            // Record feedback
+            $this->feedbackService->recordFeedback(
+                $decision, 
+                'rejected', 
+                $validated['rejection_reason'] ?? null
+            );
 
             // Log activity
             activity('ai')
@@ -116,7 +127,11 @@ class AIDecisionController extends Controller
                 ->performedOn($decision)
                 ->withProperties([
                     'action' => 'rejected',
-                    'reason' => $validated['rejection_reason'] ?? null
+                    'reason' => $validated['rejection_reason'] ?? null,
+                    'decision_type' => $decision->decision_type,
+                    'confidence_score' => $decision->confidence_score,
+                    'task_id' => $decision->task_id,
+                    'project_id' => $decision->project_id,
                 ])
                 ->log('decision_rejected');
 
@@ -141,11 +156,12 @@ class AIDecisionController extends Controller
         ]);
 
         try {
-            // Update decision
-            $decision->update([
-                'user_action' => 'modified',
-                'user_feedback' => $validated['modified_recommendation'],
-            ]);
+            // Record feedback
+            $this->feedbackService->recordFeedback(
+                $decision, 
+                'modified', 
+                $validated['modified_recommendation']
+            );
 
             // Execute modified decision
             $executed = $this->decisionEngine->executeDecision(
@@ -160,7 +176,12 @@ class AIDecisionController extends Controller
                 ->withProperties([
                     'action' => 'modified',
                     'modified_recommendation' => $validated['modified_recommendation'],
-                    'executed' => $executed
+                    'executed' => $executed,
+                    'original_recommendation' => $decision->recommendation,
+                    'decision_type' => $decision->decision_type,
+                    'confidence_score' => $decision->confidence_score,
+                    'task_id' => $decision->task_id,
+                    'project_id' => $decision->project_id,
                 ])
                 ->log('decision_modified');
 
@@ -193,10 +214,23 @@ class AIDecisionController extends Controller
                 $decision = AIDecision::find($decisionId);
                 
                 if ($decision && $decision->user_action === 'pending') {
-                    $decision->update(['user_action' => 'accepted']);
+                    $this->feedbackService->recordFeedback($decision, 'accepted');
                     
                     if ($this->decisionEngine->executeDecision($decision)) {
                         $accepted++;
+                        
+                        // Log activity for each bulk decision
+                        activity('ai')
+                            ->causedBy(auth()->user())
+                            ->performedOn($decision)
+                            ->withProperties([
+                                'action' => 'bulk_accepted',
+                                'decision_type' => $decision->decision_type,
+                                'confidence_score' => $decision->confidence_score,
+                                'task_id' => $decision->task_id,
+                                'project_id' => $decision->project_id,
+                            ])
+                            ->log('decision_accepted');
                     } else {
                         $failed++;
                     }
@@ -231,6 +265,11 @@ class AIDecisionController extends Controller
             activity('ai')
                 ->causedBy(auth()->user())
                 ->performedOn($decision)
+                ->withProperties([
+                    'action' => 'deleted',
+                    'decision_type' => $decision->decision_type,
+                    'confidence_score' => $decision->confidence_score
+                ])
                 ->log('decision_deleted');
 
             return redirect()

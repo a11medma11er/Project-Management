@@ -6,26 +6,53 @@ use App\Models\AI\AIPrompt;
 use App\Models\AI\PromptCategory;
 use Illuminate\Database\Seeder;
 
+/**
+ * ╔══════════════════════════════════════════════════════════════════════════════╗
+ * ║                    CORE SYSTEM PROMPTS SEEDER                                 ║
+ * ║                                                                               ║
+ * ║  This file contains the 12 core AI prompts that power the entire AI system.  ║
+ * ║  Each prompt is PROTECTED and cannot be deleted from the UI.                 ║
+ * ║                                                                               ║
+ * ║  ⚠️  WARNING: Editing these prompts incorrectly may break AI features!       ║
+ * ║                                                                               ║
+ * ║  SECTIONS:                                                                    ║
+ * ║  1. AI Features Page (3 prompts) - Development Plan, Breakdown, Studies      ║
+ * ║  2. Task Details Page (4 prompts) - Analysis, Risk, Assignment, Deadline     ║
+ * ║  3. AI Workflows Page (5 prompts) - Batch Operations + Workload Balance      ║
+ * ╚══════════════════════════════════════════════════════════════════════════════╝
+ */
 class CoreSystemPromptsSeeder extends Seeder
 {
-    /**
-     * Core system prompts - THE HEART OF THE AI SYSTEM
-     * These 15 prompts power all AI features and cannot be deleted
-     */
     public function run(): void
     {
         $corePrompts = [
             
-            // ============================================
-            // AI FEATURES (4 prompts)
-            // ============================================
-            
+            // ╔══════════════════════════════════════════════════════════════════════╗
+            // ║  SECTION 1: AI FEATURES PAGE (3 prompts)                             ║
+            // ║  Location: AI Assistant → AI Features                                ║
+            // ╚══════════════════════════════════════════════════════════════════════╝
+
             [
                 'name' => 'ai_feature_development_plan',
                 'category' => 'project-analysis',
                 'type' => 'system',
                 'is_system' => true,
-                'description' => 'Generates comprehensive development plans for projects with phases, timeline, and resource allocation',
+                'description' => '📍 AI Features → Development Plan Generator → "Generate Plan" button
+
+🎯 PURPOSE: Creates comprehensive project development plans with phases, timeline, and resources.
+
+📤 EXPECTED RESPONSE FORMAT: The AI should return a structured plan. The parser accepts any JSON format with these possible keys:
+- overview (object with title, summary, estimated_duration)
+- phases (array of phase objects)
+- timeline (object with milestones)
+- resources (object)
+- risks (array)
+- recommendations (array)
+
+⚠️ EDITING TIPS:
+- Keep the {{variables}} placeholders intact
+- Response can be JSON or structured text
+- Do NOT remove the project context variables',
                 'template' => <<<'EOT'
 Generate a comprehensive development plan for the following project:
 
@@ -74,125 +101,43 @@ EOT
             ],
 
             [
-                'name' => 'ai_feature_task_analysis',
-                'category' => 'task-management',
-                'type' => 'system',
-                'is_system' => true,
-                'description' => 'Analyzes individual tasks for complexity, effort estimation, and provides actionable recommendations',
-                'template' => <<<'EOT'
-Analyze the following task comprehensively:
-
-**Task Title:** {{task_title}}
-**Description:** {{task_description}}
-**Priority:** {{priority}}
-**Assigned To:** {{assigned_to}}
-**Due Date:** {{due_date}}
-
-Provide detailed analysis:
-
-1. **Complexity Analysis**
-   - Overall complexity level (Low/Medium/High/Very High)
-   - Technical complexity factors
-   - Business complexity factors
-
-2. **Effort Estimation**
-   - Estimated hours/days required
-   - Breakdown by sub-components
-   - Confidence level in estimate
-
-3. **Dependencies**
-   - Tasks that must be completed first
-   - Tasks that depend on this task
-   - External dependencies
-
-4. **Risk Factors**
-   - Technical risks
-   - Resource risks
-   - Timeline risks
-
-5. **Recommendations**
-   - Should this task be broken down further?
-   - Suggested approach/methodology
-   - Tools or resources needed
-   - Priority adjustment suggestions
-EOT
-            ],
-
-            [
-                'name' => 'ai_feature_feasibility_study',
+                'name' => 'ai_feature_project_breakdown',
                 'category' => 'project-analysis',
                 'type' => 'system',
                 'is_system' => true,
-                'description' => 'Generates detailed feasibility studies for project evaluation',
+                'description' => '📍 AI Features → Project Breakdown → "Generate Breakdown" button
+
+🎯 PURPOSE: Breaks down a project into categorized tasks with estimates.
+
+📤 EXPECTED RESPONSE FORMAT: JSON with:
+- total_estimated_tasks (number)
+- categories (object with category names as keys, each containing tasks array)
+
+Example:
+{
+  "total_estimated_tasks": 25,
+  "categories": {
+    "Planning": { "tasks": [...], "estimated_duration": "2 weeks" },
+    "Development": { "tasks": [...], "estimated_duration": "4 weeks" }
+  }
+}
+
+⚠️ EDITING TIPS:
+- Response MUST include task counts
+- Categories should be logical phases
+- Keep {{project_title}} and {{project_description}} variables',
                 'template' => <<<'EOT'
-Generate a comprehensive feasibility study for:
+Create a comprehensive task breakdown for the following project:
 
-**Project:** {{project_title}}
-**Description:** {{project_description}}
-**Proposed Budget:** {{budget}}
-**Timeline:** {{timeline}}
-**Team:** {{team_size}} members
+**Project Title:** {{project_title}}
+**Project Description:** {{project_description}}
+**Budget:** {{budget}}
+**Deadline:** {{deadline}}
 
-Analyze and provide:
+Break down the project into specific, actionable tasks:
 
-1. **Executive Summary**
-   - Project viability assessment
-   - Overall recommendation (Go/No-Go/Conditional)
-
-2. **Technical Feasibility**
-   - Technology stack assessment
-   - Infrastructure requirements
-   - Technical risks and challenges
-   - Integration complexity
-
-3. **Economic Feasibility**
-   - Cost-benefit analysis
-   - ROI estimation
-   - Budget adequacy assessment
-   - Financial risks
-
-4. **Operational Feasibility**
-   - Resource availability
-   - Team capability assessment
-   - Operational impact
-   - Support requirements
-
-5. **Schedule Feasibility**
-   - Timeline realism assessment
-   - Critical path analysis
-   - Schedule risks
-   - Milestone achievability
-
-6. **Risk Analysis**
-   - Major risks identified
-   - Risk mitigation strategies
-   - Success probability
-
-7. **Final Recommendation**
-   - Proceed/Modify/Reject with reasoning
-   - Conditions for success
-   - Next steps
-EOT
-            ],
-
-            [
-                'name' => 'ai_feature_project_breakdown',
-                'category' => 'task-management',
-                'type' => 'system',
-                'is_system' => true,
-                'description' => 'Breaks down projects into detailed, actionable tasks organized by category and priority',
-                'template' => <<<'EOT'
-Break down the following project into detailed, actionable tasks:
-
-**Project:** {{project_title}}
-**Description:** {{project_description}}
-**Granularity Level:** {{granularity}}
-**Timeline:** {{deadline}}
-
-Create a structured task breakdown:
-
-1. **Planning & Analysis Tasks**
-   - List 4-6 specific tasks
+1. **Planning Tasks**
+   - List 3-4 specific tasks
    - Estimated duration for each
    - Priority level
    - Dependencies
@@ -229,51 +174,161 @@ Create a structured task breakdown:
 EOT
             ],
 
-            // ============================================
-            // AI DECISION ENGINE (4 prompts)
-            // ============================================
-
             [
-                'name' => 'ai_decision_priority_suggestion',
-                'category' => 'data-analysis',
+                'name' => 'ai_feature_feasibility_study',
+                'category' => 'project-analysis',
                 'type' => 'system',
                 'is_system' => true,
-                'description' => 'Suggests optimal task priorities based on multiple factors and business rules',
+                'description' => '📍 AI Features → AI Studies Generator → "Feasibility Study" / "Technical Study" / "Risk Study" buttons
+
+🎯 PURPOSE: Generates professional feasibility, technical, or risk studies.
+
+📤 EXPECTED RESPONSE FORMAT: JSON with "analysis" object containing:
+- executive_summary
+- technical_feasibility / financial_feasibility / operational_feasibility
+- recommendations (array)
+- conclusion
+
+⚠️ EDITING TIPS:
+- {{study_type}} determines which study type (feasibility/technical/risk)
+- Response should be comprehensive and professional
+- Keep all project context variables intact',
                 'template' => <<<'EOT'
-Analyze and suggest priority for the following task:
+Generate a comprehensive {{study_type}} for the following project:
+
+**Project Title:** {{project_title}}
+**Project Description:** {{project_description}}
+**Budget:** {{budget}}
+**Deadline:** {{deadline}}
+**Team Size:** {{team_size}}
+**Current Progress:** {{progress}}%
+**Existing Tasks:** {{existing_tasks}}
+
+Provide a thorough analysis covering:
+
+1. **Executive Summary**
+   - Key findings overview
+   - Critical success factors
+   - Overall assessment
+
+2. **Detailed Analysis**
+   - Technical considerations
+   - Financial implications
+   - Operational requirements
+   - Schedule feasibility
+
+3. **Risk Assessment**
+   - Identified risks with severity
+   - Mitigation strategies
+   - Contingency plans
+
+4. **Recommendations**
+   - Key action items
+   - Priority changes if needed
+   - Resource optimization suggestions
+
+5. **Conclusion**
+   - Final assessment
+   - Go/No-Go recommendation
+   - Next steps
+EOT
+            ],
+
+            // ╔══════════════════════════════════════════════════════════════════════╗
+            // ║  SECTION 2: TASK DETAILS PAGE - AI ASSISTANT (4 prompts)             ║
+            // ║  Location: Any Task → Task Details → AI Assistant Card               ║
+            // ╚══════════════════════════════════════════════════════════════════════╝
+
+            [
+                'name' => 'ai_feature_task_analysis',
+                'category' => 'task-management',
+                'type' => 'system',
+                'is_system' => true,
+                'description' => '📍 Task Details → AI Assistant → "Analysis" button
+
+🎯 PURPOSE: Provides comprehensive analysis of a single task including complexity, risks, and recommendations.
+
+📤 EXPECTED RESPONSE FORMAT: Any JSON structure is accepted. Common keys:
+- task_summary, complexity, estimated_effort
+- critical_issues (array)
+- recommendations (array)
+- risk_assessment (object)
+
+⚠️ EDITING TIPS:
+- Keep {{task_title}}, {{task_description}}, {{priority}}, {{due_date}} variables
+- Response should be actionable and specific
+- Any valid JSON format works - parser is flexible',
+                'template' => <<<'EOT'
+Analyze the following task comprehensively:
+
+**Task Title:** {{task_title}}
+**Description:** {{task_description}}
+**Priority:** {{priority}}
+**Assigned To:** {{assigned_to}}
+**Due Date:** {{due_date}}
+
+Provide detailed analysis:
+
+1. **Complexity Analysis**
+   - Overall complexity level (Low/Medium/High/Very High)
+   - Technical complexity factors
+   - Business complexity factors
+
+2. **Effort Estimation**
+   - Estimated hours/days required
+   - Breakdown by sub-components
+   - Buffer recommendations
+
+3. **Risk Assessment**
+   - Identified risks
+   - Impact level for each
+   - Mitigation strategies
+
+4. **Dependencies**
+   - Related tasks or blockers
+   - Required resources
+   - Prerequisites
+
+5. **Recommendations**
+   - Approach suggestions
+   - Priority adjustments if needed
+   - Resource allocation advice
+EOT
+            ],
+
+            [
+                'name' => 'ai_decision_risk_assessment',
+                'category' => 'task-management',
+                'type' => 'system',
+                'is_system' => true,
+                'description' => '📍 Task Details → AI Assistant → "Risk Assessment" button
+
+🎯 PURPOSE: Identifies and assesses risks for a single task.
+
+📤 EXPECTED RESPONSE FORMAT: Any JSON with risk information. Parser looks for:
+- risk_level or urgency_level
+- identified_risks or risks (array)
+- mitigation or recommendations
+- impact or impact_assessment
+
+⚠️ EDITING TIPS:
+- Focus on risk identification
+- Include severity levels (Low/Medium/High/Critical)
+- Keep all {{variable}} placeholders',
+                'template' => <<<'EOT'
+Analyze risks for this task:
 
 **Task:** {{task_title}}
 **Description:** {{task_description}}
-**Current Priority:** {{current_priority}}
+**Priority:** {{priority}}
 **Due Date:** {{due_date}}
-**Project Priority:** {{project_priority}}
-**Dependencies:** {{dependencies_count}} tasks
-**Assigned To:** {{assigned_to}}
-
-Consider these factors:
-
-1. **Business Impact**
-   - How critical is this task to business goals?
-   - What's the urgency level?
-
-2. **Dependencies**
-   - How many tasks are blocked by this?
-   - Is this task blocking critical path?
-
-3. **Project Context**
-   - Project priority level
-   - Current project phase
-   - Overall project health
-
-4. **Resource Context**
-   - Assignee availability
-   - Required skills availability
 
 Provide:
-- **Suggested Priority:** Critical/High/Medium/Low
-- **Reasoning:** Detailed explanation
-- **Impact Assessment:** What happens if delayed
-- **Confidence Level:** 0-100%
+1. **Risk Level**: Low/Medium/High/Critical
+2. **Identified Risks**: List 2-4 specific risks
+3. **Mitigation**: Recommended actions for each risk
+4. **Impact Assessment**: What happens if risks materialize
+5. **Timeline Risks**: Deadline-related concerns
 EOT
             ],
 
@@ -282,46 +337,35 @@ EOT
                 'category' => 'task-management',
                 'type' => 'system',
                 'is_system' => true,
-                'description' => 'Recommends optimal user assignments based on workload, skills, and availability',
+                'description' => '📍 Task Details → AI Assistant → "Suggest Assignment" button
+
+🎯 PURPOSE: Recommends the best team member to assign to a task.
+
+📤 EXPECTED RESPONSE FORMAT: Any JSON with assignment suggestion. Parser looks for:
+- recommended_assignee or assignee
+- user_id or id
+- reason or reasoning
+- alternative (optional second choice)
+
+⚠️ EDITING TIPS:
+- {{available_users}} contains team members with workload
+- Suggest based on skills, workload, and availability
+- Always include a reason for the recommendation',
                 'template' => <<<'EOT'
-Suggest the best team member to assign this task:
+Suggest the best assignee for this task:
 
 **Task:** {{task_title}}
 **Description:** {{task_description}}
-**Required Skills:** {{required_skills}}
 **Priority:** {{priority}}
-**Estimated Effort:** {{estimated_effort}}
 
-**Available Team Members:**
-{{team_members}}
+**Available Team:**
+{{available_users}}
 
-**Current Workload:**
-{{workload_data}}
-
-Analyze and recommend:
-
-1. **Primary Recommendation**
-   - Recommended assignee
-   - Match score (0-100%)
-   - Reasoning
-
-2. **Alternative Options**
-   - 2nd choice with reasoning
-   - 3rd choice with reasoning
-
-3. **Workload Analysis**
-   - Current load of recommended assignee
-   - Impact of this assignment
-   - Overload risk assessment
-
-4. **Skills Match**
-   - How well skills align
-   - Training needed (if any)
-   - Experience level considerations
-
-5. **Timeline Feasibility**
-   - Can assignee complete by deadline?
-   - Recommended adjustments if needed
+Provide:
+1. **Recommended Assignee**: Name and ID
+2. **Reason**: Why this person is the best fit
+3. **Alternative**: Second choice if primary unavailable
+4. **Workload Consideration**: How this affects their current load
 EOT
             ],
 
@@ -330,536 +374,334 @@ EOT
                 'category' => 'task-management',
                 'type' => 'system',
                 'is_system' => true,
-                'description' => 'Estimates realistic deadlines based on complexity, workload, and historical data',
+                'description' => '📍 Task Details → AI Assistant → "Estimate Deadline" button
+
+🎯 PURPOSE: Estimates a realistic deadline for task completion.
+
+📤 EXPECTED RESPONSE FORMAT: Any JSON with deadline info. Parser looks for:
+- estimated_duration or duration
+- recommended_deadline or deadline
+- confidence or confidence_level
+- factors (what influenced the estimate)
+
+⚠️ EDITING TIPS:
+- Consider task complexity and current workload
+- Provide specific dates when possible
+- Include confidence level (Low/Medium/High)',
                 'template' => <<<'EOT'
 Estimate a realistic deadline for this task:
 
 **Task:** {{task_title}}
 **Description:** {{task_description}}
-**Complexity:** {{complexity}}
 **Priority:** {{priority}}
-**Assignee:** {{assignee}}
-**Assignee Current Load:** {{current_load}} tasks
+**Current Due Date:** {{due_date}}
 
-Historical Context:
-**Similar Tasks Average Duration:** {{avg_duration}}
-**Team Velocity:** {{team_velocity}}
-
-Provide estimation:
-
-1. **Recommended Deadline**
-   - Suggested date
-   - Working days/hours estimated
-   - Confidence level
-
-2. **Estimation Breakdown**
-   - Planning & analysis time
-   - Development time
-   - Testing time
-   - Buffer time
-   - Total time
-
-3. **Risk Factors**
-   - Factors that could delay
-   - Probability of each risk
-   - Mitigation suggestions
-
-4. **Optimistic vs Realistic vs Pessimistic**
-   - Best case scenario (date)
-   - Most likely scenario (date)
-   - Worst case scenario (date)
-
-5. **Recommendations**
-   - Should deadline be earlier or later?
-   - Any adjustments needed to task scope
-   - Resource allocation suggestions
+Provide:
+1. **Estimated Duration**: Days/hours needed
+2. **Recommended Deadline**: Specific date
+3. **Confidence Level**: Low/Medium/High
+4. **Factors Considered**: What influenced the estimate
+5. **Buffer Recommendation**: Extra time for unexpected issues
 EOT
             ],
 
-            [
-                'name' => 'ai_decision_risk_assessment',
-                'category' => 'risk-assessment',
-                'type' => 'system',
-                'is_system' => true,
-                'description' => 'Assesses risks in AI decisions and suggests mitigation strategies',
-                'template' => <<<'EOT'
-Assess the risks of this AI decision:
-
-**Decision Type:** {{decision_type}}
-**Context:** {{decision_context}}
-**Proposed Action:** {{proposed_action}}
-**Impact Scope:** {{impact_scope}}
-
-Analyze risks:
-
-1. **Decision Risks**
-   - What could go wrong?
-   - Probability of each risk (High/Medium/Low)
-   - Impact severity
-
-2. **Dependency Risks**
-   - Tasks/projects affected
-   - Cascading impact assessment
-
-3. **Resource Risks**
-   - Team capacity impact
-   - Skill gap risks
-   - Availability concerns
-
-4. **Timeline Risks**
-   - Schedule impact
-   - Deadline jeopardy
-   - Critical path effects
-
-5. **Mitigation Strategies**
-   - For each identified risk
-   - Preventive measures
-   - Contingency plans
-
-6. **Recommendation**
-   - Proceed/Modify/Abort
-   - Conditions for proceeding
-   - Monitoring requirements
-EOT
-            ],
-
-            // ============================================
-            // AI AUTOMATION (4 prompts)
-            // ============================================
+            // ╔══════════════════════════════════════════════════════════════════════╗
+            // ║  SECTION 3: AI WORKFLOWS PAGE - RUN AUTOMATION (5 prompts)           ║
+            // ║  Location: AI Assistant → Workflows → Run Automation Section         ║
+            // ╚══════════════════════════════════════════════════════════════════════╝
 
             [
-                'name' => 'ai_automation_workload_analysis',
-                'category' => 'data-analysis',
-                'type' => 'system',
-                'is_system' => true,
-                'description' => 'Analyzes team workload distribution and identifies imbalances',
-                'template' => <<<'EOT'
-Analyze workload distribution across the team:
-
-**Team Members and Their Tasks:**
-{{team_workload_data}}
-
-**Analysis Period:** {{period}}
-**Total Tasks:** {{total_tasks}}
-**Team Size:** {{team_size}}
-
-Provide comprehensive analysis:
-
-1. **Workload Distribution**
-   - Tasks per team member
-   - Hours per team member
-   - Distribution graph/visualization data
-   - Statistical summary (mean, median, std deviation)
-
-2. **Imbalance Detection**
-   - Overloaded members (>threshold)
-   - Underutilized members (<threshold)
-   - Severity of imbalance
-
-3. **Capacity Analysis**
-   - Total team capacity
-   - Current utilization %
-   - Available capacity
-   - Bottlenecks identified
-
-4. **Recommendations**
-   - Which tasks should be redistributed?
-   - From whom to whom?
-   - Expected impact of changes
-   - Priority of rebalancing
-
-5. **Trend Analysis**
-   - Is workload increasing/decreasing?
-   - Projected capacity in X weeks
-   - When will team be overloaded?
-EOT
-            ],
-
-            [
-                'name' => 'ai_automation_task_redistribution',
+                'name' => 'ai_automation_priority_batch',
                 'category' => 'ai-automation',
                 'type' => 'system',
                 'is_system' => true,
-                'description' => 'Suggests optimal task redistributions to balance team workload',
+                'description' => '📍 Workflows → Run Automation → "Priority Adjustments" button
+
+🎯 PURPOSE: Analyzes multiple tasks and suggests priority changes.
+
+📤 EXPECTED RESPONSE FORMAT: Text-based format with Task IDs. Parser searches for:
+- "Task [ID]: CHANGE priority to [Level]" or "Task [ID]: KEEP priority"
+- Keywords: change, keep, urgent, high, escalate
+
+Example response:
+Task 366: CHANGE priority to Urgent - deadline is tomorrow
+Task 388: KEEP priority High - already appropriate
+
+⚠️ CRITICAL EDITING RULES:
+- MUST include "Task [ID]:" format for parser to detect
+- MUST include action keywords (CHANGE/KEEP/urgent/high)
+- Mention EVERY task in {{tasks_list}}
+- Do NOT use JSON format for this prompt',
                 'template' => <<<'EOT'
-Suggest task redistribution to optimize team workload:
+Analyze ALL {{tasks_count}} tasks for priority adjustments:
 
-**Overloaded Member:** {{overloaded_user}}
-**Current Load:** {{current_load}} tasks / {{hours}} hours
-**Threshold:** {{threshold}}
+{{tasks_list}}
 
-**Their Tasks:**
-{{user_tasks}}
+Date: {{analysis_date}}
 
-**Available Team Members:**
-{{available_members}}
+**CRITICAL: You MUST analyze and respond for EVERY task in the list above.**
 
-Generate redistribution plan:
+For each task, respond with one line in this format:
+Task [ID]: [KEEP/CHANGE] priority [to Level] - [brief reason]
 
-1. **Tasks to Redistribute**
-   - List specific tasks
-   - Reason for selecting each
-   - Priority of redistribution
+Examples:
+Task 366: CHANGE priority to Urgent - deadline is tomorrow
+Task 388: KEEP priority High - already appropriate for workload
+Task 292: CHANGE priority to High - blocking other tasks
 
-2. **Recommended Assignments**
-   For each task:
-   - Current assignee → New assignee
-   - Match score (skills, availability)
-   - Impact on new assignee's workload
-   - Reasoning
+Priority levels: low, medium, high, urgent
 
-3. **Impact Analysis**
-   - Before redistribution state
-   - After redistribution state
-   - Workload balance improvement %
-   - Risk assessment
-
-4. **Implementation Plan**
-   - Step-by-step redistribution sequence
-   - Communication needed
-   - Timeline for changes
-   - Monitoring requirements
-
-5. **Alternative Scenarios**
-   - Plan B if primary fails
-   - Hybrid approaches
+**Summary:**
+- Total analyzed: {{tasks_count}}
+- Changes recommended: [number]
 EOT
             ],
 
             [
-                'name' => 'ai_automation_overload_detection',
+                'name' => 'ai_automation_assignment_batch',
                 'category' => 'ai-automation',
                 'type' => 'system',
                 'is_system' => true,
-                'description' => 'Detects team member overload conditions and triggers alerts',
+                'description' => '📍 Workflows → Run Automation → "Assignment Suggestions" button
+
+🎯 PURPOSE: Suggests team member assignments for multiple unassigned tasks.
+
+📤 EXPECTED RESPONSE FORMAT: Text-based format with Task IDs. Parser searches for:
+- "Task [ID]: Assign to [Name] (ID:[number])"
+- Keywords: assign, delegate, allocate
+
+Example response:
+Task 105: Assign to John Doe (ID:5) - low workload
+Task 206: Assign to Jane Smith (ID:3) - matching skills
+
+⚠️ CRITICAL EDITING RULES:
+- MUST include "Task [ID]:" format
+- MUST include "Assign to" keyword
+- Include User ID in format (ID:X)
+- Assign EVERY task in the list',
                 'template' => <<<'EOT'
-Check for team overload conditions:
+**CRITICAL: You MUST provide an assignment for EVERY task below.**
 
-**Team Member:** {{user_name}}
-**Current Tasks:** {{task_count}}
-**Total Estimated Hours:** {{total_hours}}
-**Work Hours Available:** {{available_hours}} per week
-**Threshold:** {{threshold}} tasks or {{hour_threshold}} hours
+{{tasks_list}}
 
-**Task Details:**
-{{task_list}}
+Date: {{analysis_date}}
 
-Detect and report:
+For each task, respond with:
+Task [ID]: Assign to [User Name] (ID:[User ID]) - [brief reason]
 
-1. **Overload Status**
-   - Is user overloaded? Yes/No
-   - Severity: Low/Medium/High/Critical
-   - By how much? (% over threshold)
+Example:
+Task 105: Assign to John Doe (ID:5) - low workload, matching skills
+Task 206: Assign to Jane Smith (ID:3) - available capacity
 
-2. **Contributing Factors**
-   - Too many total tasks
-   - Too many high-priority tasks
-   - Unrealistic deadlines
-   - Complex tasks requiring more time
-
-3. **Impact Assessment**
-   - At-risk tasks (likely to miss deadline)
-   - Quality risk (rushed work)
-   - Burnout risk
-   - Project impact
-
-4. **Immediate Actions Needed**
-   - Urgent: Must be done now
-   - Important: Should be done soon
-   - Can wait: For next review cycle
-
-5. **Recommended Solutions**
-   - Task redistribution candidates
-   - Deadline extension needs
-   - Resource augmentation
-   - Priority re-evaluation
-
-6. **Alert Level**
-   - None/Warning/Critical
-   - Stakeholders to notify
-   - Urgency of response
+Rules:
+- Assign EVERY task in the list
+- Prioritize users with fewer active tasks
+- Use exact User IDs from the list
 EOT
             ],
 
             [
-                'name' => 'ai_automation_workflow_optimization',
+                'name' => 'ai_automation_deadline_batch',
                 'category' => 'ai-automation',
                 'type' => 'system',
                 'is_system' => true,
-                'description' => 'Identifies workflow inefficiencies and suggests automation opportunities',
+                'description' => '📍 Workflows → Run Automation → "Deadline Extensions" button
+
+🎯 PURPOSE: Analyzes overdue/at-risk tasks and suggests deadline extensions.
+
+📤 EXPECTED RESPONSE FORMAT: Text-based format with Task IDs. Parser searches for:
+- "Task [ID]: EXTEND deadline by X days" or "Task [ID]: KEEP deadline"
+- Keywords: extend, deadline, postpone, delay
+
+Example response:
+Task 204: EXTEND deadline by 3 days - complexity requires more time
+Task 305: KEEP deadline - on track for completion
+
+⚠️ CRITICAL EDITING RULES:
+- MUST include "Task [ID]:" format
+- MUST include EXTEND or KEEP keyword
+- Respond for EVERY task
+- Specify number of days for extensions',
                 'template' => <<<'EOT'
-Analyze workflow for optimization opportunities:
+**CRITICAL: You MUST analyze EVERY task below and provide a recommendation.**
 
-**Process Name:** {{process_name}}
-**Current Steps:** {{current_steps}}
-**Frequency:** {{frequency}}
-**Time Spent:** {{time_spent}} per cycle
-**Pain Points:** {{pain_points}}
+{{tasks_list}}
 
-Analyze and optimize:
+Date: {{analysis_date}}
 
-1. **Current State Analysis**
-   - Process map
-   - Bottlenecks identified
-   - Redundant steps
-   - Manual intervention points
+For each task, respond with:
+Task [ID]: [EXTEND/KEEP] deadline [by X days] - [brief reason]
 
-2. **Inefficiency Detection**
-   - Wasted time
-   - Unnecessary steps
-   - Context switching overhead
-   - Waiting times
+Examples:
+Task 204: EXTEND deadline by 3 days - complexity requires more time
+Task 305: KEEP deadline - on track for completion
+Task 406: EXTEND deadline by 1 day - minor delays
 
-3. **Automation Opportunities**
-   - Steps that can be automated
-   - Tools/technologies for automation
-   - Implementation complexity (Low/Med/High)
-   - Expected time savings
-
-4. **Optimized Workflow**
-   - Proposed new process
-   - Steps eliminated/combined
-   - Automation points
-   - Manual steps remaining
-
-5. **ROI Analysis**
-   - Time saved per cycle
-   - Annual hours saved
-   - Cost of implementation
-   - Payback period
-
-6. **Implementation Roadmap**
-   - Phase 1: Quick wins
-   - Phase 2: Medium complexity
-   - Phase 3: Complex automations
-   - Success metrics
-EOT
-            ],
-
-            // ============================================
-            // AI INSIGHTS & ANALYTICS (3 prompts)
-            // ============================================
-
-            [
-                'name' => 'ai_insights_performance_analysis',
-                'category' => 'data-analysis',
-                'type' => 'system',
-                'is_system' => true,
-                'description' => 'Analyzes team and project performance metrics with actionable insights',
-                'template' => <<<'EOT'
-Analyze performance metrics and provide insights:
-
-**Analysis Period:** {{period}}
-**Team:** {{team_name}}
-**Projects:** {{project_count}}
-
-**Performance Data:**
-- Tasks Completed: {{completed_tasks}}
-- Tasks In Progress: {{in_progress_tasks}}
-- Tasks Overdue: {{overdue_tasks}}
-- Average Completion Time: {{avg_completion_time}}
-- Velocity: {{velocity}}
-
-**Quality Metrics:**
-- Bug Rate: {{bug_rate}}
-- Rework %: {{rework_percentage}}
-- Client Satisfaction: {{satisfaction_score}}
-
-Provide analysis:
-
-1. **Performance Summary**
-   - Overall performance score (0-100)
-   - Trend: Improving/Stable/Declining
-   - Key highlights
-   - Major concerns
-
-2. **Detailed Metrics Analysis**
-   - Velocity trends
-   - Completion rate analysis
-   - Quality trends
-   - Productivity patterns
-
-3. **Strengths Identified**
-   - What's working well
-   - Best performers
-sing practices to replicate
-
-4. **Issues Identified**
-   - Performance gaps
-   - Bottlenecks
-   - At-risk areas
-   - Root causes
-
-5. **Predictions**
-   - Next period forecast
-   - Capacity projection
-   - Risk areas
-
-6. **Actionable Recommendations**
-   - Top 3 improvement priorities
-   - Specific action items
-   - Expected impact
-   - Implementation timeline
+Rules:
+- Respond for EVERY task in the list
+- EXTEND if task is at risk or overdue
+- KEEP if deadline is achievable
 EOT
             ],
 
             [
-                'name' => 'ai_insights_bottleneck_detection',
-                'category' => 'data-analysis',
+                'name' => 'ai_automation_project_health_batch',
+                'category' => 'ai-automation',
                 'type' => 'system',
                 'is_system' => true,
-                'description' => 'Identifies workflow bottlenecks and suggests resolution strategies',
+                'description' => '📍 Workflows → Run Automation → "Project Health" button
+
+🎯 PURPOSE: Assesses health status for multiple projects.
+
+📤 EXPECTED RESPONSE FORMAT: Text-based format with Project IDs. Parser searches for:
+- "Project [ID]: HEALTHY/AT_RISK/CRITICAL"
+- Keywords: healthy, at_risk, at risk, critical, investigate
+
+Example response:
+Project 1: CRITICAL - 5 overdue tasks, 20% progress only
+Project 2: HEALTHY - on track, no overdue tasks
+
+⚠️ CRITICAL EDITING RULES:
+- MUST include "Project [ID]:" format
+- MUST include status keyword (HEALTHY/AT_RISK/CRITICAL)
+- Assess EVERY project in the list',
                 'template' => <<<'EOT'
-Detect and analyze workflow bottlenecks:
+**CRITICAL: You MUST assess EVERY project below.**
 
-**Project/Process:** {{process_name}}
-**Analysis Period:** {{period}}
+{{projects_list}}
 
-**Workflow Data:**
-- Total Tasks: {{total_tasks}}
-- Tasks in Queue: {{queued_tasks}}
-- Average Wait Time: {{avg_wait_time}}
-- Throughput: {{throughput}} tasks/week
+Date: {{analysis_date}}
 
-**Stage-wise Distribution:**
-{{stage_distribution}}
+For each project, respond with:
+Project [ID]: [HEALTHY/AT_RISK/CRITICAL] - [brief assessment]
 
-Detect bottlenecks:
+Examples:
+Project 1: CRITICAL - 5 overdue tasks, 20% progress only
+Project 2: HEALTHY - on track, no overdue tasks
+Project 3: AT_RISK - 2 overdue tasks, team understaffed
 
-1. **Bottleneck Identification**
-   - Which stage/person/process is the bottleneck?
-   - Severity: Minor/Major/Critical
-   - Duration: How long has this existed?
-
-2. **Impact Analysis**
-   - Tasks delayed
-   - Projects affected
-   - Financial impact
-   - Customer impact
-
-3. **Root Cause Analysis**
-   - Why is this a bottleneck?
-   - Resource constraints?
-   - Process inefficiency?
-   - Dependency issues?
-
-4. **Resolution Strategies**
-   - Short-term fixes (1-2 weeks)
-   - Medium-term solutions (1-2 months)
-   - Long-term improvements (3+ months)
-
-5. **Recommended Actions**
-   - Immediate steps to take
-   - Resource reallocation needs
-   - Process changes required
-   - Success metrics
-
-6. **Prevention**
-   - How to avoid in future
-   - Early warning indicators
-   - Monitoring recommendations
+Rules:
+- Assess EVERY project in the list
+- HEALTHY = on track, no issues
+- AT_RISK = minor issues, needs attention  
+- CRITICAL = major issues, immediate action needed
 EOT
             ],
 
             [
-                'name' => 'ai_insights_trend_prediction',
-                'category' => 'data-analysis',
+                'name' => 'ai_workload_balance',
+                'category' => 'ai-automation',
                 'type' => 'system',
                 'is_system' => true,
-                'description' => 'Predicts project trends and future outcomes based on historical data',
+                'description' => '📍 Workflows → Workload Balance → "Analyze Workload" button
+
+🎯 PURPOSE: Analyzes overloaded team members and suggests task redistribution.
+
+📤 EXPECTED RESPONSE FORMAT: JSON with specific structure:
+{
+  "recommendations": [
+    {
+      "user_id": 5,
+      "user_name": "John Doe",
+      "recommendation": "Redistribute 3 tasks",
+      "severity": "high",
+      "tasks_to_redistribute": 3
+    }
+  ],
+  "summary": {
+    "total_analyzed": 5,
+    "critical_cases": 2
+  }
+}
+
+⚠️ CRITICAL EDITING RULES:
+- Response MUST be valid JSON
+- MUST include "recommendations" array
+- Each item needs user_id and recommendation
+- Keep the JSON structure intact',
                 'template' => <<<'EOT'
-Predict project trends and outcomes:
+Analyze overloaded team members and provide smart workload management recommendations:
 
-**Project:** {{project_name}}
-**Current Status:** {{current_status}}
-**Progress:** {{progress}}%
-**Deadline:** {{deadline}}
+**Overloaded Team Members (JSON):**
+{{users_json}}
 
-**Historical Data:**
-- Velocity (last 4 weeks): {{velocity_data}}
-- Completion rates: {{completion_rates}}
-- Bug trends: {{bug_trends}}
-- Team capacity changes: {{capacity_changes}}
+**Context:**
+- Total overloaded users: {{users_count}}
+- Workload threshold: {{threshold}} active tasks
+- Analysis date: {{analysis_date}}
 
-**Current Metrics:**
-- Remaining tasks: {{remaining_tasks}}
-- Avg task completion time: {{avg_time}}
-- Team size: {{team_size}}
-- Active issues: {{active_issues}}
+**Instructions:**
+For each overloaded user, consider:
+1. **Workload Metrics**: Total tasks, overdue tasks, urgent tasks
+2. **Task Complexity**: Difficulty and time requirements
+3. **Performance Impact**: How overload affects quality
+4. **Team Dynamics**: Available capacity in team
 
-Provide predictions:
+**Required Output Format:**
+Return a JSON object with this EXACT structure:
 
-1. **Completion Prediction**
-   - Predicted completion date
-   - Confidence level (%)
-   - Will it meet deadline? Yes/No/Maybe
-   - Days early/late
-
-2. **Trend Analysis**
-   - Velocity trend: Up/Down/Stable
-   - Quality trend: Improving/Declining
-   - Resource trend: Sufficient/Insufficient
-   - Risk trend: Increasing/Decreasing
-
-3. **Risk Predictions**
-   - Probability of delay (%)
-   - Probability of budget overrun (%)
-   - Quality risk level
-   - Resource shortage risk
-
-4. **Scenario Analysis**
-   - Best case: if everything goes well
-   - Most likely: based on current trends
-   - Worst case: if risks materialize
-
-5. **Early Warnings**
-   - Issues likely to emerge
-   - When they'll likely occur
-   - Preventive actions
-
-6. **Recommendations**
-   - Course corrections needed
-   - Resource adjustments
-   - Scope adjustments
-   - Proactive measures
+```json
+{
+  "recommendations": [
+    {
+      "user_id": (integer),
+      "user_name": "string",
+      "active_tasks": (integer),
+      "recommendation": "Detailed, actionable recommendation",
+      "severity": "low|medium|high|critical",
+      "analysis": {
+        "overdue_tasks": (integer),
+        "urgent_tasks": (integer),
+        "workload_score": (float 0-10),
+        "burnout_risk": "low|medium|high"
+      },
+      "suggested_actions": ["action 1", "action 2"],
+      "tasks_to_redistribute": (integer)
+    }
+  ],
+  "summary": {
+    "total_analyzed": (integer),
+    "critical_cases": (integer),
+    "team_health_score": (float 0-10)
+  }
+}
+```
 EOT
             ],
+
         ];
 
-        $this->command->info('Seeding 15 core system prompts...');
-        $created = 0;
+        // ════════════════════════════════════════════════════════════════════════
+        // SEEDER LOGIC - DO NOT MODIFY BELOW THIS LINE
+        // ════════════════════════════════════════════════════════════════════════
+
+        echo "\nSeeding 12 core system prompts...\n";
 
         foreach ($corePrompts as $promptData) {
-            // Get category
-            $category = PromptCategory::where('slug', $promptData['category'])->first();
-            
-            // Extract variables from template
-            preg_match_all('/\{\{([^}]+)\}\}/', $promptData['template'], $matches);
-            $variables = array_unique($matches[1]);
-
-            // Create or update prompt
-            $prompt = AIPrompt::updateOrCreate(
-                ['name' => $promptData['name']],
+            $category = PromptCategory::firstOrCreate(
+                ['slug' => $promptData['category']],
                 [
-                    'name' => $promptData['name'],
-                    'type' => $promptData['type'],
-                    'category_id' => $category?->id,
-                    'template' => $promptData['template'],
-                    'version' => '1.0.0',
-                    'variables' => $variables,
-                    'description' => $promptData['description'],
-                    'is_active' => true,
-                    'is_system' => $promptData['is_system'],
-                    'usage_count' => 0,
-                    'created_by' => 1, // System/Admin
+                    'name' => ucwords(str_replace('-', ' ', $promptData['category'])),
+                    'description' => 'System category for ' . $promptData['category']
                 ]
             );
 
-            $created++;
-            $this->command->info("✓ {$promptData['name']}");
+            AIPrompt::updateOrCreate(
+                ['name' => $promptData['name']],
+                [
+                    'category_id' => $category->id,
+                    'type' => $promptData['type'],
+                    'is_system' => $promptData['is_system'],
+                    'description' => $promptData['description'],
+                    'template' => $promptData['template'],
+                    'created_by' => 1, // System Admin
+                ]
+            );
+
+            echo "✓ {$promptData['name']}\n";
         }
 
-        $this->command->info("\n🎉 Successfully seeded {$created} core system prompts!");
-        $this->command->warn('⚠️  These prompts are protected and cannot be deleted (but can be edited).');
+        echo "\n🎉 Successfully seeded 12 core system prompts!\n";
+        echo "⚠️  These prompts are protected and cannot be deleted (but can be edited).\n";
     }
 }

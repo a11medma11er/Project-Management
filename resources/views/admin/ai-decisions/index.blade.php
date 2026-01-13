@@ -255,7 +255,9 @@
 <!-- Bulk Accept Form -->
 <form id="bulk-accept-form" action="{{ route('ai.decisions.bulk-accept') }}" method="POST" style="display: none;">
     @csrf
-    <input type="hidden" name="decision_ids[]" id="bulk-decision-ids">
+    <div id="bulk-inputs-container">
+        <input type="hidden" name="decision_ids[]" id="bulk-decision-ids">
+    </div>
 </form>
 @endsection
 
@@ -278,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (selected.length > 0 && confirm(`Accept ${selected.length} decision(s)?`)) {
                 // Clear existing inputs
-                const container = bulkForm.querySelector('#bulk-decision-ids').parentElement;
+                const container = document.getElementById('bulk-inputs-container');
                 container.innerHTML = '';
                 
                 // Add selected IDs

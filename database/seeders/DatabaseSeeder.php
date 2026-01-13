@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder
     {
         // Essential seeders (always run)
         $this->call([
+            CoreSystemPromptsSeeder::class, // Crucial: Prompts must exist first
             RolesAndPermissionsSeeder::class,
             AIPermissionsSeeder::class,
             DefaultUserSeeder::class,

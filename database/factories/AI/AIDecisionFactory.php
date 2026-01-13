@@ -109,17 +109,17 @@ class AIDecisionFactory extends Factory
         };
     }
 
-    protected function generateReasoning(string $type, float $confidence): string
+    protected function generateReasoning(string $type, float $confidence): array
     {
         $reasons = [
-            'task_analysis' => "Based on the task complexity and historical data, this analysis has a confidence score of {$confidence}. The task requires specific technical skills and estimated completion time.",
-            'project_breakdown' => "The project breakdown is based on similar projects and industry standards, resulting in a {$confidence} confidence score.",
-            'priority_suggestion' => "Priority suggestion is calculated based on deadline, business impact, and current workload with {$confidence} confidence.",
-            'deadline_prediction' => "Deadline prediction uses historical velocity and current team capacity, achieving {$confidence} confidence level.",
-            'resource_allocation' => "Resource allocation recommendation is based on project scope and team availability with {$confidence} confidence.",
+            'task_analysis' => ["Based on the task complexity and historical data, this analysis has a confidence score of {$confidence}.", "The task requires specific technical skills and estimated completion time."],
+            'project_breakdown' => ["The project breakdown is based on similar projects and industry standards, resulting in a {$confidence} confidence score."],
+            'priority_suggestion' => ["Priority suggestion is calculated based on deadline, business impact, and current workload with {$confidence} confidence."],
+            'deadline_prediction' => ["Deadline prediction uses historical velocity and current team capacity, achieving {$confidence} confidence level."],
+            'resource_allocation' => ["Resource allocation recommendation is based on project scope and team availability with {$confidence} confidence."],
         ];
 
-        return $reasons[$type] ?? "AI analysis completed with {$confidence} confidence score.";
+        return $reasons[$type] ?? ["AI analysis completed with {$confidence} confidence score."];
     }
 
     /**

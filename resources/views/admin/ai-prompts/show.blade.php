@@ -51,6 +51,7 @@
                             <thead>
                                 <tr>
                                     <th>Version</th>
+                                    <th>Description</th>
                                     <th>Status</th>
                                     <th>Created</th>
                                     <th>Actions</th>
@@ -66,15 +67,29 @@
                                         @endif
                                     </td>
                                     <td>
+                                        <small class="text-muted">{{ \Illuminate\Support\Str::limit($version->description, 40) }}</small>
+                                    </td>
+                                    <td>
                                         <span class="badge bg-{{ $version->is_active ? 'success' : 'secondary' }}">
                                             {{ $version->is_active ? 'Active' : 'Inactive' }}
                                         </span>
                                     </td>
                                     <td>{{ $version->created_at->format('Y-m-d H:i') }}</td>
                                     <td>
-                                        <a href="{{ route('ai.prompts.show', $version->id) }}" class="btn btn-sm btn-soft-primary">
-                                            <i class="ri-eye-line"></i> View
-                                        </a>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{{ route('ai.prompts.show', $version->id) }}" class="btn btn-soft-primary" title="View">
+                                                <i class="ri-eye-line"></i>
+                                            </a>
+                                            
+                                            @if(!$version->is_active)
+                                            <form action="{{ route('ai.prompts.activate', $version->id) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                <button type="submit" class="btn btn-soft-success" title="Activate this version" onclick="return confirm('Activate v{{$version->version}}? This will switch the system to use this prompt.')">
+                                                    <i class="ri-checkbox-circle-line"></i>
+                                                </button>
+                                            </form>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -166,8 +181,54 @@
             @if($prompt->description)
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Description</h5>
-                    <p class="text-muted">{{ $prompt->description }}</p>
+                    <h5 class="card-title">Documentation</h5>
+                    
+                    @php
+                        $desc = $prompt->description ?? '';
+                        
+                        // Extract sections
+                        preg_match('/📍\s*(.+?)(?=🎯|📤|⚠️|$)/s', $desc, $locationMatch);
+                        preg_match('/🎯\s*PURPOSE:\s*(.+?)(?=📤|⚠️|$)/s', $desc, $purposeMatch);
+                        preg_match('/📤\s*EXPECTED RESPONSE FORMAT:\s*(.+?)(?=⚠️|$)/s', $desc, $formatMatch);
+                        preg_match('/⚠️\s*(?:CRITICAL )?EDITING (?:TIPS|RULES):\s*(.+)$/s', $desc, $tipsMatch);
+                        
+                        $location = trim($locationMatch[1] ?? '');
+                        $purpose = trim($purposeMatch[1] ?? '');
+                        $format = trim($formatMatch[1] ?? '');
+                        $tips = trim($tipsMatch[1] ?? '');
+                    @endphp
+
+                    @if($location)
+                    <div class="alert alert-warning mb-3" style="border-left: 4px solid #f1b44c;">
+                        <strong><i class="ri-map-pin-line"></i> UI Location:</strong>
+                        <div class="mt-1">{{ $location }}</div>
+                    </div>
+                    @endif
+
+                    @if($purpose)
+                    <div class="alert alert-info mb-3" style="border-left: 4px solid #50a5f1;">
+                        <strong><i class="ri-focus-line"></i> Purpose:</strong>
+                        <div class="mt-1">{{ $purpose }}</div>
+                    </div>
+                    @endif
+
+                    @if($format)
+                    <div class="alert alert-success mb-3" style="border-left: 4px solid #34c38f;">
+                        <strong><i class="ri-file-code-line"></i> Expected Response Format:</strong>
+                        <pre class="mt-2 mb-0 bg-light p-2 rounded" style="white-space: pre-wrap; font-size: 0.85rem;">{{ $format }}</pre>
+                    </div>
+                    @endif
+
+                    @if($tips)
+                    <div class="alert alert-danger mb-0" style="border-left: 4px solid #f46a6a;">
+                        <strong><i class="ri-error-warning-line"></i> Editing Rules:</strong>
+                        <pre class="mt-2 mb-0" style="white-space: pre-wrap; font-size: 0.85rem; color: inherit;">{{ $tips }}</pre>
+                    </div>
+                    @endif
+
+                    @if(!$location && !$purpose && !$format && !$tips)
+                    <p class="text-muted mb-0">{{ $desc }}</p>
+                    @endif
                 </div>
             </div>
             @endif

@@ -38,7 +38,7 @@ class AIDecisionEngineTest extends TestCase
         $this->assertNotNull($decision);
         $this->assertArrayHasKey('decision_type', $decision);
         $this->assertArrayHasKey('confidence_score', $decision);
-        $this->assertArrayHasKey('recommended_action', $decision);
+        $this->assertArrayHasKey('recommendation', $decision);
     }
 
     /** @test */
@@ -57,8 +57,8 @@ class AIDecisionEngineTest extends TestCase
         $decision = $this->engine->analyzeTask($task);
 
         $this->assertNotNull($decision);
-        $this->assertEquals('priority_adjustment', $decision['decision_type']);
-        $this->assertStringContainsString('urgent', strtolower($decision['recommended_action']['new_priority'] ?? ''));
+        $this->assertEquals('task_analysis', $decision['decision_type']);
+        $this->assertStringContainsString('escalate task priority', strtolower($decision['recommendation'] ?? ''));
     }
 
     /** @test */

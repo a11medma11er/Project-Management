@@ -73,11 +73,17 @@
                     </div>
 
                     <!-- Reasoning -->
-                    @if($decision->reasoning && count($decision->reasoning) > 0)
+                    @php
+                        $reasoning = $decision->reasoning;
+                        if (is_string($reasoning)) {
+                            $reasoning = [$reasoning];
+                        }
+                    @endphp
+                    @if($reasoning && count($reasoning) > 0)
                     <div class="mb-4">
                         <h5 class="mb-3"><i class="ri-lightbulb-flash-line text-info"></i> Reasoning</h5>
                         <ul class="list-group list-group-flush">
-                            @foreach($decision->reasoning as $reason)
+                            @foreach($reasoning as $reason)
                             <li class="list-group-item">
                                 <i class="ri-checkbox-circle-line text-success"></i> {{ $reason }}
                             </li>
@@ -91,15 +97,22 @@
                     <div class="mb-4">
                         <h5 class="mb-3"><i class="ri-route-line text-warning"></i> Alternative Actions</h5>
                         @foreach($decision->alternatives as $index => $alternative)
+                            @php
+                                $action = is_array($alternative) ? ($alternative['action'] ?? 'Alternative Action') : $alternative;
+                                $description = is_array($alternative) ? ($alternative['description'] ?? '') : '';
+                                $impact = is_array($alternative) ? ($alternative['impact'] ?? 'Medium') : 'Medium';
+                            @endphp
                         <div class="card border mb-2">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div class="flex-grow-1">
-                                        <h6 class="mb-1">{{ $alternative['action'] }}</h6>
-                                        <p class="text-muted mb-0">{{ $alternative['description'] }}</p>
+                                        <h6 class="mb-1">{{ $action }}</h6>
+                                        @if($description)
+                                        <p class="text-muted mb-0">{{ $description }}</p>
+                                        @endif
                                     </div>
-                                    <span class="badge bg-{{ $alternative['impact'] === 'Low' ? 'success' : ($alternative['impact'] === 'Medium' ? 'warning' : 'danger') }}">
-                                        {{ $alternative['impact'] }} Impact
+                                    <span class="badge bg-{{ $impact === 'Low' ? 'success' : ($impact === 'Medium' ? 'warning' : 'danger') }}">
+                                        {{ $impact }} Impact
                                     </span>
                                 </div>
                             </div>

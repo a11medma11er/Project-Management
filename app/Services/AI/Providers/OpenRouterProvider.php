@@ -19,6 +19,7 @@ class OpenRouterProvider implements AIProvider
     private string $baseUrl = 'https://openrouter.ai/api/v1';
     private string $siteUrl;
     private string $appName;
+    private $promptHelper;
 
     public function __construct(
         string $apiKey, 
@@ -28,6 +29,9 @@ class OpenRouterProvider implements AIProvider
     ) {
         $this->apiKey = $apiKey;
         $this->model = $model;
+        $this->siteUrl = $siteUrl;
+        $this->appName = $appName;
+        $this->promptHelper = app(\App\Services\AI\AIPromptHelper::class);
         $this->siteUrl = $siteUrl;
         $this->appName = $appName;
     }
@@ -40,7 +44,7 @@ class OpenRouterProvider implements AIProvider
         $type = $context['type'] ?? 'general';
         $data = $context['context'] ?? [];
 
-        $systemPrompt = $this->getSystemPrompt($type);
+        $systemPrompt = $this->getSystemPrompt($type, $data);
         $userPrompt = $this->constructUserPrompt($type, $data);
 
         try {
@@ -52,7 +56,7 @@ class OpenRouterProvider implements AIProvider
                     'HTTP-Referer' => $this->siteUrl,
                     'X-Title' => $this->appName,
                 ])
-                ->timeout(120)
+                ->timeout(180)
                 ->post("{$this->baseUrl}/chat/completions", [
                     'model' => $this->model,
                     'messages' => [
@@ -122,19 +126,39 @@ class OpenRouterProvider implements AIProvider
     /**
      * Get system prompt based on type
      */
-    private function getSystemPrompt(string $type): string
+    private function getSystemPrompt(string $type, array $data = []): string
     {
-        $base = "You are an expert Project Management AI assistant. Your response MUST be valid JSON only, with no markdown formatting, no code blocks, just pure JSON.";
+        // 1. Try to get from Database first
         
-        return match ($type) {
-            'development_plan' => "$base Return a development plan with these exact keys: overview (object with title, summary, estimated_duration in weeks, complexity string, confidence float), phases (array of objects with name, duration, tasks array, deliverables array), timeline (object with start_date, estimated_end_date, total_weeks, milestones array), resources (object), risks (array), recommendations (array). Make it comprehensive.",
-            'project_breakdown' => "$base Return a task breakdown with total_estimated_tasks (number) and categories (object where each key is a category name like 'Planning', 'Design', etc. with properties: tasks array, estimated_duration string, priority string).",
-            'task_analysis' => "$base Analyze the task and return JSON with: task (string), estimated_effort (string), complexity (object with level, score, factors array), dependencies (array), recommendations (array).",
-            'feasibility_study' => "$base Generate a comprehensive feasibility study with keys: analysis (object with executive_summary, technical_feasibility, financial_feasibility, operational_feasibility, schedule_feasibility, legal_feasibility, recommendations array, conclusion).",
-            'technical_study' => "$base Generate a technical study with keys: analysis (object with technology_stack array, architecture_overview, scalability_analysis, security_considerations, performance_requirements, technical_risks array, recommendations array).",
-            'risk_study' => "$base Generate a risk assessment with keys: analysis (object with identified_risks array with (risk, severity, probability, impact, mitigation), risk_matrix, contingency_plans array, monitoring_strategy).",
-            default => "$base Provide helpful suggestions in valid JSON format.",
-        };
+        // Case A: The type IS the prompt name (e.g. passed from AIGateway)
+        if ($this->promptHelper->exists($type)) {
+            $compiledPrompt = $this->promptHelper->getCompiledPrompt($type, $data);
+            Log::info("🤖 Using DB Prompt directly: {$type}");
+            return $compiledPrompt;
+        }
+
+        // Case B: Map short feature codes to prompt names
+        $promptMap = [
+            'development_plan' => 'ai_feature_development_plan',
+            'project_breakdown' => 'ai_feature_project_breakdown',
+            'task_analysis' => 'ai_feature_task_analysis',
+            'feasibility_study' => 'ai_feature_feasibility_study',
+            'technical_study' => 'ai_feature_technical_study',
+            'risk_study' => 'ai_feature_risk_study',
+        ];
+
+        $promptName = $promptMap[$type] ?? null;
+
+        if ($promptName && $this->promptHelper->exists($promptName)) {
+            // Use getCompiledPrompt to replace variables with data
+            $compiledPrompt = $this->promptHelper->getCompiledPrompt($promptName, $data);
+            Log::info("🤖 Using DB Prompt: {$promptName}");
+            return $compiledPrompt;
+        }
+
+        // 2. Prompt not found
+        Log::error("❌ System prompt not found for type: {$type}");
+        throw new \Exception("System prompt not found for type: {$type}. Please ensure the prompt is active in the administration panel.");
     }
 
     /**
@@ -142,6 +166,30 @@ class OpenRouterProvider implements AIProvider
      */
     private function constructUserPrompt(string $type, array $data): string
     {
+        // Check if we are using a DB prompt (Direct Name)
+        if ($this->promptHelper->exists($type)) {
+            return "Please proceed with the analysis based on the provided project details above.";
+        }
+
+        // Check if we are using a DB prompt (Mapped Name)
+        $promptMap = [
+            'development_plan' => 'ai_feature_development_plan',
+            'project_breakdown' => 'ai_feature_project_breakdown',
+            'task_analysis' => 'ai_feature_task_analysis',
+            'feasibility_study' => 'ai_feature_feasibility_study',
+            'technical_study' => 'ai_feature_technical_study',
+            'risk_study' => 'ai_feature_risk_study',
+        ];
+        
+        $promptName = $promptMap[$type] ?? null;
+        
+        if ($promptName && $this->promptHelper->exists($promptName)) {
+            // Context is already embedded in the System Prompt via template variables.
+            // Just provide a short confirmation or additional context if needed.
+            return "Please proceed with the analysis based on the provided project details above.";
+        }
+
+        // Legacy Fallback
         return "Analyze the following project management context and provide your response as valid JSON:\n\n" . 
                json_encode($data, JSON_PRETTY_PRINT);
     }

@@ -137,6 +137,7 @@ class AIPromptTemplateService
             'variables' => $variables,
             'description' => $description,
             'is_active' => true,
+            'is_system' => $type === 'system',
             'usage_count' => 0,
             'created_by' => auth()->id(),
         ]);
@@ -150,6 +151,7 @@ class AIPromptTemplateService
         
         // Clear cache
         Cache::forget("ai_prompt_{$name}_latest");
+        Cache::forget("system_prompt_{$name}"); // Also clear AIPromptHelper cache
         
         return $prompt;
     }

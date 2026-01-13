@@ -15,20 +15,132 @@
         </div>
     </div>
 
-    <!-- Run Manual Automation -->
+    <!-- Run Manual Automation (Dual Mode: Local vs Cloud) -->
+    @php
+        $aiProvider = \App\Models\AI\AISetting::where('key', 'ai_provider')->value('value') ?? 'local';
+        $isCloudMode = $aiProvider !== 'local';
+    @endphp
+
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
                         <i class="ri-play-circle-line text-success"></i> Run Automation
+                        @if($isCloudMode)
+                            <span class="badge bg-primary ms-2">Cloud Mode</span>
+                        @else
+                            <span class="badge bg-secondary ms-2">Local Mode</span>
+                        @endif
                     </h5>
                 </div>
                 <div class="card-body">
-                    <button type="button" class="btn btn-primary" id="runAutomation">
-                        <i class="ri-robot-line"></i> Run AI Automation Now
-                    </button>
-                    <div id="automationResults" class="mt-3" style="display: none;"></div>
+                    @if(!$isCloudMode)
+                        <!-- Legacy UI for Local Mode -->
+                        <button type="button" class="btn btn-primary" id="runAutomation">
+                            <i class="ri-robot-line"></i> Run AI Automation Now
+                        </button>
+                        <div id="automationResults" class="mt-3" style="display: none;"></div>
+                    @else
+                        <!-- New Batch UI for Cloud Mode -->
+                        <p class="text-muted mb-3">
+                            <i class="ri-information-line"></i> 
+                            Cloud mode allows you to process features independently with batch AI analysis.
+                        </p>
+                        
+                        <div class="row g-3">
+                            <!-- Feature: Priority Adjustments -->
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card border h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-primary d-flex justify-content-between align-items-center">
+                                            <span><i class="ri-price-tag-3-line"></i> Priority Adjustments</span>
+                                            <span class="badge bg-soft-primary text-primary">{{ $availableCounts['priority'] ?? 0 }}</span>
+                                        </h6>
+                                        <p class="text-muted small mb-2">Analyze tasks needing priority changes</p>
+                                        <div class="input-group input-group-sm mb-2">
+                                            <span class="input-group-text">Limit</span>
+                                            <input type="number" class="form-control" id="priority-limit" value="3" min="1" max="50">
+                                        </div>
+                                        <button class="btn btn-primary btn-sm w-100" onclick="runFeature('priority')">
+                                            <i class="ri-play-fill"></i> Execute
+                                        </button>
+                                        <div id="priority-result" class="mt-2"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Feature: Assignment Suggestions -->
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card border h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-primary d-flex justify-content-between align-items-center">
+                                            <span><i class="ri-user-add-line"></i> Assignment Suggestions</span>
+                                            <span class="badge bg-soft-primary text-primary">{{ $availableCounts['assignment'] ?? 0 }}</span>
+                                        </h6>
+                                        <p class="text-muted small mb-2">Suggest assignees for unassigned tasks</p>
+                                        <div class="input-group input-group-sm mb-2">
+                                            <span class="input-group-text">Limit</span>
+                                            <input type="number" class="form-control" id="assignment-limit" value="5" min="1" max="50">
+                                        </div>
+                                        <button class="btn btn-primary btn-sm w-100" onclick="runFeature('assignment')">
+                                            <i class="ri-play-fill"></i> Execute
+                                        </button>
+                                        <div id="assignment-result" class="mt-2"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Feature: Deadline Extensions -->
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card border h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-primary d-flex justify-content-between align-items-center">
+                                            <span><i class="ri-calendar-check-line"></i> Deadline Extensions</span>
+                                            <span class="badge bg-soft-primary text-primary">{{ $availableCounts['deadline'] ?? 0 }}</span>
+                                        </h6>
+                                        <p class="text-muted small mb-2">Analyze overdue tasks for deadline adjustments</p>
+                                        <div class="input-group input-group-sm mb-2">
+                                            <span class="input-group-text">Limit</span>
+                                            <input type="number" class="form-control" id="deadline-limit" value="10" min="1" max="50">
+                                        </div>
+                                        <button class="btn btn-primary btn-sm w-100" onclick="runFeature('deadline')">
+                                            <i class="ri-play-fill"></i> Execute
+                                        </button>
+                                        <div id="deadline-result" class="mt-2"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Feature: Project Health -->
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card border h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-primary d-flex justify-content-between align-items-center">
+                                            <span><i class="ri-heart-pulse-line"></i> Project Health</span>
+                                            <span class="badge bg-soft-primary text-primary">{{ $availableCounts['projects'] ?? 0 }}</span>
+                                        </h6>
+                                        <p class="text-muted small mb-2">Assess risks for active projects</p>
+                                        <div class="input-group input-group-sm mb-2">
+                                            <span class="input-group-text">Limit</span>
+                                            <input type="number" class="form-control" id="projects-limit" value="5" min="1" max="50">
+                                        </div>
+                                        <button class="btn btn-primary btn-sm w-100" onclick="runFeature('projects')">
+                                            <i class="ri-play-fill"></i> Execute
+                                        </button>
+                                        <div id="projects-result" class="mt-2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info mt-3 mb-0">
+                            <small>
+                                <i class="ri-information-line"></i> 
+                                <strong>Batch Processing:</strong> Each feature processes multiple items in a single AI request, reducing wait time from minutes to seconds.
+                            </small>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -39,8 +151,9 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="ri-user-settings-line text-info"></i> Workload Balance
+                    <h5 class="card-title mb-0 d-flex justify-content-between align-items-center">
+                        <span><i class="ri-user-settings-line text-info"></i> Workload Balance</span>
+                        <span class="badge bg-soft-info text-info">{{ $availableCounts['overloaded_users'] ?? 0 }} overloaded</span>
                     </h5>
                 </div>
                 <div class="card-body">
@@ -444,6 +557,58 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     initRuleBuilder();
+
+    // Run Feature (Batch AI Processing for Cloud Mode)
+    window.runFeature = function(feature) {
+        const limitInput = document.getElementById(`${feature}-limit`);
+        const resultDiv = document.getElementById(`${feature}-result`);
+        const limit = limitInput ? parseInt(limitInput.value) : 10;
+        
+        // Show loading
+        resultDiv.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> Processing...';
+        
+        axios.post('{{ route("ai.workflows.run-feature") }}', {
+            feature: feature,
+            limit: limit
+        })
+        .then(response => {
+            if (response.data.success) {
+                const result = response.data.result;
+                
+                // Format result
+                let html = '';
+                
+                if (result.decisions_created !== undefined) {
+                    html = `<div class="alert alert-success alert-sm py-2 mb-0">
+                        <i class="ri-check-line"></i> 
+                        <strong>${result.decisions_created}</strong> decisions created
+                    </div>`;
+                } else if (result.message) {
+                    html = `<div class="alert alert-info alert-sm py-2 mb-0">
+                        <i class="ri-information-line"></i> ${result.message}
+                    </div>`;
+                } else {
+                    html = '<div class="alert alert-success alert-sm py-2 mb-0">Completed successfully</div>';
+                }
+                
+                resultDiv.innerHTML = html;
+                
+                if (typeof toastr !== 'undefined') {
+                    toastr.success(`${feature} feature executed successfully`);
+                }
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            resultDiv.innerHTML = `<div class="alert alert-danger alert-sm py-2 mb-0">
+                <i class="ri-error-warning-line"></i> Failed: ${error.response?.data?.message || error.message}
+            </div>`;
+            
+            if (typeof toastr !== 'undefined') {
+                toastr.error('Feature execution failed');
+            }
+        });
+    };
 
     // Check Workload
     const checkWorkloadBtn = document.getElementById('checkWorkload');

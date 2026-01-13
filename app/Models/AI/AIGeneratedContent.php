@@ -9,6 +9,8 @@ class AIGeneratedContent extends Model
 {
     use HasFactory;
 
+    protected $table = 'ai_generated_contents';
+
     protected $fillable = [
         'project_id',
         'task_id',

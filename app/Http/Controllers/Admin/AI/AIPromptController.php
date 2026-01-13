@@ -238,6 +238,39 @@ class AIPromptController extends Controller
     }
 
     /**
+     * Activate a specific version of a prompt
+     */
+    public function activate(AIPrompt $prompt)
+    {
+        try {
+            // 1. Deactivate all other versions with the same name
+            AIPrompt::where('name', $prompt->name)
+                ->where('id', '!=', $prompt->id)
+                ->update(['is_active' => false]);
+
+            // 2. Activate this version
+            $prompt->update(['is_active' => true]);
+
+            // 3. Clear Cache (Both Service and Helper keys)
+            \Illuminate\Support\Facades\Cache::forget("ai_prompt_{$prompt->name}_latest");
+            \Illuminate\Support\Facades\Cache::forget("system_prompt_{$prompt->name}");
+
+            // 4. Log activity
+            activity('ai')
+                ->causedBy(auth()->user())
+                ->performedOn($prompt)
+                ->withProperties(['version' => $prompt->version])
+                ->log('prompt_activated');
+
+            return back()->with('success', "Version v{$prompt->version} successfully activated!");
+
+        } catch (\Exception $e) {
+            Log::error('Failed to activate prompt version: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Failed to activate version.']);
+        }
+    }
+
+    /**
      * Soft delete prompt
      */
     public function destroy(AIPrompt $prompt)

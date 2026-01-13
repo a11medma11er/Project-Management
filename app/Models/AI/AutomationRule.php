@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class AutomationRule extends Model
 {
+    protected $table = 'automation_rules';
+
     protected $fillable = [
         'name',
         'trigger', 

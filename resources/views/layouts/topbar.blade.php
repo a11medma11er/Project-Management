@@ -250,7 +250,16 @@
                                         <h6 class="m-0 fs-16 fw-semibold text-white"> AI Notifications </h6>
                                     </div>
                                     <div class="col-auto dropdown-tabs">
-                                        <span class="badge bg-light-subtle text-body fs-13"> {{ auth()->user()->unreadNotifications->count() }} New</span>
+                                        @if(auth()->user()->unreadNotifications->count() > 0)
+                                            <form action="{{ route('notifications.markAllRead') }}" method="POST" class="d-inline">
+                                                @csrf
+                                                <button type="submit" class="badge bg-light-subtle text-body fs-13 border-0" title="Mark all as read">
+                                                    <i class="bx bx-check-double me-1"></i> Mark all read
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="badge bg-light-subtle text-body fs-13"> {{ auth()->user()->unreadNotifications->count() }} New</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -273,9 +282,12 @@
                                                         AI Decision: <b>{{ Str::limit($notification->data['recommendation'], 50) }}</b>
                                                     </h6>
                                                 </a>
+                                                @php
+                                                    $confidence = $notification->data['confidence_score'] ?? 0;
+                                                @endphp
                                                 <p class="mb-1 fs-12 text-muted">
-                                                    Confidence: <span class="badge bg-{{ $notification->data['confidence_score'] >= 0.8 ? 'success' : ($notification->data['confidence_score'] >= 0.6 ? 'warning' : 'danger') }}">
-                                                        {{ round($notification->data['confidence_score'] * 100) }}%
+                                                    Confidence: <span class="badge bg-{{ $confidence >= 0.8 ? 'success' : ($confidence >= 0.6 ? 'warning' : 'danger') }}">
+                                                        {{ round($confidence * 100) }}%
                                                     </span>
                                                 </p>
                                                 <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">

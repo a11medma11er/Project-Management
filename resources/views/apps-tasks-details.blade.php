@@ -4,6 +4,29 @@
 
 <div class="row">
     <div class="col-xxl-3">
+        <!-- AI Assistant Card -->
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center bg-primary-subtle">
+                <h6 class="card-title mb-0 text-primary"><i class="ri-robot-line me-1"></i> AI Assistant</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary ai-action-btn" data-type="ai_feature_task_analysis">
+                        <i class="ri-magic-line me-1 align-bottom"></i> Analysis
+                    </button>
+                    <button class="btn btn-outline-danger ai-action-btn" data-type="risk_assessment">
+                        <i class="ri-alert-line me-1 align-bottom"></i> Risk Assessment
+                    </button>
+                    <button class="btn btn-outline-info ai-action-btn" data-type="assignment_suggestion">
+                        <i class="ri-user-follow-line me-1 align-bottom"></i> Suggest Assignment
+                    </button>
+                    <button class="btn btn-outline-warning ai-action-btn" data-type="deadline_estimation">
+                        <i class="ri-calendar-check-line me-1 align-bottom"></i> Estimate Deadline
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-body text-center">
                 <h6 class="card-title mb-3 flex-grow-1 text-start">Time Tracking</h6>
@@ -548,10 +571,185 @@
 </div>
 <!-- end modal -->
 @endsection
+
+<!-- AI Result Modal -->
+<div class="modal fade" id="aiResultModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-light p-3">
+                <h5 class="modal-title" id="aiModalTitle">AI Analysis Result</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" id="aiResultContent">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section('script')
 <script src="{{ URL::asset('build/js/app.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // ============================================
+        // AI Assistant Functionality
+        // ============================================
+        const aiButtons = document.querySelectorAll('.ai-action-btn');
+        const aiModalElement = document.getElementById('aiResultModal');
+        // Check if modal exists to avoid error if bootstrap not loaded yet (though it should be)
+        let aiModal; 
+        if(aiModalElement) {
+             aiModal = new bootstrap.Modal(aiModalElement);
+        }
+
+        aiButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(!aiModal) return;
+
+                const type = this.dataset.type;
+                const resultContent = document.getElementById('aiResultContent');
+                const modalTitle = document.getElementById('aiModalTitle');
+                
+                // Set Title Based on Type
+                modalTitle.textContent = this.innerText.trim();
+
+                // Show Loading
+                resultContent.innerHTML = `
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h5 class="mt-3 text-muted">AI is thinking...</h5>
+                    </div>`;
+                
+                aiModal.show();
+
+                // Call API
+                fetch("{{ route('ai.features.task') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        task_id: "{{ $task->id }}",
+                        decision_type: type
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        renderAIResult(data.analysis, resultContent);
+                    } else {
+                        resultContent.innerHTML = `
+                            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                <i class="ri-error-warning-line me-2 fs-20"></i>
+                                <div>${data.message || 'An error occurred'}</div>
+                            </div>
+                            <p class="text-muted small">${data.error || ''}</p>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('AI Error:', error);
+                    resultContent.innerHTML = `
+                        <div class="alert alert-danger" role="alert">
+                             Something went wrong. Please try again later.
+                        </div>`;
+                });
+            });
+        });
+
+        function renderAIResult(analysis, container) {
+            let html = '';
+            
+            // Structured Decision Response (from Engine)
+            if(analysis.recommendation) {
+                html += `
+                    <div class="mb-4">
+                        <h5 class="text-primary mb-3">Recommendation</h5>
+                        <div class="p-3 bg-light rounded border-start border-4 border-primary">
+                            <p class="fs-15 mb-0">${analysis.recommendation}</p>
+                        </div>
+                    </div>
+                `;
+
+                if(analysis.reasoning) {
+                    html += `
+                        <div class="mb-4">
+                            <h6 class="fw-semibold text-uppercase fs-12 text-muted">Reasoning</h6>
+                            <p>${analysis.reasoning}</p>
+                        </div>
+                    `;
+                }
+
+                if(analysis.confidence) {
+                    let color = 'success';
+                    if(analysis.confidence < 70) color = 'warning';
+                    if(analysis.confidence < 50) color = 'danger';
+                    
+                    html += `
+                        <div class="mb-4">
+                            <h6 class="fw-semibold text-uppercase fs-12 text-muted">Confidence Score</h6>
+                            <div class="progress animated-progress" style="height: 20px;">
+                                <div class="progress-bar bg-${color}" role="progressbar" style="width: ${analysis.confidence}%" aria-valuenow="${analysis.confidence}" aria-valuemin="0" aria-valuemax="100">${analysis.confidence}%</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                if(analysis.alternatives && analysis.alternatives.length > 0) {
+                     html += `<h6 class="fw-semibold text-uppercase fs-12 text-muted mb-3">Alternatives</h6>`;
+                     html += `<ul class="list-group list-group-flush">`;
+                     analysis.alternatives.forEach(alt => {
+                         html += `<li class="list-group-item px-0"><i class="ri-arrow-right-s-line me-1 text-primary"></i> ${alt}</li>`;
+                     });
+                     html += `</ul>`;
+                }
+
+            } 
+            // Generic/Legacy Response
+            else if (analysis.task) {
+                 html += `<h5 class="mb-3">Analysis for: ${analysis.task}</h5>`;
+                 html += `
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded">
+                                <p class="text-muted mb-1">Estimated Effort</p>
+                                <h6 class="mb-0">${analysis.estimated_effort || 'N/A'}</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded">
+                                <p class="text-muted mb-1">Complexity</p>
+                                <h6 class="mb-0">${analysis.complexity || 'N/A'}</h6>
+                            </div>
+                        </div>
+                    </div>
+                 `;
+                 
+                 if(analysis.recommendations) {
+                     html += `<h6 class="fw-semibold mb-3">Recommendations</h6><ul>`;
+                     analysis.recommendations.forEach(rec => {
+                         html += `<li>${rec}</li>`;
+                     });
+                     html += `</ul>`;
+                 }
+            }
+            // Raw/Fallback
+            else {
+                html += `<pre class="bg-light p-3 rounded code">${JSON.stringify(analysis, null, 2)}</pre>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+
         // ============================================
         // Sub-tasks Toggle Functionality
         // ============================================

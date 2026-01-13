@@ -66,10 +66,7 @@ class AIDecision extends Model
         return $this->belongsTo(User::class, 'reviewed_by');
     }
 
-    public function auditLogs()
-    {
-        return $this->hasMany(AIAuditLog::class, 'decision_id');
-    }
+
 
     // Scopes
     public function scopePending($query)

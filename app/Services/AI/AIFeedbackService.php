@@ -47,7 +47,7 @@ class AIFeedbackService
             'context' => json_encode([
                 'entity_type' => $decision->entity_type,
                 'entity_id' => $decision->entity_id,
-                'reasoning_length' => strlen($decision->reasoning),
+                'reasoning_length' => is_array($decision->reasoning) ? strlen(json_encode($decision->reasoning)) : strlen($decision->reasoning ?? ''),
                 'alternatives_count' => count($decision->alternatives ?? []),
             ]),
             'created_at' => now(),

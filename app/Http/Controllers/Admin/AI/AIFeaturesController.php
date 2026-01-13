@@ -11,11 +11,13 @@ use Illuminate\Support\Facades\Log;
 class AIFeaturesController extends Controller
 {
     protected $aiGateway;
+    protected $decisionEngine;
 
-    public function __construct(\App\Services\AI\AIGateway $aiGateway)
+    public function __construct(\App\Services\AI\AIGateway $aiGateway, \App\Services\AI\AIDecisionEngine $decisionEngine)
     {
         $this->middleware(['auth']);
         $this->aiGateway = $aiGateway;
+        $this->decisionEngine = $decisionEngine;
     }
 
     /**
@@ -134,21 +136,7 @@ class AIFeaturesController extends Controller
             return $aiPlan;
         }
 
-        // Fallback to simulated generation if AI fails or unavailable
-        $phases = $this->generatePhases($context);
-        $timeline = $this->generateTimeline($context);
-        $resources = $this->generateResourcePlan($context);
-        $risks = $this->identifyRisks($context);
-        
-        return [
-            'overview' => $this->generateOverview($context),
-            'phases' => $phases,
-            'timeline' => $timeline,
-            'resources' => $resources,
-            'risks' => $risks,
-            'recommendations' => $this->generateRecommendations($context),
-            'generated_at' => now()->toIso8601String(),
-        ];
+        throw new \Exception('Failed to generate development plan. AI service returned no valid data.');
     }
 
     /**
@@ -370,6 +358,8 @@ class AIFeaturesController extends Controller
         return max(8, $baseWeeks); // Minimum 8 weeks
     }
 
+
+
     /**
      * Assess project complexity
      */
@@ -396,17 +386,42 @@ class AIFeaturesController extends Controller
     {
         $request->validate([
             'task_id' => 'required|exists:tasks,id',
+            'decision_type' => 'nullable|string'
         ]);
 
         try {
-            $task = Task::with(['project', 'assignedTo'])->findOrFail($request->task_id);
+            $task = Task::with(['project', 'assignedUsers'])->findOrFail($request->task_id);
             
-            // Use system prompt for task analysis
+            // If decision type is specific (e.g. risk_assessment), use the Engine
+            if ($request->filled('decision_type')) {
+                $decision = $this->decisionEngine->analyzeTask($task, $request->decision_type);
+                
+                if ($decision) {
+                    return response()->json([
+                        'success' => true,
+                        'analysis' => [
+                            'recommendation' => $decision->recommendation,
+                            'reasoning' => $decision->reasoning,
+                            'confidence' => $decision->confidence_score,
+                            'alternatives' => $decision->alternatives
+                        ]
+                    ]);
+                }
+                
+                return response()->json(['success' => false, 'message' => 'No decision generated'], 404);
+            }
+
+            // Fallback for generic 'analyze' button (Legacy/Direct Gateway usage)
+            // Use system prompt for task analysis via Gateway directly if no type specified
+            $assignedNames = $task->assignedUsers->isNotEmpty() 
+                ? $task->assignedUsers->pluck('name')->implode(', ') 
+                : 'Unassigned';
+
             $aiAnalysis = $this->aiGateway->suggest('ai_feature_task_analysis', [
                 'task_title' => $task->title,
                 'task_description' => $task->description ?? 'No description',
                 'priority' => $task->priority ?? 'medium',
-                'assigned_to' => $task->assignedTo->name ?? 'Unassigned',
+                'assigned_to' => $assignedNames,
                 'due_date' => $task->due_date ?? 'Not set',
             ]);
 
@@ -429,9 +444,11 @@ class AIFeaturesController extends Controller
             ]);
             
         } catch (\Exception $e) {
+            Log::error("Analysis failed: " . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Analysis failed',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -550,16 +567,19 @@ class AIFeaturesController extends Controller
      */
     protected function generateStudy(Project $project, string $type): array
     {
-        // Map study type to system prompt
-        $promptName = $type === 'feasibility' ? 'ai_feature_feasibility_study' : null;
+        // Use the same prompt for all study types, changing the context variable
+        $promptName = 'ai_feature_feasibility_study';
         
         if ($promptName) {
             $aiStudy = $this->aiGateway->suggest($promptName, [
+                'study_type' => ucfirst($type) . ' Study', // Pass the dynamic type (Feasibility/Technical/Risk)
                 'project_title' => $project->title,
                 'project_description' => $project->description ?? 'No description',
                 'budget' => $project->budget ?? 'Not specified',
                 'timeline' => $project->end_date ?? 'Not specified',
                 'team_size' => $project->members()->count(),
+                'progress' => $project->progress ?? 0,
+                'existing_tasks' => $project->tasks()->count(),
             ]);
 
             if ($aiStudy && isset($aiStudy['analysis'])) {
@@ -567,13 +587,7 @@ class AIFeaturesController extends Controller
             }
         }
 
-        // Fallback to template-based studies
-        return match($type) {
-            'feasibility' => $this->generateFeasibilityStudy($project),
-            'technical' => $this->generateTechnicalStudy($project),
-            'risk' => $this->generateRiskStudy($project),
-            default => [],
-        };
+        throw new \Exception('Failed to generate study. AI service returned no valid data.');
     }
 
     /**
@@ -696,26 +710,7 @@ class AIFeaturesController extends Controller
             return $aiBreakdown;
         }
 
-        // Fallback
-        $taskTemplates = $this->getTaskTemplates($granularity);
-        $estimatedTasks = [];
-        
-        foreach ($taskTemplates as $category => $tasks) {
-            $estimatedTasks[$category] = [
-                'tasks' => $tasks,
-                'estimated_duration' => $this->estimateCategoryDuration($tasks),
-                'priority' => $this->determineCategoryPriority($category),
-            ];
-        }
-        
-        return [
-            'project_id' => $project->id,
-            'project_title' => $project->title,
-            'granularity' => $granularity,
-            'total_estimated_tasks' => $this->countTotalTasks($estimatedTasks),
-            'categories' => $estimatedTasks,
-            'generated_at' => now()->toIso8601String(),
-        ];
+        throw new \Exception('Failed to generate project breakdown. AI service returned no valid data.');
     }
 
     /**

@@ -11,6 +11,7 @@ enum TaskStatus: string
     case ON_HOLD = 'on_hold';
     case REVIEW = 'review';
     case CANCELLED = 'cancelled';
+    case BLOCKED = 'blocked';
 
     /**
      * Get human-readable label
@@ -25,6 +26,7 @@ enum TaskStatus: string
             self::ON_HOLD => 'On Hold',
             self::REVIEW => 'Review',
             self::CANCELLED => 'Cancelled',
+            self::BLOCKED => 'Blocked',
         };
     }
 
@@ -41,6 +43,7 @@ enum TaskStatus: string
             self::ON_HOLD => 'secondary',
             self::REVIEW => 'info',
             self::CANCELLED => 'danger',
+            self::BLOCKED => 'danger',
         };
     }
 

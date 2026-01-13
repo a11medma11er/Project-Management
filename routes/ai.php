@@ -4,7 +4,6 @@ use App\Http\Controllers\Admin\AI\AIControlController;
 use App\Http\Controllers\Admin\AI\AIPromptController;
 use App\Http\Controllers\Admin\AI\AIDecisionController;
 use App\Http\Controllers\Admin\AI\AIGuardrailController;
-use App\Http\Controllers\Admin\AI\AIDecisionReviewController;
 use App\Http\Controllers\Admin\AI\AIInsightsController;
 use App\Http\Controllers\Admin\AI\AIAnalyticsController;
 use App\Http\Controllers\Admin\AI\AISafetyController;
@@ -59,6 +58,7 @@ Route::prefix('admin/ai')
             Route::resource('prompts', AIPromptController::class);
             Route::post('/prompts/{prompt}/restore', [AIPromptController::class, 'restore'])->name('prompts.restore');
             Route::post('/prompts/{prompt}/toggle-active', [AIPromptController::class, 'toggleActive'])->name('prompts.toggle-active');
+            Route::post('/prompts/{prompt}/activate', [AIPromptController::class, 'activate'])->name('prompts.activate');
         });
 
         Route::middleware(['can:test-ai-prompts'])->group(function () {
@@ -75,14 +75,15 @@ Route::prefix('admin/ai')
         });
 
         // ============================================
-        // AI Decision Review (Approve/Reject)
+        // AI Review & Actions
         // ============================================
         Route::middleware(['can:approve-ai-actions'])->group(function () {
-            Route::get('/decisions/{decision}/review', [AIDecisionReviewController::class, 'show'])->name('decisions.review');
-            Route::post('/decisions/bulk-accept', [AIDecisionReviewController::class, 'bulkAccept'])->name('decisions.bulk-accept');
-            Route::post('/decisions/{decision}/accept', [AIDecisionReviewController::class, 'accept'])->name('decisions.accept');
-            Route::post('/decisions/{decision}/reject', [AIDecisionReviewController::class, 'reject'])->name('decisions.reject');
-            Route::post('/decisions/{decision}/modify', [AIDecisionReviewController::class, 'modify'])->name('decisions.modify');
+            // Reusing the main controller for actions
+            Route::get('/decisions/{decision}/review', [AIDecisionController::class, 'show'])->name('decisions.review');
+            Route::post('/decisions/bulk-accept', [AIDecisionController::class, 'bulkAccept'])->name('decisions.bulk-accept');
+            Route::post('/decisions/{decision}/accept', [AIDecisionController::class, 'accept'])->name('decisions.accept');
+            Route::post('/decisions/{decision}/reject', [AIDecisionController::class, 'reject'])->name('decisions.reject');
+            Route::post('/decisions/{decision}/modify', [AIDecisionController::class, 'modify'])->name('decisions.modify');
         });
 
         // ============================================
@@ -121,6 +122,7 @@ Route::prefix('admin/ai')
             Route::post('/workflows/run', [AIWorkflowController::class, 'runAutomation'])->name('workflows.run');
             Route::post('/workflows/create-rule', [AIWorkflowController::class, 'createRule'])->name('workflows.create-rule');
             Route::post('/workflows/schedule', [AIWorkflowController::class, 'scheduleAnalysis'])->name('workflows.schedule');
+            Route::post('/workflows/run-feature', [AIWorkflowController::class, 'runFeature'])->name('workflows.run-feature');
             Route::get('/workflows/workload', [AIWorkflowController::class, 'workloadBalance'])->name('workflows.workload');
             Route::post('/workflows/update-threshold', [AIWorkflowController::class, 'updateWorkloadThreshold'])->name('workflows.update-threshold');
         });

@@ -311,4 +311,33 @@ class AIContextBuilder
 
         return $recommendations;
     }
+    /**
+     * Build compact context for Generative AI to save tokens
+     */
+    public function buildCompactContext(int $taskId): array
+    {
+        $taskContext = $this->buildTaskContext($taskId);
+
+        if (empty($taskContext)) {
+            return [];
+        }
+
+        return [
+            'context_type' => 'decision_analysis',
+            'task' => [
+                'id' => $taskContext['task']['id'],
+                'title' => $taskContext['task']['title'],
+                'status' => $taskContext['task']['status'],
+                'priority' => $taskContext['task']['priority'],
+                'time_logged' => $taskContext['engagement']['total_hours_logged'] . 'h',
+                'due_date' => $taskContext['timeline']['due_date'] ? \Carbon\Carbon::parse($taskContext['timeline']['due_date'])->format('Y-m-d') . ($taskContext['timeline']['days_overdue'] > 0 ? ' (overdue)' : '') : 'N/A',
+            ],
+            'signals' => [
+                'is_blocked' => $taskContext['ai_signals']['is_blocked'],
+                'needs_attention' => $taskContext['ai_signals']['needs_attention'],
+                'days_stale' => $taskContext['ai_signals']['stale_task'] ? 7 : 0, // Simplified signal
+                'engagement_level' => $taskContext['ai_signals']['low_engagement'] ? 'low' : 'normal',
+            ]
+        ];
+    }
 }
